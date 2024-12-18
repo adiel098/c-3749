@@ -30,8 +30,7 @@ export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingView
           show_popup_button: !isMobile,
           hide_side_toolbar: isMobile,
           hide_top_toolbar: false,
-          studies: isMobile ? [] : undefined,
-          hide_volume: false
+          studies: isMobile ? [] : undefined
         });
 
         return () => {
