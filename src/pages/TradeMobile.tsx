@@ -49,7 +49,7 @@ const TradeMobile = () => {
               </p>
             </header>
 
-            <div className="h-[300px]">
+            <div className="h-[250px]">
               <MobileCryptoChart 
                 symbol={selectedCrypto} 
                 onPriceUpdate={handlePriceUpdate}
@@ -68,15 +68,15 @@ const TradeMobile = () => {
         </div>
 
         {/* Mobile Trading Buttons */}
-        <div className="fixed bottom-16 left-0 right-0 p-4 flex gap-4 bg-background/95 backdrop-blur-md border-t border-white/10">
+        <div className="fixed bottom-16 left-0 right-0 px-4 py-2 flex gap-4 bg-background/95 backdrop-blur-md border-t border-white/10">
           <Sheet open={isTradeFormOpen} onOpenChange={setIsTradeFormOpen}>
             <SheetTrigger asChild>
               <Button
-                className="flex-1 h-14 bg-success hover:bg-success/90"
+                className="flex-1 h-10 bg-success hover:bg-success/90"
                 onClick={() => openTradeForm('long')}
               >
-                <div className="flex flex-col items-center">
-                  <TrendingUp className="h-6 w-6 mb-1" />
+                <div className="flex items-center justify-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
                   <span>Long</span>
                 </div>
               </Button>
@@ -94,11 +94,11 @@ const TradeMobile = () => {
           <Sheet>
             <SheetTrigger asChild>
               <Button
-                className="flex-1 h-14 bg-warning hover:bg-warning/90"
+                className="flex-1 h-10 bg-warning hover:bg-warning/90"
                 onClick={() => openTradeForm('short')}
               >
-                <div className="flex flex-col items-center">
-                  <TrendingDown className="h-6 w-6 mb-1" />
+                <div className="flex items-center justify-center gap-2">
+                  <TrendingDown className="h-4 w-4" />
                   <span>Short</span>
                 </div>
               </Button>

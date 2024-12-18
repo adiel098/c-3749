@@ -3,6 +3,7 @@ import { CryptoSearch } from "./crypto/CryptoSearch";
 import { useQuery } from "@tanstack/react-query";
 import { TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TradingViewWidget } from "./trading/TradingViewWidget";
 
 interface MobileCryptoChartProps {
   symbol: string;
@@ -82,10 +83,7 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
       </div>
       
       <div className="relative flex-1 w-full h-[200px] bg-card/30 rounded-lg">
-        {/* Simplified chart for mobile */}
-        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-          Mobile Chart View
-        </div>
+        <TradingViewWidget symbol={symbol} isMobile={true} />
       </div>
     </div>
   );

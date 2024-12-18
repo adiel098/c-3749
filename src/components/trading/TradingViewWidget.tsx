@@ -2,9 +2,10 @@ import { useEffect, useRef, memo } from "react";
 
 interface TradingViewWidgetProps {
   symbol: string;
+  isMobile?: boolean;
 }
 
-export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
+export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingViewWidgetProps) => {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,9 +27,12 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: container.current.id,
-          show_popup_button: true,
-          hide_side_toolbar: false,
-          hide_top_toolbar: false
+          show_popup_button: !isMobile,
+          hide_side_toolbar: isMobile,
+          hide_top_toolbar: false,
+          withdateranges: !isMobile,
+          hide_volume: isMobile,
+          scale_position: isMobile ? 'right' : 'left'
         });
 
         return () => {
@@ -48,7 +52,7 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
     return () => {
       script.remove();
     };
-  }, [symbol]);
+  }, [symbol, isMobile]);
 
   return (
     <div 
