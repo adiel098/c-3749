@@ -10,7 +10,6 @@ import { usePositions } from "@/hooks/usePositions";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PositionsList } from "@/components/trading/PositionsList";
-import MarketStats from "@/components/MarketStats";
 
 const Index = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
@@ -51,8 +50,6 @@ const Index = () => {
                 <p className="text-muted-foreground">Practice trading with virtual funds</p>
               </div>
             </header>
-
-            <MarketStats />
 
             <div className="relative w-full">
               <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
