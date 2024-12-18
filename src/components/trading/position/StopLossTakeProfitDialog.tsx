@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Position } from "@/types/position";
@@ -10,9 +10,10 @@ import type { Position } from "@/types/position";
 interface StopLossTakeProfitDialogProps {
   position: Position;
   onUpdate: () => void;
+  children?: ReactNode;
 }
 
-export function StopLossTakeProfitDialog({ position, onUpdate }: StopLossTakeProfitDialogProps) {
+export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopLossTakeProfitDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [stopLoss, setStopLoss] = useState(position.stop_loss?.toString() || "");
@@ -73,7 +74,7 @@ export function StopLossTakeProfitDialog({ position, onUpdate }: StopLossTakePro
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {!position.stop_loss && !position.take_profit ? (
+        {children || (
           <Button
             variant="outline"
             size="sm"
@@ -81,14 +82,6 @@ export function StopLossTakeProfitDialog({ position, onUpdate }: StopLossTakePro
           >
             <Plus className="h-4 w-4 mr-1" />
             SL/TP
-          </Button>
-        ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-primary hover:text-primary hover:bg-primary/20"
-          >
-            <Edit2 className="h-4 w-4" />
           </Button>
         )}
       </DialogTrigger>

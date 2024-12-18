@@ -1,12 +1,11 @@
-import type { Position } from "@/types/position";
-import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle, Edit2 } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { StopLossTakeProfitDialog } from "./position/StopLossTakeProfitDialog";
-import { PositionDetails } from "./position/PositionDetails";
+import { supabase } from "@/integrations/supabase/client";
+import type { Position } from "@/types/position";
+import { PositionInfo } from "./position/PositionInfo";
+import { StopLossTakeProfitInfo } from "./position/StopLossTakeProfitInfo";
+import { ProfitLossInfo } from "./position/ProfitLossInfo";
 
 interface PositionRowProps {
   position: Position;
@@ -17,8 +16,6 @@ interface PositionRowProps {
 
 export function PositionRow({ position, currentPrice, onUpdate, type }: PositionRowProps) {
   const { toast } = useToast();
-  const profitLossPercentage = ((currentPrice || position.exit_price || 0) - position.entry_price) / position.entry_price * 100;
-  const isProfitable = position.profit_loss >= 0;
 
   const handleClosePosition = async () => {
     try {
@@ -51,101 +48,34 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
   return (
     <div className="flex items-center justify-between p-3 rounded-lg bg-card/30 backdrop-blur-sm border border-white/10 hover:bg-card/40 transition-all duration-200">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          {position.type === 'long' ? (
-            <ArrowUpCircle className="text-green-500 h-5 w-5" />
-          ) : (
-            <ArrowDownCircle className="text-red-500 h-5 w-5" />
-          )}
-          <span className="font-semibold">{position.symbol}</span>
-          <Badge variant={position.type === 'long' ? 'default' : 'destructive'} className="uppercase">
-            {position.type}
-          </Badge>
-        </div>
+        <PositionInfo 
+          position={position}
+          currentPrice={currentPrice}
+          type={type}
+        />
         
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Entry:</span>
-                <span className="font-medium">${position.entry_price.toFixed(2)}</span>
-                {type === 'open' && (
-                  <>
-                    <span className="text-sm text-muted-foreground">Current:</span>
-                    <span className="font-medium">${currentPrice?.toFixed(2) || '...'}</span>
-                  </>
-                )}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <PositionDetails 
-                position={position}
-                currentPrice={currentPrice}
-                type={type}
-              />
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {type === 'open' && (position.stop_loss || position.take_profit) && (
-          <div className="flex items-center gap-2">
-            {position.stop_loss && (
-              <Badge variant="outline" className="gap-1">
-                SL: ${position.stop_loss.toFixed(2)}
-              </Badge>
-            )}
-            {position.take_profit && (
-              <Badge variant="outline" className="gap-1">
-                TP: ${position.take_profit.toFixed(2)}
-              </Badge>
-            )}
-            <StopLossTakeProfitDialog 
-              position={position}
-              onUpdate={onUpdate || (() => {})}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0"
-              >
-                <Edit2 className="h-4 w-4" />
-              </Button>
-            </StopLossTakeProfitDialog>
-          </div>
+        {type === 'open' && (
+          <StopLossTakeProfitInfo 
+            position={position}
+            onUpdate={onUpdate || (() => {})}
+          />
         )}
       </div>
 
       <div className="flex items-center gap-4">
-        <div className={`flex items-center gap-1 ${isProfitable ? 'text-green-500' : 'text-red-500'}`}>
-          {isProfitable ? (
-            <TrendingUp className="h-4 w-4" />
-          ) : (
-            <TrendingDown className="h-4 w-4" />
-          )}
-          <span className="font-medium whitespace-nowrap">
-            {isProfitable ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
-          </span>
-          <span className="text-sm">
-            ({profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%)
-          </span>
-        </div>
+        <ProfitLossInfo 
+          position={position}
+          currentPrice={currentPrice}
+        />
 
         {type === 'open' && (
-          <div className="flex items-center gap-2">
-            {!position.stop_loss && !position.take_profit && (
-              <StopLossTakeProfitDialog 
-                position={position}
-                onUpdate={onUpdate || (() => {})}
-              />
-            )}
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleClosePosition}
-            >
-              <XCircle className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleClosePosition}
+          >
+            <XCircle className="h-4 w-4" />
+          </Button>
         )}
       </div>
     </div>
