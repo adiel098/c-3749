@@ -32,10 +32,10 @@ export function CryptoSearchResults({
   return (
     <>
       {(!cryptoList || cryptoList.length === 0) && (
-        <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+        <CommandEmpty>No results found</CommandEmpty>
       )}
       {cryptoList && cryptoList.length > 0 && (
-        <CommandGroup heading="מטבעות פופולריים">
+        <CommandGroup heading="Popular Cryptocurrencies">
           {cryptoList.map((crypto) => (
             <CommandItem
               key={crypto.symbol}
