@@ -1,13 +1,12 @@
 import type { Position } from "@/types/position";
-import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle, Edit2, Plus } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { StopLossTakeProfitDialog } from "./position/StopLossTakeProfitDialog";
+import { PositionDetails } from "./position/PositionDetails";
 
 interface PositionRowProps {
   position: Position;
@@ -18,9 +17,6 @@ interface PositionRowProps {
 
 export function PositionRow({ position, currentPrice, onUpdate, type }: PositionRowProps) {
   const { toast } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
-  const [stopLoss, setStopLoss] = useState(position.stop_loss?.toString() || "");
-  const [takeProfit, setTakeProfit] = useState(position.take_profit?.toString() || "");
   const profitLossPercentage = ((currentPrice || position.exit_price || 0) - position.entry_price) / position.entry_price * 100;
   const isProfitable = position.profit_loss >= 0;
 
@@ -47,57 +43,6 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
       toast({
         title: "Error closing position",
         description: "Please try again later",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleUpdateLevels = async () => {
-    try {
-      const { error } = await supabase
-        .from('positions')
-        .update({
-          stop_loss: stopLoss ? Number(stopLoss) : null,
-          take_profit: takeProfit ? Number(takeProfit) : null
-        })
-        .eq('id', position.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Levels updated successfully",
-      });
-
-      setIsEditing(false);
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      toast({
-        title: "Error updating levels",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleRemoveLevels = async () => {
-    try {
-      const { error } = await supabase
-        .from('positions')
-        .update({
-          stop_loss: null,
-          take_profit: null
-        })
-        .eq('id', position.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Levels removed successfully",
-      });
-
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      toast({
-        title: "Error removing levels",
         variant: "destructive",
       });
     }
@@ -143,10 +88,11 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <div className="space-y-1">
-                <p>Leverage: {position.leverage}x</p>
-                <p>Amount: ${position.amount}</p>
-              </div>
+              <PositionDetails 
+                position={position}
+                currentPrice={currentPrice}
+                type={type}
+              />
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -169,68 +115,10 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
 
         {type === 'open' && (
           <div className="flex items-center gap-2">
-            <Dialog>
-              <DialogTrigger asChild>
-                {!position.stop_loss && !position.take_profit ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-primary hover:text-primary hover:bg-primary/20"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    SL/TP
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-primary hover:text-primary hover:bg-primary/20"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-                )}
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Set Stop Loss & Take Profit</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Stop Loss</label>
-                    <Input
-                      placeholder="Enter stop loss price"
-                      value={stopLoss}
-                      onChange={(e) => setStopLoss(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Take Profit</label>
-                    <Input
-                      placeholder="Enter take profit price"
-                      value={takeProfit}
-                      onChange={(e) => setTakeProfit(e.target.value)}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    {(position.stop_loss || position.take_profit) && (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleRemoveLevels}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                    <Button
-                      onClick={handleUpdateLevels}
-                    >
-                      Save
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-
+            <StopLossTakeProfitDialog 
+              position={position}
+              onUpdate={onUpdate || (() => {})}
+            />
             <Button
               variant="destructive"
               size="sm"
