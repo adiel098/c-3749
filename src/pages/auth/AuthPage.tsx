@@ -65,7 +65,7 @@ const AuthPage = () => {
                     </TabsContent>
                     <TabsContent 
                       value="signup" 
-                      className={`space-y-4 [&>*]:relative ${isMobile ? 'pb-8' : ''}`}
+                      className={`space-y-4 [&>*]:relative ${isMobile ? 'pb-16' : ''}`}
                     >
                       <SignUpForm />
                     </TabsContent>
