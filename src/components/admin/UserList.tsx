@@ -26,11 +26,32 @@ export function UserList() {
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get user profiles
+      const { data: profiles, error: profilesError } = await supabase
         .rpc('get_user_profiles');
 
-      if (error) throw error;
-      return data;
+      if (profilesError) throw profilesError;
+
+      // Then get open positions count for each user
+      const openPositionsCounts: Record<string, number> = {};
+      
+      const { data: positions, error: positionsError } = await supabase
+        .from('positions')
+        .select('user_id')
+        .eq('status', 'open');
+
+      if (positionsError) throw positionsError;
+
+      // Count open positions for each user
+      positions?.forEach(position => {
+        openPositionsCounts[position.user_id] = (openPositionsCounts[position.user_id] || 0) + 1;
+      });
+
+      // Combine the data
+      return profiles?.map(profile => ({
+        ...profile,
+        open_positions_count: openPositionsCounts[profile.id] || 0
+      }));
     },
   });
 
