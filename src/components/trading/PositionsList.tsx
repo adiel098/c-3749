@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import type { Position } from "@/types/position";
 import { PositionRow } from "./PositionRow";
 
@@ -16,13 +15,13 @@ export function PositionsList({ positions, currentPrice, onUpdate }: PositionsLi
 
   return (
     <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
-      <CardContent>
+      <CardContent className="p-4">
         <Tabs defaultValue="open" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-secondary/40">
+          <TabsList className="grid w-full grid-cols-2 bg-secondary/40 mb-4">
             <TabsTrigger value="open">Open Positions ({openPositions.length})</TabsTrigger>
             <TabsTrigger value="closed">Closed Positions ({closedPositions.length})</TabsTrigger>
           </TabsList>
-          <TabsContent value="open">
+          <TabsContent value="open" className="mt-0">
             {!openPositions.length ? (
               <div className="text-center text-muted-foreground py-4">
                 No open positions
@@ -41,7 +40,7 @@ export function PositionsList({ positions, currentPrice, onUpdate }: PositionsLi
               </div>
             )}
           </TabsContent>
-          <TabsContent value="closed">
+          <TabsContent value="closed" className="mt-0">
             {!closedPositions.length ? (
               <div className="text-center text-muted-foreground py-4">
                 No closed positions
