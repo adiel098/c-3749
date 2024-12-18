@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormData {
   email: string;
@@ -20,6 +21,7 @@ export function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { setSession } = useAuth();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -54,8 +56,8 @@ export function LoginForm() {
 
       console.log("Login successful, session:", authData.session ? "Exists" : "None");
       
-      // Wait for session to be properly set
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Update the session in AuthContext immediately
+      setSession(authData.session);
       
       toast({
         title: "Success",
