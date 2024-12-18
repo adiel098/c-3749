@@ -26,14 +26,7 @@ const Wallet = () => {
     const totalMargin = openPositions.reduce((sum, pos) => sum + pos.amount, 0);
     
     // Calculate total P&L from open positions
-    const totalPnL = openPositions.reduce((sum, pos) => {
-      const exitPrice = pos.exit_price || pos.entry_price;
-      const priceChange = exitPrice - pos.entry_price;
-      const direction = pos.type === 'long' ? 1 : -1;
-      const positionSize = pos.amount * pos.leverage;
-      const pnl = (priceChange / pos.entry_price) * positionSize * direction;
-      return sum + pnl;
-    }, 0);
+    const totalPnL = openPositions.reduce((sum, pos) => sum + (pos.profit_loss || 0), 0);
 
     // Total account value = Available Balance + Margin Used + Total P&L
     return profile.balance + totalMargin + totalPnL;
@@ -90,6 +83,7 @@ const Wallet = () => {
                 totalAccountValue={totalAccountValue}
                 marginUsed={marginUsed}
                 balance={profile.balance}
+                positions={positions}
               />
             </div>
             <div className="space-y-6">
