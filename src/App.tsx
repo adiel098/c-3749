@@ -20,11 +20,11 @@ function App() {
     <Router>
       <div className="relative min-h-screen">
         <Routes>
-          <Route path="/auth" element={
-            session ? <Navigate to="/" replace /> : <AuthPage />
+          <Route path="/" element={
+            session ? <Navigate to="/trade" replace /> : <AuthPage />
           } />
           <Route
-            path="/"
+            path="/trade"
             element={
               <ProtectedRoute>
                 <div className={isMobile ? "main-content" : ""}>
