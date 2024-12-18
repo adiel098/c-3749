@@ -25,7 +25,7 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
       script.async = true;
       script.onload = () => {
         if (typeof window.TradingView !== 'undefined') {
-          new window.TradingView.widget({
+          const widget = new window.TradingView.widget({
             width: '100%',
             height: 500,
             symbol: `BINANCE:${symbol}USDT`,
@@ -50,24 +50,28 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
                 window.postMessage({ name: 'tradingview-price', price: symbolData.price }, '*');
               }
             },
-            // Add a callback function that will be called when the chart is ready
-            onReady: () => {
-              console.log('Chart is ready');
-              // Start polling for price updates
-              const priceUpdateInterval = setInterval(() => {
-                const chartElement = document.querySelector('#tradingview_chart iframe');
-                if (chartElement) {
-                  const price = (chartElement as any).contentWindow?.document?.querySelector('.price-KxHzP6nH')?.textContent;
-                  if (price) {
-                    window.postMessage({ name: 'tradingview-price', price: parseFloat(price) }, '*');
+          });
+
+          // Start polling for price updates
+          const priceUpdateInterval = setInterval(() => {
+            try {
+              const chartFrame = document.querySelector('#tradingview_chart iframe');
+              if (chartFrame) {
+                const priceElement = (chartFrame as any).contentWindow?.document?.querySelector('.price-KxHzP6nH');
+                if (priceElement) {
+                  const price = parseFloat(priceElement.textContent);
+                  if (!isNaN(price)) {
+                    window.postMessage({ name: 'tradingview-price', price }, '*');
                   }
                 }
-              }, 1000);
-
-              // Cleanup interval on component unmount
-              return () => clearInterval(priceUpdateInterval);
+              }
+            } catch (error) {
+              console.error('Error getting price:', error);
             }
-          });
+          }, 1000);
+
+          // Cleanup interval on component unmount
+          return () => clearInterval(priceUpdateInterval);
         }
       };
 

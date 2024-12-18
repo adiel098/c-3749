@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PositionCard } from "./PositionCard";
+import { ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 
 interface Position {
   id: string;
