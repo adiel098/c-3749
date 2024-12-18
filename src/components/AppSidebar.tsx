@@ -1,71 +1,60 @@
-import { LineChart, Settings, Wallet, History, ChartBar } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import {
+  BarChart3Icon,
+  WalletIcon,
+  HistoryIcon,
+  Settings2Icon,
+  TrendingUpIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const items = [
-  {
-    title: "Trade",
-    url: "/",
-    icon: LineChart,
-  },
-  {
-    title: "Portfolio",
-    url: "/portfolio",
-    icon: ChartBar,
-  },
-  {
-    title: "History",
-    url: "/history",
-    icon: History,
-  },
-  {
-    title: "Wallet",
-    url: "/wallet",
-    icon: Wallet,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-];
-
-export function AppSidebar() {
+export const AppSidebar = () => {
   const location = useLocation();
 
+  const isActive = (path: string) => location.pathname === path;
+
+  const menuItems = [
+    { path: "/", icon: TrendingUpIcon, label: "Trade" },
+    { path: "/portfolio", icon: BarChart3Icon, label: "Portfolio" },
+    { path: "/wallet", icon: WalletIcon, label: "Wallet" },
+    { path: "/history", icon: HistoryIcon, label: "History" },
+    { path: "/settings", icon: Settings2Icon, label: "Settings" },
+  ];
+
   return (
-    <Sidebar>
+    <Sidebar className="border-r border-border/40 bg-gradient-to-b from-background/95 to-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>
-            <span className="text-xl text-gray-400 px-4 py-2">Menu</span>
-          </SidebarGroupLabel>
+          <div className="flex h-[60px] items-center px-6">
+            <Link to="/" className="flex items-center gap-2 font-semibold">
+              <span className="text-xl gradient-text">CryptoTrade</span>
+            </Link>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link 
-                      to={item.url} 
-                      className={`nav-link ${location.pathname === item.url ? 'active' : ''}`}
+              {menuItems.map(({ path, icon: Icon, label }) => (
+                <SidebarMenuItem key={path}>
+                  <Link to={path} className="w-full">
+                    <SidebarMenuButton
+                      className={cn(
+                        "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground",
+                        "hover:bg-accent/50",
+                        isActive(path) && "bg-accent/50 text-foreground"
+                      )}
                     >
-                      <item.icon className={`nav-link-icon ${
-                        location.pathname === item.url 
-                          ? 'text-primary' 
-                          : 'text-gray-400'
-                      }`} />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
+                      <Icon className="h-5 w-5" />
+                      <span>{label}</span>
+                    </SidebarMenuButton>
+                  </Link>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -74,4 +63,4 @@ export function AppSidebar() {
       </SidebarContent>
     </Sidebar>
   );
-}
+};
