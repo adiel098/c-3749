@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn, Mail, Lock, CheckCircle, AlertCircle } from "lucide-react";
+import { LogIn, Mail, Lock } from "lucide-react";
+import { toastStyles, ToastClose } from "@/utils/toastStyles";
 
 interface LoginFormData {
   email: string;
@@ -35,9 +36,14 @@ export function LoginForm() {
 
       if (!data.email || !data.password) {
         toast({
-          title: "Missing Fields 🤔",
-          description: "Please fill in all required fields",
-          variant: "destructive",
+          title: "Missing Fields",
+          description: (
+            <div className="flex items-center gap-2">
+              {toastStyles.error.icon}
+              <span>Please fill in all required fields</span>
+            </div>
+          ),
+          className: toastStyles.error.className,
           duration: 3000,
         });
         return;
@@ -50,14 +56,14 @@ export function LoginForm() {
 
       if (error) {
         toast({
-          title: "Login Failed ❌",
+          title: "Login Failed",
           description: (
             <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-destructive" />
+              {toastStyles.error.icon}
               <span>Invalid credentials. Please try again</span>
             </div>
           ),
-          variant: "destructive",
+          className: toastStyles.error.className,
           duration: 3000,
         });
         return;
@@ -66,13 +72,14 @@ export function LoginForm() {
       setSession(authData.session);
       
       toast({
-        title: "Welcome Back! 🎉",
+        title: "Welcome Back!",
         description: (
           <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-primary" />
-            <span>You have successfully logged in</span>
+            {toastStyles.success.icon}
+            <span>Successfully logged in</span>
           </div>
         ),
+        className: toastStyles.success.className,
         duration: 3000,
       });
 
@@ -80,9 +87,14 @@ export function LoginForm() {
       navigate(from);
     } catch (error: any) {
       toast({
-        title: "Unexpected Error 😕",
-        description: "An error occurred. Please try again later",
-        variant: "destructive",
+        title: "Unexpected Error",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.error.icon}
+            <span>An error occurred. Please try again later</span>
+          </div>
+        ),
+        className: toastStyles.error.className,
         duration: 3000,
       });
     } finally {

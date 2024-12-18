@@ -1,28 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { countryCodes } from "@/utils/countryPhoneCodes";
-import { UserPlus, Mail, Lock, User, Phone, CheckCircle, AlertCircle } from "lucide-react";
-
-interface SignUpFormData {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-}
+import { UserPlus } from "lucide-react";
+import { SignUpFormFields } from "./SignUpFormFields";
+import { SignUpFormData } from "./types";
+import { toastStyles, ToastClose } from "@/utils/toastStyles";
 
 export function SignUpForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
@@ -33,9 +17,14 @@ export function SignUpForm() {
   const onSubmit = async (data: SignUpFormData) => {
     if (data.password !== data.confirmPassword) {
       toast({
-        title: "Password Error ⚠️",
-        description: "The passwords you entered do not match",
-        variant: "destructive",
+        title: "Password Error",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.error.icon}
+            <span>The passwords you entered do not match</span>
+          </div>
+        ),
+        className: toastStyles.error.className,
         duration: 3000,
       });
       return;
@@ -58,25 +47,26 @@ export function SignUpForm() {
       if (error) throw error;
 
       toast({
-        title: "Welcome to the Family! 🎊",
+        title: "Welcome to the Family!",
         description: (
           <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-primary" />
+            {toastStyles.success.icon}
             <span>Account created successfully! You can now log in</span>
           </div>
         ),
+        className: toastStyles.success.className,
         duration: 3000,
       });
     } catch (error: any) {
       toast({
-        title: "Registration Failed ❌",
+        title: "Registration Failed",
         description: (
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-destructive" />
+            {toastStyles.error.icon}
             <span>{error.message}</span>
           </div>
         ),
-        variant: "destructive",
+        className: toastStyles.error.className,
         duration: 3000,
       });
     } finally {
@@ -86,136 +76,12 @@ export function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />
-            First Name
-          </Label>
-          <Input
-            {...register("firstName", { required: "First name is required" })}
-            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-            placeholder="Enter first name"
-          />
-          {errors.firstName && (
-            <p className="text-sm text-destructive">{errors.firstName.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />
-            Last Name
-          </Label>
-          <Input
-            {...register("lastName", { required: "Last name is required" })}
-            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-            placeholder="Enter last name"
-          />
-          {errors.lastName && (
-            <p className="text-sm text-destructive">{errors.lastName.message}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Mail className="w-4 h-4 text-primary" />
-          Email
-        </Label>
-        <Input
-          type="email"
-          {...register("email", { 
-            required: "Email is required",
-            pattern: {
-              value: /\S+@\S+\.\S+/,
-              message: "Please enter a valid email address"
-            }
-          })}
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-          placeholder="Enter your email"
-        />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Phone className="w-4 h-4 text-primary" />
-          Phone Number
-        </Label>
-        <div className="flex gap-2">
-          <Select value={countryCode} onValueChange={setCountryCode}>
-            <SelectTrigger className="w-[140px] bg-card/50 border-primary/10 focus:border-primary/20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/10">
-              {countryCodes.map((country) => (
-                <SelectItem 
-                  key={country.code} 
-                  value={country.code}
-                  className="hover:bg-primary/10 focus:bg-primary/10"
-                >
-                  {country.flag} {country.code}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            {...register("phoneNumber", { 
-              required: "Phone number is required",
-              pattern: {
-                value: /^\d+$/,
-                message: "Please enter only numbers"
-              }
-            })}
-            className="flex-1 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-            placeholder="Enter phone number"
-          />
-        </div>
-        {errors.phoneNumber && (
-          <p className="text-sm text-destructive">{errors.phoneNumber.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-primary" />
-          Password
-        </Label>
-        <Input
-          type="password"
-          {...register("password", { 
-            required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters"
-            }
-          })}
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-          placeholder="Create a password"
-        />
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-primary" />
-          Confirm Password
-        </Label>
-        <Input
-          type="password"
-          {...register("confirmPassword", { required: "Please confirm your password" })}
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-          placeholder="Confirm your password"
-        />
-        {errors.confirmPassword && (
-          <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-        )}
-      </div>
+      <SignUpFormFields
+        register={register}
+        errors={errors}
+        countryCode={countryCode}
+        setCountryCode={setCountryCode}
+      />
 
       <Button 
         type="submit" 
