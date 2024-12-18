@@ -41,6 +41,15 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
       <TradingFormHeader selectedCrypto={selectedCrypto} />
       <CardContent>
         <div className="space-y-6">
+          <TradingFormInputs
+            amount={amount}
+            setAmount={setAmount}
+            leverage={leverage}
+            setLeverage={setLeverage}
+            isSubmitting={isSubmitting}
+            currentPrice={currentPrice}
+          />
+          
           <div className="grid grid-cols-2 gap-4">
             <Button
               className="h-16 bg-success hover:bg-success/90 transition-all duration-200 hover:scale-[1.02]"
@@ -63,15 +72,6 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
               </div>
             </Button>
           </div>
-          
-          <TradingFormInputs
-            amount={amount}
-            setAmount={setAmount}
-            leverage={leverage}
-            setLeverage={setLeverage}
-            isSubmitting={isSubmitting}
-            currentPrice={currentPrice}
-          />
         </div>
       </CardContent>
     </Card>
