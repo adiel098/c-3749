@@ -39,13 +39,30 @@ export function useUserManagement() {
 
   const handleBalanceUpdate = async (userId: string, currentBalance: number, newBalance: number) => {
     try {
-      console.log('Updating balance:', { userId, currentBalance, newBalance });
+      console.log('Starting balance update process...', { userId, currentBalance, newBalance });
+      
+      // First, verify the user exists and get their current data
+      const { data: userData, error: userError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (userError) {
+        console.error('Error fetching user data:', userError);
+        throw userError;
+      }
+
+      console.log('Current user data:', userData);
       
       // Update the user's balance in the profiles table
-      const { error: updateError } = await supabase
+      const { data: updateData, error: updateError } = await supabase
         .from('profiles')
         .update({ balance: newBalance })
-        .eq('id', userId);
+        .eq('id', userId)
+        .select();
+
+      console.log('Update response:', { updateData, updateError });
 
       if (updateError) {
         console.error('Update error:', updateError);
@@ -54,23 +71,30 @@ export function useUserManagement() {
 
       // Create a transaction record for the balance adjustment
       const balanceChange = newBalance - currentBalance;
-      const { error: transactionError } = await supabase
+      const { data: transactionData, error: transactionError } = await supabase
         .from('transactions')
         .insert({
           user_id: userId,
           type: balanceChange >= 0 ? 'deposit' : 'withdrawal',
           amount: Math.abs(balanceChange),
           status: 'completed'
-        });
+        })
+        .select();
+
+      console.log('Transaction created:', { transactionData, transactionError });
 
       if (transactionError) {
         console.error('Transaction error:', transactionError);
         throw transactionError;
       }
 
+      console.log('Starting cache invalidation...');
+      
       // Refresh both admin-users and profile queries
       await queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       await queryClient.invalidateQueries({ queryKey: ["profile"] });
+
+      console.log('Cache invalidation complete');
 
       toast({
         title: "Balance Updated",
