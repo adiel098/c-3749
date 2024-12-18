@@ -1,102 +1,67 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { toastStyles, toastConfig } from "@/utils/toastStyles";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 
-interface AuthContextType {
-  session: Session | null;
-  user: User | null;
-  signOut: () => Promise<void>;
-  isLoading: boolean;
-  setSession: (session: Session | null) => void;
-}
-
-const AuthContext = createContext<AuthContextType>({
-  session: null,
-  user: null,
-  signOut: async () => {},
-  isLoading: true,
-  setSession: () => {},
-});
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const initSession = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      if (initialSession) {
-        setSession(initialSession);
-        setUser(initialSession.user);
-      }
-      setIsLoading(false);
-    };
-
-    initSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      if (newSession) {
-        setSession(newSession);
-        setUser(newSession.user);
-      } else {
-        setSession(null);
-        setUser(null);
-      }
-      setIsLoading(false);
+    const session = supabase.auth.getSession();
+    setUser(session.user);
+    
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null);
     });
 
     return () => {
-      subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
   }, []);
 
   const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      setSession(null);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Sign Out Failed ❌",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.error.icon}
+            <span>{error.message}</span>
+          </div>
+        ),
+        className: toastStyles.error.className,
+        ...toastConfig,
+      });
+    } else {
+      toast({
+        title: "Goodbye! 👋",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.logout.icon}
+            <span>You've been successfully signed out. See you soon!</span>
+          </div>
+        ),
+        className: toastStyles.logout.className,
+        ...toastConfig,
+      });
       setUser(null);
-      navigate("/");
-      toast({
-        title: "Success",
-        description: "You have been logged out successfully",
-      });
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
+      navigate("/auth");
     }
   };
 
-  const updateSession = (newSession: Session | null) => {
-    setSession(newSession);
-    setUser(newSession?.user ?? null);
-  };
-
   return (
-    <AuthContext.Provider value={{ 
-      session, 
-      user, 
-      signOut, 
-      isLoading, 
-      setSession: updateSession 
-    }}>
+    <AuthContext.Provider value={{ user, signOut }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return useContext(AuthContext);
 };

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { countryCodes } from "@/utils/countryPhoneCodes";
 import { User, Mail, Phone, Save } from "lucide-react";
-import { toastStyles } from "@/utils/toastStyles";  // Add this import
+import { toastStyles, toastConfig } from "@/utils/toastStyles";  // Add this import
 
 type ProfileFormProps = {
   initialData: {
@@ -52,15 +52,27 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Profile updated successfully",
+        title: "Profile Updated! ✨",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.success.icon}
+            <span>Your profile information has been successfully updated</span>
+          </div>
+        ),
         className: toastStyles.success.className,
+        ...toastConfig,
       });
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Update Failed ❌",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.error.icon}
+            <span>{error.message}</span>
+          </div>
+        ),
         className: toastStyles.error.className,
+        ...toastConfig,
       });
     } finally {
       setIsLoading(false);

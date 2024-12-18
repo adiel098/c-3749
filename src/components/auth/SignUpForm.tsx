@@ -17,15 +17,15 @@ export function SignUpForm() {
   const onSubmit = async (data: SignUpFormData) => {
     if (data.password !== data.confirmPassword) {
       toast({
-        title: "Password Error",
+        title: "Password Mismatch ❌",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.error.icon}
-            <span>The passwords you entered do not match</span>
+            <span>The passwords you entered don't match. Please try again</span>
           </div>
         ),
         className: toastStyles.error.className,
-        duration: 3000,
+        ...toastConfig,
       });
       return;
     }
@@ -33,7 +33,6 @@ export function SignUpForm() {
     try {
       setIsLoading(true);
       
-      // First, sign up the user
       const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -48,7 +47,6 @@ export function SignUpForm() {
 
       if (signUpError) throw signUpError;
 
-      // Ensure the profile is created with the correct data
       if (signUpData.user) {
         const { error: profileError } = await supabase
           .from('profiles')
@@ -63,19 +61,19 @@ export function SignUpForm() {
       }
 
       toast({
-        title: "Welcome to the Family!",
+        title: "Welcome to the Family! 🎉",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.success.icon}
-            <span>Account created successfully! You can now log in</span>
+            <span>Your account has been created successfully! You can now log in</span>
           </div>
         ),
         className: toastStyles.success.className,
-        duration: 3000,
+        ...toastConfig,
       });
     } catch (error: any) {
       toast({
-        title: "Registration Failed",
+        title: "Registration Failed ❌",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.error.icon}
@@ -83,7 +81,7 @@ export function SignUpForm() {
           </div>
         ),
         className: toastStyles.error.className,
-        duration: 3000,
+        ...toastConfig,
       });
     } finally {
       setIsLoading(false);

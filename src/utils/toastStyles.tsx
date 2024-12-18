@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle, Info, X } from "lucide-react";
+import { AlertCircle, CheckCircle, Info, X, LogOut } from "lucide-react";
 
 export const toastStyles = {
   success: {
@@ -13,6 +13,10 @@ export const toastStyles = {
     className: "bg-primary/20 text-primary border border-primary/30 shadow-lg backdrop-blur-sm",
     icon: <Info className="h-5 w-5" />,
   },
+  logout: {
+    className: "bg-accent/20 text-accent border border-accent/30 shadow-lg backdrop-blur-sm",
+    icon: <LogOut className="h-5 w-5" />,
+  }
 };
 
 export const ToastClose = () => (
@@ -20,3 +24,9 @@ export const ToastClose = () => (
     <X className="h-4 w-4" />
   </button>
 );
+
+// Common toast configuration
+export const toastConfig = {
+  duration: 3000,
+  className: "animate-in slide-in-from-top-full",
+};

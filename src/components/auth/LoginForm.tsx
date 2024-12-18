@@ -36,11 +36,11 @@ export function LoginForm() {
 
       if (!data.email || !data.password) {
         toast({
-          title: "Missing Fields",
+          title: "Missing Fields ❌",
           description: (
             <div className="flex items-center gap-2">
               {toastStyles.error.icon}
-              <span>Please fill in all required fields</span>
+              <span>Please fill in all required fields to continue</span>
             </div>
           ),
           className: toastStyles.error.className,
@@ -56,11 +56,11 @@ export function LoginForm() {
 
       if (error) {
         toast({
-          title: "Login Failed",
+          title: "Login Failed ❌",
           description: (
             <div className="flex items-center gap-2">
               {toastStyles.error.icon}
-              <span>Invalid credentials. Please try again</span>
+              <span>Invalid credentials. Please check and try again</span>
             </div>
           ),
           className: toastStyles.error.className,
@@ -72,11 +72,11 @@ export function LoginForm() {
       setSession(authData.session);
       
       toast({
-        title: "Welcome Back!",
+        title: "Welcome Back! ✨",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.success.icon}
-            <span>Successfully logged in</span>
+            <span>Successfully logged in. Great to see you again!</span>
           </div>
         ),
         className: toastStyles.success.className,
@@ -87,11 +87,11 @@ export function LoginForm() {
       navigate(from);
     } catch (error: any) {
       toast({
-        title: "Unexpected Error",
+        title: "Unexpected Error 🔧",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.error.icon}
-            <span>An error occurred. Please try again later</span>
+            <span>Something went wrong. Please try again later</span>
           </div>
         ),
         className: toastStyles.error.className,
