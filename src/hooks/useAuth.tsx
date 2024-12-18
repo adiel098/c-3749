@@ -24,16 +24,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("AuthProvider - Initializing");
     let mounted = true;
-    
+
     const initSession = async () => {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
-        console.log("AuthProvider - Initial session:", initialSession ? "Exists" : "None");
+        console.log("AuthProvider - Initial session fetch:", initialSession ? "Exists" : "None");
         
         if (mounted) {
-          setSession(initialSession);
-          setUser(initialSession?.user ?? null);
+          if (initialSession) {
+            setSession(initialSession);
+            setUser(initialSession.user);
+          }
           setIsLoading(false);
         }
       } catch (error) {
@@ -47,13 +50,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      if (!mounted) return;
-      
       console.log("AuthProvider - Auth state changed:", _event);
       console.log("AuthProvider - New session:", newSession ? "Exists" : "None");
       
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
+      if (!mounted) return;
+      
+      if (newSession) {
+        setSession(newSession);
+        setUser(newSession.user);
+      } else {
+        setSession(null);
+        setUser(null);
+      }
       setIsLoading(false);
     });
 
@@ -66,12 +74,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
   const updateSession = (newSession: Session | null) => {
+    console.log("AuthProvider - Manual session update:", newSession ? "Exists" : "None");
     setSession(newSession);
     setUser(newSession?.user ?? null);
   };

@@ -1,13 +1,18 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, isLoading } = useAuth();
   const location = useLocation();
 
-  console.log("ProtectedRoute - Loading:", isLoading);
-  console.log("ProtectedRoute - Session:", session ? "Exists" : "None");
-  console.log("ProtectedRoute - Location:", location.pathname);
+  useEffect(() => {
+    console.log("ProtectedRoute - Session state changed:", {
+      isLoading,
+      hasSession: !!session,
+      path: location.pathname
+    });
+  }, [isLoading, session, location]);
 
   if (isLoading) {
     return (
