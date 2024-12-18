@@ -12,7 +12,7 @@ const AuthPage = () => {
         <CardContent className="p-0">
           <Tabs defaultValue="login" className="w-full">
             <TabsContent value="login">
-              <div className="p-6 pb-2">
+              <div className="p-4 pb-2">
                 <h1 className="text-4xl font-bold gradient-text mb-4">Welcome Back</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Great to see you again! Log in to continue your trading journey
@@ -45,7 +45,7 @@ const AuthPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="signup">
-              <div className="p-6 pb-2">
+              <div className="p-4 pb-2">
                 <h1 className="text-4xl font-bold gradient-text mb-4">Join Us Now</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Join hundreds of traders and start your crypto trading adventure
