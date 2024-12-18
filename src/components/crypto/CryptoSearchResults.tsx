@@ -1,4 +1,4 @@
-import { Command, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
+import { CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { topCryptos } from '@/data/cryptoList';
 
 interface CryptoSearchResultsProps {
@@ -12,10 +12,12 @@ export function CryptoSearchResults({
   onSelect, 
   onClose 
 }: CryptoSearchResultsProps) {
-  const filteredCryptos = topCryptos.filter(crypto => 
-    crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    crypto.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCryptos = searchTerm 
+    ? topCryptos.filter(crypto => 
+        crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        crypto.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : topCryptos; // Show all cryptos when searchTerm is empty
 
   return (
     <>

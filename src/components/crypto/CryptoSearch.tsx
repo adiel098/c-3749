@@ -18,7 +18,10 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          setSearch(""); // Reset search when opening
+        }}
         className="bg-secondary/20 hover:bg-secondary/40"
       >
         <Search className="h-5 w-5 text-primary" />
