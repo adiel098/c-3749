@@ -88,15 +88,15 @@ const PortfolioMobile = () => {
         </Card>
       </div>
 
-      {/* Trading Stats - 2 cards per row */}
+      {/* Trading Stats - spread out cards */}
       {positions && (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <TradingStats positions={positions} />
           </div>
           
-          {/* PnL Analysis - 2 cards per row */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* PnL Analysis - spread out cards */}
+          <div className="grid grid-cols-1 gap-3">
             <PnLAnalysis positions={positions} />
           </div>
         </div>
