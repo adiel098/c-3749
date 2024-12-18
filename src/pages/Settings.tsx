@@ -9,7 +9,7 @@ import { PreferencesForm } from "@/components/settings/PreferencesForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings2, UserRound, Lock, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
@@ -20,7 +20,7 @@ const Settings = () => {
     firstName: "",
     lastName: "",
     phoneNumber: "",
-    countryCode: "+91"
+    countryCode: "+972"
   });
 
   useEffect(() => {
@@ -37,16 +37,22 @@ const Settings = () => {
         if (error) throw error;
 
         if (data) {
+          // Parse phone number to separate country code and number
           const phoneMatch = data.phone?.match(/^(\+\d+)(.*)$/);
           setProfile({
             firstName: data.first_name || "",
             lastName: data.last_name || "",
             phoneNumber: phoneMatch ? phoneMatch[2] : "",
-            countryCode: phoneMatch ? phoneMatch[1] : "+91"
+            countryCode: phoneMatch ? phoneMatch[1] : "+972"
           });
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data",
+          variant: "destructive",
+        });
       }
     };
 

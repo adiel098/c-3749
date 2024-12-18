@@ -31,7 +31,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState({
     ...initialData,
-    countryCode: initialData.countryCode || "+91" // Set India's country code as default
+    countryCode: initialData.countryCode || "+972"
   });
 
   const handleProfileUpdate = async () => {
@@ -53,12 +53,14 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       toast({
         title: "Success",
         description: "Profile updated successfully",
+        className: toastStyles.success.className,
       });
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
+        className: toastStyles.error.className,
       });
     } finally {
       setIsLoading(false);

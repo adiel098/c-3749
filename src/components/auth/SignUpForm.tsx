@@ -32,7 +32,9 @@ export function SignUpForm() {
 
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signUp({
+      
+      // First, sign up the user
+      const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -44,7 +46,21 @@ export function SignUpForm() {
         }
       });
 
-      if (error) throw error;
+      if (signUpError) throw signUpError;
+
+      // Ensure the profile is created with the correct data
+      if (signUpData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            first_name: data.firstName,
+            last_name: data.lastName,
+            phone: `${countryCode}${data.phoneNumber}`
+          })
+          .eq('id', signUpData.user.id);
+
+        if (profileError) throw profileError;
+      }
 
       toast({
         title: "Welcome to the Family!",
