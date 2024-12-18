@@ -11,7 +11,7 @@ import { toastStyles, ToastClose, toastConfig } from "@/utils/toastStyles";
 export function SignUpForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
   const [isLoading, setIsLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState("+972");
+  const [countryCode, setCountryCode] = useState("+91"); // Changed default to India's code
   const { toast } = useToast();
 
   const onSubmit = async (data: SignUpFormData) => {
