@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAuth } from "@/hooks/useAuth";
+import { LogIn, Mail, Lock } from "lucide-react";
 
 interface LoginFormData {
   email: string;
@@ -83,43 +84,73 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          {...register("email", { 
-            required: "Email is required",
-            pattern: {
-              value: /\S+@\S+\.\S+/,
-              message: "Entered value does not match email format"
-            }
-          })}
-        />
+        <Label htmlFor="email" className="text-sm font-medium">
+          Email
+        </Label>
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="email"
+            type="email"
+            className="pl-10"
+            placeholder="Enter your email"
+            {...register("email", { 
+              required: "Email is required",
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: "Entered value does not match email format"
+              }
+            })}
+          />
+        </div>
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         )}
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          {...register("password", { 
-            required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters"
-            }
-          })}
-        />
+        <Label htmlFor="password" className="text-sm font-medium">
+          Password
+        </Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="password"
+            type="password"
+            className="pl-10"
+            placeholder="Enter your password"
+            {...register("password", { 
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters"
+              }
+            })}
+          />
+        </div>
         {errors.password && (
           <p className="text-sm text-destructive">{errors.password.message}</p>
         )}
       </div>
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Loading..." : "Login"}
+
+      <Button 
+        type="submit" 
+        className="w-full h-12 text-base font-medium"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <span>Logging in...</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <LogIn className="h-5 w-5" />
+            <span>Login</span>
+          </div>
+        )}
       </Button>
     </form>
   );
