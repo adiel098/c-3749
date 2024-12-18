@@ -9,7 +9,7 @@ interface MobilePositionRowProps {
   position: Position;
   currentPrice?: number;
   onUpdate?: () => void;
-  type: 'open' | 'closed';  // Added this line to fix the TypeScript error
+  type: 'open' | 'closed';
 }
 
 export function MobilePositionRow({ position, currentPrice, onUpdate, type }: MobilePositionRowProps) {
@@ -18,15 +18,20 @@ export function MobilePositionRow({ position, currentPrice, onUpdate, type }: Mo
   };
 
   const calculatePnL = () => {
-    if (!currentPrice || !position.entry_price) return 0;
-    const difference = position.type === 'long' 
-      ? currentPrice - position.entry_price
-      : position.entry_price - currentPrice;
-    return (difference * position.amount * position.leverage);
+    if (!currentPrice && !position.exit_price) return 0;
+    
+    const exitPrice = position.exit_price || currentPrice || position.entry_price;
+    const priceChange = exitPrice - position.entry_price;
+    const direction = position.type === 'long' ? 1 : -1;
+    
+    const positionSize = position.amount * position.leverage;
+    const pnl = (priceChange / position.entry_price) * positionSize * direction;
+    
+    return pnl;
   };
 
   const pnl = calculatePnL();
-  const pnlPercentage = (pnl / (position.amount * position.leverage)) * 100;
+  const pnlPercentage = (pnl / position.amount) * 100;
 
   return (
     <div className="glass-effect p-4 rounded-lg space-y-3">
