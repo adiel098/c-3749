@@ -16,7 +16,7 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
   const handlePriceUpdate = useCallback(
     debounce((price: number) => {
       onPriceUpdate(price);
-    }, 1000),
+    }, 100), // Reduced from 1000ms to 100ms
     [onPriceUpdate]
   );
 
@@ -49,7 +49,8 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
         if (reconnectAttempts.current < maxReconnectAttempts) {
-          const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 10000);
+          // Reduced base timeout from 1000ms to 500ms
+          const timeout = Math.min(500 * Math.pow(2, reconnectAttempts.current), 5000);
           reconnectAttempts.current++;
           console.log(`Reconnecting in ${timeout}ms... Attempt ${reconnectAttempts.current}`);
           setTimeout(connect, timeout);
@@ -65,7 +66,8 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
       ws.onclose = () => {
         console.log('WebSocket connection closed');
         if (reconnectAttempts.current < maxReconnectAttempts) {
-          const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 10000);
+          // Reduced base timeout from 1000ms to 500ms
+          const timeout = Math.min(500 * Math.pow(2, reconnectAttempts.current), 5000);
           reconnectAttempts.current++;
           console.log(`Reconnecting in ${timeout}ms... Attempt ${reconnectAttempts.current}`);
           setTimeout(connect, timeout);
