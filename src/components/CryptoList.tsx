@@ -2,23 +2,31 @@ import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchCryptoData = async () => {
-  const response = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT","BNBUSDT","XRPUSDT","SOLUSDT"]');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+  try {
+    const response = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT","BNBUSDT","XRPUSDT","SOLUSDT"]');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid data format received');
+    }
+    return data.map((crypto: any) => ({
+      symbol: crypto.symbol.replace('USDT', ''),
+      name: crypto.symbol.replace('USDT', ''),
+      current_price: parseFloat(crypto.lastPrice),
+      price_change_percentage_24h: parseFloat(crypto.priceChangePercent),
+      total_volume: parseFloat(crypto.volume),
+      image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${crypto.symbol.replace('USDT', '').toLowerCase()}.png`,
+    }));
+  } catch (error) {
+    console.error('Error fetching crypto data:', error);
+    return []; // Return empty array instead of undefined
   }
-  const data = await response.json();
-  return data.map((crypto: any) => ({
-    symbol: crypto.symbol.replace('USDT', ''),
-    name: crypto.symbol.replace('USDT', ''),
-    current_price: parseFloat(crypto.lastPrice),
-    price_change_percentage_24h: parseFloat(crypto.priceChangePercent),
-    total_volume: parseFloat(crypto.volume),
-    image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${crypto.symbol.replace('USDT', '').toLowerCase()}.png`,
-  }));
 };
 
 const CryptoList = () => {
-  const { data: cryptos, isLoading } = useQuery({
+  const { data: cryptos = [], isLoading } = useQuery({
     queryKey: ['cryptos'],
     queryFn: fetchCryptoData,
     refetchInterval: 30000, // Refetch every 30 seconds
@@ -42,7 +50,7 @@ const CryptoList = () => {
             </tr>
           </thead>
           <tbody>
-            {cryptos?.map((crypto) => (
+            {cryptos.map((crypto) => (
               <tr key={crypto.symbol} className="border-t border-secondary">
                 <td className="py-4">
                   <div className="flex items-center gap-2">
