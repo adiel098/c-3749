@@ -5,6 +5,7 @@ import { Mail, Lock, User, Phone } from "lucide-react";
 import { countryCodes } from "@/utils/countryPhoneCodes";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import { SignUpFormData } from "./types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SignUpFormFieldsProps {
   register: UseFormRegister<SignUpFormData>;
@@ -80,16 +81,18 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
             <SelectTrigger className="w-[120px] bg-card/50 border-primary/10 focus:border-primary/20 h-12">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/10">
-              {countryCodes.map((country) => (
-                <SelectItem 
-                  key={country.code} 
-                  value={country.code}
-                  className="hover:bg-primary/10 focus:bg-primary/10"
-                >
-                  {country.flag} {country.code}
-                </SelectItem>
-              ))}
+            <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/10 max-h-[200px]">
+              <ScrollArea className="h-[200px]">
+                {countryCodes.map((country) => (
+                  <SelectItem 
+                    key={country.code} 
+                    value={country.code}
+                    className="hover:bg-primary/10 focus:bg-primary/10"
+                  >
+                    {country.flag} {country.code}
+                  </SelectItem>
+                ))}
+              </ScrollArea>
             </SelectContent>
           </Select>
           <Input
