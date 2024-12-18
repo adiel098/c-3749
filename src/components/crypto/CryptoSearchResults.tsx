@@ -1,4 +1,4 @@
-import { CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { CryptoData } from '@/types/crypto';
 
@@ -11,7 +11,7 @@ interface CryptoSearchResultsProps {
 }
 
 export function CryptoSearchResults({ 
-  cryptoList = [], // Provide default empty array
+  cryptoList = [], 
   isLoading, 
   error, 
   onSelect, 
@@ -30,7 +30,7 @@ export function CryptoSearchResults({
   }
 
   return (
-    <>
+    <Command>
       {(!cryptoList || cryptoList.length === 0) && (
         <CommandEmpty>No results found</CommandEmpty>
       )}
@@ -66,6 +66,6 @@ export function CryptoSearchResults({
           ))}
         </CommandGroup>
       )}
-    </>
+    </Command>
   );
 }

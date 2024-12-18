@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Command, CommandInput } from "@/components/ui/command";
 import { useWebSocketData } from "./useWebSocketData";
 import { CryptoSearchResults } from "./CryptoSearchResults";
 
@@ -37,12 +37,12 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
             <DialogTitle>Search Cryptocurrencies</DialogTitle>
           </DialogHeader>
 
-          <div className="flex flex-col gap-4">
-            <Input
+          <Command className="rounded-lg border">
+            <CommandInput
               placeholder="Search by name..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border border-primary/20 bg-secondary/20 focus:border-primary/40 transition-colors"
+              onValueChange={setSearch}
+              className="border-none focus:ring-0"
             />
 
             <div className="max-h-[400px] overflow-y-auto space-y-2 custom-scrollbar">
@@ -54,7 +54,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
                 onClose={() => setOpen(false)}
               />
             </div>
-          </div>
+          </Command>
         </DialogContent>
       </Dialog>
     </>
