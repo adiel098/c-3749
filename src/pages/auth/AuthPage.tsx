@@ -4,8 +4,11 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { LogIn, UserPlus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const AuthPage = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 auth-page">
       <Card className="w-full max-w-md glass-effect">
@@ -45,7 +48,7 @@ const AuthPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="signup">
-              <div className="pt-6 p-4 pb-2">
+              <div className={`pt-6 p-4 pb-2 ${isMobile ? "pt-12" : ""}`}>
                 <h1 className="text-4xl font-bold gradient-text mb-4">Join Us Now</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Join hundreds of traders and start your crypto trading adventure
