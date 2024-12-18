@@ -1,4 +1,4 @@
-import { Bitcoin, Ethereum, DollarSign } from 'lucide-react';
+import { Bitcoin, DollarSign } from 'lucide-react';
 
 export interface StaticCryptoData {
   symbol: string;
@@ -15,12 +15,21 @@ export const topCryptos: StaticCryptoData[] = [
   {
     symbol: "ETH",
     name: "Ethereum",
-    icon: Ethereum
+    icon: DollarSign // Using DollarSign as a temporary icon for ETH
   },
   {
     symbol: "USDT",
     name: "Tether",
     icon: DollarSign
   },
-  // ... נוסיף עוד מטבעות בהמשך
+  {
+    symbol: "BNB",
+    name: "Binance Coin",
+    icon: DollarSign
+  },
+  {
+    symbol: "SOL",
+    name: "Solana",
+    icon: DollarSign
+  }
 ];
