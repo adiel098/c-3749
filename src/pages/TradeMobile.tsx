@@ -31,7 +31,7 @@ const TradeMobile = () => {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1 overflow-y-auto h-[calc(100dvh-4rem)]">
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-4 pb-20">
             <div className="h-[300px]">
               <MobileCryptoChart 
                 symbol={selectedCrypto} 
@@ -50,8 +50,8 @@ const TradeMobile = () => {
           </div>
         </div>
 
-        {/* Mobile Trading Buttons */}
-        <div className="fixed bottom-16 left-0 right-0 px-4 py-2 flex gap-4 bg-background/95 backdrop-blur-md border-t border-white/10">
+        {/* Mobile Trading Buttons - Adjusted spacing */}
+        <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 flex gap-4 bg-background/95 backdrop-blur-md border-t border-white/10">
           <Sheet open={isTradeFormOpen} onOpenChange={setIsTradeFormOpen}>
             <SheetTrigger asChild>
               <Button
