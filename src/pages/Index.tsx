@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
-import { Search } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useQuery } from "@tanstack/react-query";
 import CryptoChart from "@/components/CryptoChart";
 import { TradingForm } from "@/components/TradingForm";
 import { usePositions } from "@/hooks/usePositions";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PositionsList } from "@/components/trading/PositionsList";
 
 const Index = () => {
@@ -51,44 +49,37 @@ const Index = () => {
               </div>
             </header>
 
-            <div className="relative w-full">
-              <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full flex items-center gap-2 justify-start">
-                    <Search className="h-5 w-5" />
-                    <span>Search for a cryptocurrency...</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <Command className="rounded-lg">
-                    <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
-                    <CommandList className="max-h-[300px] overflow-y-auto">
-                      <CommandEmpty>No results found</CommandEmpty>
-                      <CommandGroup heading="Popular Cryptocurrencies">
-                        {cryptoList?.map((crypto: any) => (
-                          <CommandItem
-                            key={crypto.id}
-                            value={crypto.symbol}
-                            onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
-                            className="flex items-center gap-2 cursor-pointer p-2 hover:bg-accent/10"
-                          >
-                            <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
-                            <span>{crypto.name}</span>
-                            <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+              <DialogContent className="max-w-md">
+                <Command className="rounded-lg">
+                  <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
+                  <CommandList className="max-h-[300px] overflow-y-auto">
+                    <CommandEmpty>No results found</CommandEmpty>
+                    <CommandGroup heading="Popular Cryptocurrencies">
+                      {cryptoList?.map((crypto: any) => (
+                        <CommandItem
+                          key={crypto.id}
+                          value={crypto.symbol}
+                          onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
+                          className="flex items-center gap-2 cursor-pointer p-2 hover:bg-accent/10"
+                        >
+                          <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
+                          <span>{crypto.name}</span>
+                          <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </DialogContent>
+            </Dialog>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <CryptoChart 
                   symbol={selectedCrypto} 
                   onPriceUpdate={handlePriceUpdate}
+                  onSearchOpen={() => setSearchOpen(true)}
                 />
               </div>
               <div className="glass-card rounded-lg">

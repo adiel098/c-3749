@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CryptoChartProps {
   symbol?: string;
   onPriceUpdate?: (price: number) => void;
+  onSearchOpen?: () => void;
 }
 
 declare global {
@@ -11,12 +14,11 @@ declare global {
   }
 }
 
-const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
+const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const ws = useRef<WebSocket | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle Binance WebSocket for real-time price updates
   useEffect(() => {
     if (ws.current) {
       ws.current.close();
@@ -45,7 +47,6 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
     };
   }, [symbol, onPriceUpdate]);
 
-  // Initialize TradingView widget
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/tv.js';
@@ -74,7 +75,6 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
       }
     };
 
-    // Create container for TradingView widget
     if (containerRef.current) {
       containerRef.current.innerHTML = '<div id="tradingview_chart" style="height: 100%; width: 100%;"></div>';
       document.head.appendChild(script);
@@ -94,9 +94,19 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
     <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden border border-white/10 bg-secondary/20 backdrop-blur-lg">
       <div className="flex justify-between items-center p-4 border-b border-white/10">
         <h2 className="text-xl font-semibold">{symbol}/USDT Live Price</h2>
-        <span className="text-lg font-mono bg-secondary/40 px-3 py-1 rounded-lg">
-          ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-lg font-mono bg-secondary/40 px-3 py-1 rounded-lg">
+            ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSearchOpen}
+            className="hover:bg-secondary/40"
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
       <div ref={containerRef} className="h-[calc(100%-4rem)]" />
     </div>
