@@ -186,6 +186,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_profiles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          balance: number
+          created_at: string
+          first_name: string
+          last_name: string
+          phone: string
+          is_admin: boolean
+          email: string
+        }[]
+      }
       merge_positions: {
         Args: {
           p1_id: string

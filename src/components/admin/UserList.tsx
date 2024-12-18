@@ -15,9 +15,7 @@ export function UserList() {
     queryKey: ["admin-users"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .rpc('get_user_profiles');
 
       if (error) throw error;
       return data;
