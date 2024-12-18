@@ -24,7 +24,7 @@ const AuthPage = () => {
         <Card className={`glass-effect relative overflow-hidden ${isMobile ? 'h-full rounded-none' : ''}`}>
           <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent animate-pulse-subtle" />
           <div className={`${isMobile ? 'h-full flex flex-col' : ''}`}>
-            <CardHeader className="space-y-4 relative">
+            <CardHeader className={`space-y-4 relative ${isMobile ? 'pt-4' : ''}`}>
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 {activeTab === "login" ? "Welcome Back" : "Join Us Today"}
               </CardTitle>
