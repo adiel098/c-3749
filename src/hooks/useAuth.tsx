@@ -22,58 +22,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-    console.log("AuthProvider - Initializing");
-
-    async function initializeAuth() {
-      try {
-        // Get initial session
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        console.log("AuthProvider - Initial session:", initialSession ? "Exists" : "None");
-        
-        if (mounted) {
-          setSession(initialSession);
-          setUser(initialSession?.user ?? null);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error("AuthProvider - Error initializing:", error);
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    initializeAuth();
+    console.log("AuthProvider - Starting initialization");
+    
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      console.log("AuthProvider - Initial session received:", initialSession ? "Exists" : "None");
+      setSession(initialSession);
+      setUser(initialSession?.user ?? null);
+      setIsLoading(false);
+    });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       console.log("AuthProvider - Auth state changed:", _event);
-      console.log("AuthProvider - New session:", session ? "Exists" : "None");
+      console.log("AuthProvider - New session:", newSession ? "Exists" : "None");
       
-      if (mounted) {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-      }
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
+      setIsLoading(false);
     });
 
     return () => {
-      mounted = false;
+      console.log("AuthProvider - Cleaning up subscription");
       subscription.unsubscribe();
     };
   }, []);
 
   const signOut = async () => {
     try {
-      setIsLoading(true);
       await supabase.auth.signOut();
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      console.error("Error signing out:", error);
     }
   };
 
-  console.log("AuthProvider - Current state:", {
+  console.log("AuthProvider - Render state:", {
     isLoading,
     hasSession: !!session,
     hasUser: !!user

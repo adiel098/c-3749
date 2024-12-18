@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   console.log("ProtectedRoute - Current location:", location.pathname);
 
   if (isLoading) {
-    console.log("ProtectedRoute - Still loading");
+    console.log("ProtectedRoute - Showing loading spinner");
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
