@@ -12,7 +12,15 @@ interface TradingView {
     hide_side_toolbar: boolean;
     allow_symbol_change: boolean;
     container_id: string;
-  }) => void;
+    hide_top_toolbar?: boolean;
+    save_image?: boolean;
+    studies?: string[];
+    show_popup_button?: boolean;
+    popup_width?: string;
+    popup_height?: string;
+  }) => {
+    remove: () => void;
+  };
 }
 
 declare global {

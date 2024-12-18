@@ -13,40 +13,51 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
   const [widgetInstance, setWidgetInstance] = useState<any>(null);
 
   useEffect(() => {
+    let isMounted = true;
     if (!containerRef.current) return;
 
     const script = document.createElement("script");
     script.src = "https://s3.tradingview.com/tv.js";
     script.async = true;
     script.onload = () => {
-      if (typeof TradingView !== "undefined" && containerRef.current) {
-        // Clear previous widget if exists
-        if (widgetInstance) {
-          widgetInstance.remove();
+      if (!isMounted || !containerRef.current) return;
+
+      if (typeof TradingView !== "undefined") {
+        try {
+          // Safely cleanup previous widget if it exists
+          if (widgetInstance) {
+            try {
+              widgetInstance.remove();
+            } catch (e) {
+              console.warn("Error cleaning up previous widget:", e);
+            }
+          }
+
+          const widget = new TradingView.widget({
+            autosize: true,
+            symbol: `BINANCE:${symbol}USDT`,
+            interval: "D",
+            timezone: "Etc/UTC",
+            theme: "dark",
+            style: "1",
+            locale: "en",
+            toolbar_bg: "#f1f3f6",
+            enable_publishing: false,
+            hide_side_toolbar: false,
+            allow_symbol_change: true,
+            container_id: containerRef.current.id,
+            hide_top_toolbar: false,
+            save_image: false,
+            studies: [],
+            show_popup_button: false,
+            popup_width: "1000",
+            popup_height: "650",
+          });
+
+          setWidgetInstance(widget);
+        } catch (error) {
+          console.error("Error creating TradingView widget:", error);
         }
-
-        const widget = new TradingView.widget({
-          autosize: true,
-          symbol: `BINANCE:${symbol}USDT`,
-          interval: "D",
-          timezone: "Etc/UTC",
-          theme: "dark",
-          style: "1",
-          locale: "en",
-          toolbar_bg: "#f1f3f6",
-          enable_publishing: false,
-          hide_side_toolbar: false,
-          allow_symbol_change: true,
-          container_id: containerRef.current.id,
-          hide_top_toolbar: false,
-          save_image: false,
-          studies: [],
-          show_popup_button: false,
-          popup_width: "1000",
-          popup_height: "650",
-        });
-
-        setWidgetInstance(widget);
       }
     };
 
@@ -60,7 +71,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
     
     // Debounce the price update to prevent too frequent updates
     const debouncedPriceUpdate = debounce((price: number) => {
-      if (onPriceUpdate) {
+      if (onPriceUpdate && isMounted) {
         onPriceUpdate(price);
       }
     }, 1000); // Update price maximum once per second
@@ -72,12 +83,20 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
     };
 
     return () => {
+      isMounted = false;
       ws.close();
       debouncedPriceUpdate.cancel();
-      // Clean up TradingView widget
+      
+      // Safely cleanup TradingView widget
       if (widgetInstance) {
-        widgetInstance.remove();
+        try {
+          widgetInstance.remove();
+        } catch (e) {
+          console.warn("Error cleaning up widget:", e);
+        }
       }
+      
+      // Clear container contents
       if (containerRef.current) {
         containerRef.current.innerHTML = "";
       }
