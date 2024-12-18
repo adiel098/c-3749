@@ -93,6 +93,7 @@ export function UserList() {
                 <TableHead className="text-[#E5DEFF]">Phone</TableHead>
                 <TableHead className="text-[#E5DEFF]">Registered</TableHead>
                 <TableHead className="text-right text-[#E5DEFF]">Balance</TableHead>
+                <TableHead className="text-center text-[#E5DEFF]">Open Positions</TableHead>
                 <TableHead className="text-center text-[#E5DEFF]">Admin</TableHead>
                 <TableHead className="text-right text-[#E5DEFF]">Actions</TableHead>
               </TableRow>
@@ -114,6 +115,11 @@ export function UserList() {
                   <TableCell className="text-right font-medium">
                     <span className="text-[#9b87f5]">
                       ${user.balance?.toLocaleString()}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className="text-[#E5DEFF]/80">
+                      {user.open_positions_count}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
