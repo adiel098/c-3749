@@ -1,8 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { ProfileForm } from "@/components/settings/ProfileForm";
 import { SecurityForm } from "@/components/settings/SecurityForm";
 import { PreferencesForm } from "@/components/settings/PreferencesForm";
@@ -12,54 +10,14 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useProfile } from "@/hooks/useProfile";
 
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [profile, setProfile] = useState({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    countryCode: "+972"
-  });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return;
-
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('first_name, last_name, phone')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-
-        if (data) {
-          // Parse phone number to separate country code and number
-          const phoneMatch = data.phone?.match(/^(\+\d+)(.*)$/);
-          setProfile({
-            firstName: data.first_name || "",
-            lastName: data.last_name || "",
-            phoneNumber: phoneMatch ? phoneMatch[2] : "",
-            countryCode: phoneMatch ? phoneMatch[1] : "+972"
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load profile data",
-          variant: "destructive",
-        });
-      }
-    };
-
-    fetchProfile();
-  }, [user]);
+  const { data: profile, isLoading } = useProfile();
 
   const handleLogout = async () => {
     try {
@@ -76,6 +34,21 @@ const Settings = () => {
         variant: "destructive",
       });
     }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  const profileData = {
+    firstName: profile?.first_name || "",
+    lastName: profile?.last_name || "",
+    phoneNumber: profile?.phone?.replace(/^\+\d+/, "") || "",
+    countryCode: profile?.phone?.match(/^\+\d+/)?.[0] || "+972"
   };
 
   return (
@@ -109,7 +82,7 @@ const Settings = () => {
               </TabsList>
 
               <TabsContent value="profile" className="space-y-4 animate-in fade-in-50">
-                <ProfileForm initialData={profile} />
+                <ProfileForm initialData={profileData} />
               </TabsContent>
 
               <TabsContent value="security" className="space-y-4 animate-in fade-in-50">
