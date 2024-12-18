@@ -91,13 +91,28 @@ export function UserList() {
     if (!selectedUser) return;
     
     try {
-      const { error } = await supabase
+      // Update the user's balance in the profiles table
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ balance: newBalance })
         .eq('id', selectedUser.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
+      // Create a transaction record for the balance adjustment
+      const balanceChange = newBalance - selectedUser.balance;
+      const { error: transactionError } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: selectedUser.id,
+          type: balanceChange >= 0 ? 'deposit' : 'withdrawal',
+          amount: Math.abs(balanceChange),
+          status: 'completed'
+        });
+
+      if (transactionError) throw transactionError;
+
+      // Refresh the data
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       setSelectedUser(null);
 
