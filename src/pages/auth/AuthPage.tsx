@@ -30,12 +30,14 @@ const AuthPage = () => {
               </CardTitle>
               <CardDescription className="space-y-3">
                 <p className="text-lg text-foreground/90 font-medium">
-                  The Leading Commission-Free Crypto Trading Platform
+                  {activeTab === "login" 
+                    ? "Great to see you again! Log in to continue your trading journey" 
+                    : "Join hundreds of traders and start your crypto trading adventure"}
                 </p>
                 <p className="text-foreground/80">
                   {activeTab === "login" 
                     ? "Great to see you again! Log in to continue your trading journey" 
-                    : "Join hundreds of traders already enjoying our advanced and user-friendly trading experience"}
+                    : "Unlock powerful trading tools and opportunities"}
                 </p>
               </CardDescription>
             </CardHeader>
