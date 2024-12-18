@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Command, CommandInput } from "@/components/ui/command";
+import { Command, CommandInput, CommandList } from "@/components/ui/command";
 import { CryptoSearchList } from "./CryptoSearchList";
 import { useQuery } from "@tanstack/react-query";
 
@@ -26,7 +26,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
           price: parseFloat(item.lastPrice).toFixed(2),
           priceChange: parseFloat(item.priceChangePercent).toFixed(2)
         }))
-        .slice(0, 100); // Get top 100 coins
+        .slice(0, 100);
     },
     refetchInterval: 30000
   });
@@ -50,6 +50,9 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Search Cryptocurrencies</DialogTitle>
+            <DialogDescription>
+              Search and select from the top 100 cryptocurrencies by trading volume
+            </DialogDescription>
           </DialogHeader>
 
           <Command className="rounded-lg border shadow-sm">
@@ -59,13 +62,13 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
               onValueChange={setSearch}
               className="border-none focus:ring-0"
             />
-            <div className="max-h-[300px] overflow-y-auto space-y-2 custom-scrollbar">
+            <CommandList className="max-h-[300px] overflow-y-auto custom-scrollbar">
               <CryptoSearchList
                 cryptoList={filteredCryptos}
                 onSelect={onSelect}
                 onClose={() => setOpen(false)}
               />
-            </div>
+            </CommandList>
           </Command>
         </DialogContent>
       </Dialog>
