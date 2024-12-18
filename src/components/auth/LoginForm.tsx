@@ -26,7 +26,6 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log("Login attempt started");
       setIsLoading(true);
       
       if (!data.email || !data.password) {
@@ -44,20 +43,14 @@ export function LoginForm() {
       });
 
       if (error) {
-        console.error("Login error details:", error);
-        
         toast({
           title: "Login Failed",
           description: error.message || "Invalid login credentials",
           variant: "destructive",
         });
-        
         return;
       }
-
-      console.log("Login successful, session:", authData.session ? "Exists" : "None");
       
-      // Update the session in AuthContext immediately
       setSession(authData.session);
       
       toast({
@@ -66,13 +59,9 @@ export function LoginForm() {
       });
 
       const from = location.state?.from?.pathname || "/";
-      console.log("Navigating to:", from);
-      console.log("Is Mobile:", isMobile);
       navigate(from, { replace: true });
 
     } catch (error: any) {
-      console.error("Unexpected login error:", error);
-      
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -86,50 +75,43 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-medium">
+        <Label className="flex items-center gap-2">
+          <Mail className="w-4 h-4 text-primary" />
           Email
         </Label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="email"
-            type="email"
-            className="pl-10"
-            placeholder="Enter your email"
-            {...register("email", { 
-              required: "Email is required",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "Entered value does not match email format"
-              }
-            })}
-          />
-        </div>
+        <Input
+          {...register("email", { 
+            required: "Email is required",
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: "Entered value does not match email format"
+            }
+          })}
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          placeholder="Enter your email"
+        />
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-medium">
+        <Label className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-primary" />
           Password
         </Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="password"
-            type="password"
-            className="pl-10"
-            placeholder="Enter your password"
-            {...register("password", { 
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters"
-              }
-            })}
-          />
-        </div>
+        <Input
+          type="password"
+          {...register("password", { 
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters"
+            }
+          })}
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          placeholder="Enter your password"
+        />
         {errors.password && (
           <p className="text-sm text-destructive">{errors.password.message}</p>
         )}
@@ -137,12 +119,12 @@ export function LoginForm() {
 
       <Button 
         type="submit" 
-        className="w-full h-12 text-base font-medium"
+        className="w-full bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity h-11"
         disabled={isLoading}
       >
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
             <span>Logging in...</span>
           </div>
         ) : (

@@ -25,9 +25,9 @@ interface SignUpFormData {
 }
 
 export function SignUpForm() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignUpFormData>();
+  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
   const [isLoading, setIsLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91"); // Default to India
+  const [countryCode, setCountryCode] = useState("+91");
   const { toast } = useToast();
 
   const onSubmit = async (data: SignUpFormData) => {
@@ -75,32 +75,30 @@ export function SignUpForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="firstName">First Name</Label>
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="firstName"
-              className="pl-10"
-              placeholder="John"
-              {...register("firstName", { required: "First name is required" })}
-            />
-          </div>
+          <Label className="flex items-center gap-2">
+            <User className="w-4 h-4 text-primary" />
+            First Name
+          </Label>
+          <Input
+            {...register("firstName", { required: "First name is required" })}
+            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            placeholder="Enter first name"
+          />
           {errors.firstName && (
             <p className="text-sm text-destructive">{errors.firstName.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="lastName">Last Name</Label>
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="lastName"
-              className="pl-10"
-              placeholder="Doe"
-              {...register("lastName", { required: "Last name is required" })}
-            />
-          </div>
+          <Label className="flex items-center gap-2">
+            <User className="w-4 h-4 text-primary" />
+            Last Name
+          </Label>
+          <Input
+            {...register("lastName", { required: "Last name is required" })}
+            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            placeholder="Enter last name"
+          />
           {errors.lastName && (
             <p className="text-sm text-destructive">{errors.lastName.message}</p>
           )}
@@ -108,56 +106,60 @@ export function SignUpForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="email"
-            type="email"
-            className="pl-10"
-            placeholder="john.doe@example.com"
-            {...register("email", { required: "Email is required" })}
-          />
-        </div>
+        <Label className="flex items-center gap-2">
+          <Mail className="w-4 h-4 text-primary" />
+          Email
+        </Label>
+        <Input
+          type="email"
+          {...register("email", { 
+            required: "Email is required",
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: "Please enter a valid email address"
+            }
+          })}
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          placeholder="Enter your email"
+        />
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label>Phone Number</Label>
+        <Label className="flex items-center gap-2">
+          <Phone className="w-4 h-4 text-primary" />
+          Phone Number
+        </Label>
         <div className="flex gap-2">
           <Select value={countryCode} onValueChange={setCountryCode}>
-            <SelectTrigger className="w-[140px] bg-card">
+            <SelectTrigger className="w-[140px] bg-card/50 border-primary/10 focus:border-primary/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-card border-primary/10 shadow-lg backdrop-blur-lg">
+            <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/10">
               {countryCodes.map((country) => (
                 <SelectItem 
                   key={country.code} 
                   value={country.code}
-                  className="flex items-center gap-2 hover:bg-primary/10"
+                  className="hover:bg-primary/10 focus:bg-primary/10"
                 >
-                  <span className="text-lg">{country.flag}</span>
-                  <span>{country.code}</span>
+                  {country.flag} {country.code}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <div className="relative flex-1">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              {...register("phoneNumber", { 
-                required: "Phone number is required",
-                pattern: {
-                  value: /^\d+$/,
-                  message: "Please enter only numbers"
-                }
-              })}
-              placeholder="Phone number"
-              className="pl-10"
-            />
-          </div>
+          <Input
+            {...register("phoneNumber", { 
+              required: "Phone number is required",
+              pattern: {
+                value: /^\d+$/,
+                message: "Please enter only numbers"
+              }
+            })}
+            className="flex-1 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            placeholder="Enter phone number"
+          />
         </div>
         {errors.phoneNumber && (
           <p className="text-sm text-destructive">{errors.phoneNumber.message}</p>
@@ -165,34 +167,38 @@ export function SignUpForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="password"
-            type="password"
-            className="pl-10"
-            placeholder="Create a password"
-            {...register("password", { required: "Password is required" })}
-          />
-        </div>
+        <Label className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-primary" />
+          Password
+        </Label>
+        <Input
+          type="password"
+          {...register("password", { 
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters"
+            }
+          })}
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          placeholder="Create a password"
+        />
         {errors.password && (
           <p className="text-sm text-destructive">{errors.password.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="confirmPassword"
-            type="password"
-            className="pl-10"
-            placeholder="Confirm your password"
-            {...register("confirmPassword", { required: "Please confirm your password" })}
-          />
-        </div>
+        <Label className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-primary" />
+          Confirm Password
+        </Label>
+        <Input
+          type="password"
+          {...register("confirmPassword", { required: "Please confirm your password" })}
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          placeholder="Confirm your password"
+        />
         {errors.confirmPassword && (
           <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
         )}
@@ -200,12 +206,12 @@ export function SignUpForm() {
 
       <Button 
         type="submit" 
-        className="w-full h-12 text-base font-medium"
+        className="w-full bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity h-11"
         disabled={isLoading}
       >
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
             <span>Creating account...</span>
           </div>
         ) : (
