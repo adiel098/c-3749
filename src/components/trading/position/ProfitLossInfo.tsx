@@ -25,25 +25,23 @@ export function ProfitLossInfo({ position, currentPrice }: ProfitLossInfoProps) 
   const profitLossPercentage = (profitLoss / position.amount) * 100;
 
   return (
-    <div className="text-right space-y-2">
-      <div className={`flex items-center gap-2 justify-end text-2xl font-bold ${
+    <div className="text-right">
+      <div className={`flex items-center gap-1 justify-end text-sm font-bold ${
         isProfitable ? 'text-success' : 'text-warning'
       }`}>
         {isProfitable ? (
-          <TrendingUp className="h-6 w-6" />
+          <TrendingUp className="h-3 w-3" />
         ) : (
-          <TrendingDown className="h-6 w-6" />
+          <TrendingDown className="h-3 w-3" />
         )}
-        <span className="text-3xl">
+        <span>
           {isProfitable ? '+' : ''}{profitLoss.toFixed(2)} USDT
         </span>
       </div>
-      <div className={`flex items-center gap-1 justify-end text-xl ${
+      <div className={`text-xs ${
         isProfitable ? 'text-success/80' : 'text-warning/80'
       }`}>
-        <span>
-          {isProfitable ? '+' : ''}{profitLossPercentage.toFixed(2)}%
-        </span>
+        {isProfitable ? '+' : ''}{profitLossPercentage.toFixed(2)}%
       </div>
     </div>
   );

@@ -47,39 +47,25 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
   };
 
   return (
-    <div className="glass-effect p-4 rounded-lg hover:bg-card/40 transition-all duration-300 space-y-4">
-      <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-xl">{position.symbol}</span>
-            <Badge 
-              variant={position.type === 'long' ? 'default' : 'destructive'} 
-              className={`uppercase ${
-                position.type === 'long' 
-                  ? 'bg-success/20 text-success hover:bg-success/30' 
-                  : 'bg-warning/20 text-warning hover:bg-warning/30'
-              }`}
-            >
-              {position.type === 'long' ? (
-                <TrendingUp className="w-4 h-4 mr-1" />
-              ) : (
-                <TrendingDown className="w-4 h-4 mr-1" />
-              )}
-              {position.type.toUpperCase()} {position.leverage}X
-            </Badge>
-          </div>
-          
-          {type === 'closed' && (
-            <p className="text-sm text-muted-foreground">
-              Closed on {new Date(position.closed_at || '').toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-          )}
+    <div className="glass-effect p-3 rounded-lg hover:bg-card/40 transition-all duration-300">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">{position.symbol}</span>
+          <Badge 
+            variant={position.type === 'long' ? 'default' : 'destructive'} 
+            className={`uppercase text-xs ${
+              position.type === 'long' 
+                ? 'bg-success/20 text-success hover:bg-success/30' 
+                : 'bg-warning/20 text-warning hover:bg-warning/30'
+            }`}
+          >
+            {position.type === 'long' ? (
+              <TrendingUp className="w-3 h-3 mr-1" />
+            ) : (
+              <TrendingDown className="w-3 h-3 mr-1" />
+            )}
+            {position.type.toUpperCase()} {position.leverage}X
+          </Badge>
         </div>
 
         <ProfitLossInfo 
@@ -88,11 +74,11 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
         />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-white/10">
+      <div className="grid grid-cols-3 gap-3 mt-2 text-sm">
         <div>
-          <p className="text-sm text-muted-foreground">Entry Price</p>
-          <p className="font-medium text-lg flex items-center gap-1">
-            <DollarSign className="h-4 w-4 text-primary" />
+          <p className="text-xs text-muted-foreground">Entry Price</p>
+          <p className="font-medium flex items-center gap-1">
+            <DollarSign className="h-3 w-3 text-primary" />
             {position.entry_price}
           </p>
         </div>
@@ -100,16 +86,16 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
         {type === 'open' ? (
           <>
             <div>
-              <p className="text-sm text-muted-foreground">Current Price</p>
-              <p className="font-medium text-lg flex items-center gap-1">
-                <DollarSign className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Current Price</p>
+              <p className="font-medium flex items-center gap-1">
+                <DollarSign className="h-3 w-3 text-primary" />
                 {currentPrice?.toFixed(2) || '...'}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Position Size</p>
-              <p className="font-medium text-lg flex items-center gap-1">
-                <DollarSign className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Position Size</p>
+              <p className="font-medium flex items-center gap-1">
+                <DollarSign className="h-3 w-3 text-primary" />
                 {position.amount}
               </p>
             </div>
@@ -117,14 +103,14 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
               position={position}
               onUpdate={onUpdate || (() => {})}
             />
-            <div className="flex justify-end col-span-full">
+            <div className="col-span-full flex justify-end">
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={handleClosePosition}
-                className="bg-warning/20 text-warning hover:bg-warning/30"
+                className="bg-warning/20 text-warning hover:bg-warning/30 h-8 text-xs"
               >
-                <XCircle className="h-4 w-4 mr-2" />
+                <XCircle className="h-3 w-3 mr-1" />
                 Close Position
               </Button>
             </div>
@@ -132,16 +118,16 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
         ) : (
           <>
             <div>
-              <p className="text-sm text-muted-foreground">Exit Price</p>
-              <p className="font-medium text-lg flex items-center gap-1">
-                <DollarSign className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Exit Price</p>
+              <p className="font-medium flex items-center gap-1">
+                <DollarSign className="h-3 w-3 text-primary" />
                 {position.exit_price}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Position Size</p>
-              <p className="font-medium text-lg flex items-center gap-1">
-                <DollarSign className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Position Size</p>
+              <p className="font-medium flex items-center gap-1">
+                <DollarSign className="h-3 w-3 text-primary" />
                 {position.amount}
               </p>
             </div>
