@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { countryCodes } from "@/utils/countryPhoneCodes";
 import { User, Mail, Phone, Save } from "lucide-react";
-import { toastStyles, toastConfig } from "@/utils/toastStyles";  // Add this import
+import { toastStyles, toastConfig } from "@/utils/toastStyles";
 
 type ProfileFormProps = {
   initialData: {
@@ -32,7 +32,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState({
     ...initialData,
-    countryCode: initialData.countryCode || "+972"
+    countryCode: initialData.countryCode || "+972",
+    phoneNumber: initialData.phoneNumber || ""
   });
 
   const handleProfileUpdate = async () => {
