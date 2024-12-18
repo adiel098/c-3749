@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bitcoin, DollarSign, Wallet, Check, Copy, Loader2 } from "lucide-react";
+import { Check, Copy, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useDepositAddresses } from "@/hooks/useDepositAddresses";
 
@@ -53,7 +53,15 @@ export function MobileDepositCard() {
             onClick={() => setSelectedMethod("bitcoin")}
           >
             <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <Bitcoin className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <img 
+              src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/btc.png"
+              alt="Bitcoin"
+              className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
             <span className="text-sm font-medium">Bitcoin</span>
             {selectedMethod === "bitcoin" && (
               <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
@@ -71,7 +79,15 @@ export function MobileDepositCard() {
             onClick={() => setSelectedMethod("ethereum")}
           >
             <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <Wallet className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <img 
+              src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png"
+              alt="Ethereum"
+              className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
             <span className="text-sm font-medium">Ethereum</span>
             {selectedMethod === "ethereum" && (
               <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
@@ -89,7 +105,15 @@ export function MobileDepositCard() {
             onClick={() => setSelectedMethod("usdt")}
           >
             <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <DollarSign className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <img 
+              src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png"
+              alt="USDT"
+              className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
             <span className="text-sm font-medium">USDT</span>
             {selectedMethod === "usdt" && (
               <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
