@@ -4,11 +4,9 @@ import type { Tables } from "@/integrations/supabase/types";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { updatePositionProfitLoss } from "@/utils/positionUpdater";
-import { useCryptoPrice } from "@/hooks/useCryptoPrice";
 
 export const usePositions = () => {
   const queryClient = useQueryClient();
-  const { getCurrentPrice } = useCryptoPrice();
 
   // Set up real-time subscription for positions updates
   useEffect(() => {
@@ -42,9 +40,16 @@ export const usePositions = () => {
 
       if (positions) {
         for (const position of positions) {
-          const currentPrice = await getCurrentPrice(position.symbol);
-          if (currentPrice) {
-            await updatePositionProfitLoss(position, currentPrice);
+          try {
+            const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${position.symbol}USDT`);
+            const data = await response.json();
+            const currentPrice = parseFloat(data.price);
+            
+            if (currentPrice) {
+              await updatePositionProfitLoss(position, currentPrice);
+            }
+          } catch (error) {
+            console.error('Error updating position PnL:', error);
           }
         }
       }
@@ -55,7 +60,7 @@ export const usePositions = () => {
     const interval = setInterval(updatePnL, 15000);
 
     return () => clearInterval(interval);
-  }, [getCurrentPrice]);
+  }, []);
 
   return useQuery({
     queryKey: ["positions"],

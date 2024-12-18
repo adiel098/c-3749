@@ -116,5 +116,20 @@ export function useCryptoPrice(symbol: string) {
     };
   }, [symbol, connect, cleanup]);
 
-  return currentPrice;
+  // Add a function to get the current price for a specific symbol
+  const getCurrentPrice = async (symbol: string): Promise<number | undefined> => {
+    try {
+      const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}USDT`);
+      const data = await response.json();
+      return parseFloat(data.price);
+    } catch (error) {
+      console.error('Error fetching current price:', error);
+      return undefined;
+    }
+  };
+
+  return {
+    currentPrice,
+    getCurrentPrice
+  };
 }
