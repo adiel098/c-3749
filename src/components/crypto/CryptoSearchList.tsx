@@ -39,7 +39,7 @@ export function CryptoSearchList({ cryptoList, onSelect, onClose }: CryptoSearch
                 onSelect(crypto.symbol);
                 onClose();
               }}
-              className="flex items-center justify-between p-3 hover:bg-accent/10 cursor-pointer transition-colors duration-200"
+              className="flex items-center justify-between p-3 hover:bg-accent/10 cursor-pointer transition-colors duration-200 border-b border-secondary/20 last:border-b-0"
             >
               <div className="flex items-center gap-3">
                 <img
