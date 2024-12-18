@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { UserPlus } from "lucide-react";
 import { SignUpFormFields } from "./SignUpFormFields";
 import { SignUpFormData } from "./types";
-import { toastStyles, ToastClose } from "@/utils/toastStyles";
+import { toastStyles, ToastClose, toastConfig } from "@/utils/toastStyles";
 
 export function SignUpForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
