@@ -31,10 +31,10 @@ export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingView
           hide_side_toolbar: isMobile,
           hide_top_toolbar: false,
           studies: isMobile ? [] : undefined,
-          hide_legend: true,
-          hide_symbol_info: true,
-          withdateranges: false,
-          hide_volume: true
+          toolbar_bg: "#1B1B1D",
+          hidevolume: true,
+          save_image: false,
+          show_symbol_logo: false
         });
 
         return () => {
