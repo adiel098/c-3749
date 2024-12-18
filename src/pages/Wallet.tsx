@@ -11,12 +11,15 @@ import { AccountValueCard } from "@/components/wallet/AccountValueCard";
 import { TransactionHistory } from "@/components/wallet/TransactionHistory";
 import { DepositCard } from "@/components/wallet/DepositCard";
 import { WithdrawalCard } from "@/components/wallet/WithdrawalCard";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import WalletMobile from "./WalletMobile";
 
 const Wallet = () => {
   const queryClient = useQueryClient();
   const { data: profile } = useProfile();
   const { data: positions } = usePositions();
   const { data: transactions } = useTransactions();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const calculateAccountValue = () => {
     if (!profile || !positions) return 0;
@@ -56,6 +59,10 @@ const Wallet = () => {
 
   if (!profile?.id) return null;
 
+  if (isMobile) {
+    return <WalletMobile />;
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gradient-to-b from-background to-background/95">
@@ -66,9 +73,7 @@ const Wallet = () => {
             <p className="text-muted-foreground">Manage your virtual funds</p>
           </header>
 
-          {/* Main content with responsive grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left column */}
             <div className="space-y-6">
               <WithdrawalCard availableBalance={profile.balance} />
               <BalanceCard 
@@ -83,7 +88,6 @@ const Wallet = () => {
                 positions={positions}
               />
             </div>
-            {/* Right column */}
             <div className="space-y-6">
               <DepositCard />
               <TransactionHistory 
