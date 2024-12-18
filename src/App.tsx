@@ -36,7 +36,7 @@ function App() {
           path="/portfolio"
           element={
             <ProtectedRoute>
-              <div className="main-content">
+              <div className={isMobile ? "main-content" : ""}>
                 <Portfolio />
               </div>
             </ProtectedRoute>
@@ -46,7 +46,7 @@ function App() {
           path="/wallet"
           element={
             <ProtectedRoute>
-              <div className="main-content">
+              <div className={isMobile ? "main-content" : ""}>
                 <Wallet />
               </div>
             </ProtectedRoute>
@@ -56,7 +56,7 @@ function App() {
           path="/history"
           element={
             <ProtectedRoute>
-              <div className="main-content">
+              <div className={isMobile ? "main-content" : ""}>
                 <History />
               </div>
             </ProtectedRoute>
@@ -66,7 +66,7 @@ function App() {
           path="/settings"
           element={
             <ProtectedRoute>
-              <div className="main-content">
+              <div className={isMobile ? "main-content" : ""}>
                 <Settings />
               </div>
             </ProtectedRoute>
