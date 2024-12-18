@@ -29,9 +29,10 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
         .filter((item: any) => item.symbol.endsWith("USDT"))
         .map((item: any) => {
           const baseSymbol = item.symbol.replace("USDT", "").toLowerCase();
+          const price = parseFloat(item.lastPrice);
           return {
             symbol: item.symbol.replace("USDT", ""),
-            price: parseFloat(item.lastPrice).toFixed(2),
+            price: price < 1 ? price.toFixed(6) : price.toFixed(2),
             priceChange: parseFloat(item.priceChangePercent).toFixed(2),
             volume: parseFloat(item.volume),
             image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${baseSymbol}.png`
