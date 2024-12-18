@@ -6,32 +6,55 @@ import { useToast } from "@/components/ui/use-toast";
 import { useProfile } from "@/hooks/useProfile";
 import { useTransactions } from "@/hooks/useTransactions";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Wallet = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: profile } = useProfile();
   const { data: transactions } = useTransactions();
 
   const handleDeposit = async () => {
+    if (!profile?.id) return;
+    
     try {
-      const { error } = await supabase
+      // Start transaction
+      const depositAmount = 10000;
+      
+      // Update profile balance
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ 
+          balance: (profile.balance || 0) + depositAmount 
+        })
+        .eq('id', profile.id);
+
+      if (profileError) throw profileError;
+
+      // Create transaction record
+      const { error: transactionError } = await supabase
         .from("transactions")
         .insert({
-          type: 'deposit' as const,
-          amount: 10000,
-          status: 'completed' as const,
-          user_id: profile?.id
+          type: 'deposit',
+          amount: depositAmount,
+          status: 'completed',
+          user_id: profile.id
         });
 
-      if (error) throw error;
+      if (transactionError) throw transactionError;
+
+      // Invalidate queries to refresh data
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
+      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
 
       toast({
-        title: "Demo Mode",
-        description: "This is a demo platform. A virtual deposit of $10,000 has been added to your account.",
+        title: "הפקדה בוצעה בהצלחה",
+        description: "נוספו $10,000 לחשבונך",
       });
     } catch (error: any) {
+      console.error('Deposit error:', error);
       toast({
-        title: "Error",
+        title: "שגיאה",
         description: error.message,
         variant: "destructive",
       });
@@ -45,51 +68,51 @@ const Wallet = () => {
         <div className="flex-1 p-4 md:p-8">
           <div className="max-w-7xl mx-auto space-y-8">
             <header>
-              <h1 className="text-2xl md:text-3xl font-bold">Wallet</h1>
-              <p className="text-muted-foreground">Manage your virtual funds</p>
+              <h1 className="text-2xl md:text-3xl font-bold">ארנק</h1>
+              <p className="text-muted-foreground">נהל את הכספים הוירטואליים שלך</p>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card>
+              <Card className="bg-secondary/80">
                 <CardHeader>
-                  <CardTitle>Balance</CardTitle>
+                  <CardTitle>יתרה</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <p className="text-3xl font-bold">${profile?.balance?.toFixed(2) || '0.00'}</p>
-                    <p className="text-sm text-muted-foreground">Available USDT</p>
+                    <p className="text-sm text-muted-foreground">USDT זמין</p>
                   </div>
-                  <Button onClick={handleDeposit} className="w-full">
-                    Add Demo Funds
+                  <Button onClick={handleDeposit} className="w-full bg-primary hover:bg-primary/90">
+                    הוסף כספי דמו
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-secondary/80">
                 <CardHeader>
-                  <CardTitle>Transaction History</CardTitle>
+                  <CardTitle>היסטוריית עסקאות</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {!transactions?.length ? (
                     <div className="text-center text-muted-foreground py-8">
-                      No transactions found
+                      לא נמצאו עסקאות
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {transactions.map((tx: any) => (
-                        <div key={tx.id} className="flex justify-between items-center p-4 border rounded-lg">
+                        <div key={tx.id} className="flex justify-between items-center p-4 border border-muted rounded-lg">
                           <div>
-                            <p className="font-semibold capitalize">{tx.type}</p>
+                            <p className="font-semibold capitalize">{tx.type === 'deposit' ? 'הפקדה' : 'משיכה'}</p>
                             <p className="text-sm text-muted-foreground">
                               {new Date(tx.created_at).toLocaleDateString()}
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className={`font-semibold ${tx.type === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>
+                            <p className={`font-semibold ${tx.type === 'deposit' ? 'text-success' : 'text-warning'}`}>
                               {tx.type === 'deposit' ? '+' : '-'}${tx.amount.toFixed(2)}
                             </p>
                             <p className="text-sm text-muted-foreground capitalize">
-                              {tx.status}
+                              {tx.status === 'completed' ? 'הושלם' : 'בתהליך'}
                             </p>
                           </div>
                         </div>
