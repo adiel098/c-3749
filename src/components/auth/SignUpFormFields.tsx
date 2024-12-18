@@ -77,7 +77,7 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
         </Label>
         <div className="flex gap-2">
           <Select value={countryCode} onValueChange={setCountryCode}>
-            <SelectTrigger className="w-[140px] bg-card/50 border-primary/10 focus:border-primary/20">
+            <SelectTrigger className="w-[100px] bg-card/50 border-primary/10 focus:border-primary/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/10">
@@ -93,11 +93,21 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
             </SelectContent>
           </Select>
           <Input
+            type="tel"
+            inputMode="numeric"
             {...register("phoneNumber", { 
               required: "Phone number is required",
               pattern: {
                 value: /^\d+$/,
                 message: "Please enter only numbers"
+              },
+              minLength: {
+                value: 9,
+                message: "Phone number must be at least 9 digits"
+              },
+              maxLength: {
+                value: 15,
+                message: "Phone number cannot exceed 15 digits"
               }
             })}
             className="flex-1 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
