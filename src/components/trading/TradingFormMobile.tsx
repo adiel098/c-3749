@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TradingFormHeader } from "./trading/TradingFormHeader";
+import { TradingFormHeader } from "@/components/trading/TradingFormHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
