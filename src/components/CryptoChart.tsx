@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { CryptoSearch } from './crypto/CryptoSearch';
 import { PriceHeader } from './crypto/PriceHeader';
@@ -20,27 +19,12 @@ declare global {
 const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cryptoList, setCryptoList] = useState<any[]>([]);
   const ws = useRef<WebSocket | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Fetch 24h price change
   const { data: priceData } = useCryptoPrice(symbol);
-
-  // Fetch crypto list for search
-  useEffect(() => {
-    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false')
-      .then(res => res.json())
-      .then(data => setCryptoList(data))
-      .catch(() => {
-        toast({
-          title: "Error fetching crypto list",
-          description: "Could not fetch the available cryptocurrencies",
-          variant: "destructive",
-        });
-      });
-  }, []);
 
   useEffect(() => {
     if (ws.current) {
@@ -137,7 +121,6 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChar
         <CryptoSearch
           searchOpen={searchOpen}
           setSearchOpen={setSearchOpen}
-          cryptoList={cryptoList}
           onSelect={handleCryptoSelect}
         />
       </PriceHeader>

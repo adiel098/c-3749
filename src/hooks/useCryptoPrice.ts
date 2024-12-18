@@ -1,28 +1,35 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export function useCryptoPrice(symbol: string) {
+  const [priceData, setPriceData] = useState<any>(null);
   const { toast } = useToast();
 
-  return useQuery({
-    queryKey: ['cryptoPrice', symbol],
-    queryFn: async () => {
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd&include_24hr_change=true`
-      );
-      if (!response.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-      return response.json();
-    },
-    meta: {
-      onError: () => {
-        toast({
-          title: "Error fetching price data",
-          description: "Could not fetch the latest price changes",
-          variant: "destructive",
-        });
-      }
-    }
-  });
+  useEffect(() => {
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@ticker`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setPriceData({
+        [symbol.toLowerCase()]: {
+          usd: parseFloat(data.c),
+          usd_24h_change: parseFloat(data.P)
+        }
+      });
+    };
+
+    ws.onerror = () => {
+      toast({
+        title: "Error fetching price data",
+        description: "Could not fetch the latest price changes",
+        variant: "destructive",
+      });
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [symbol, toast]);
+
+  return { data: priceData, isLoading: !priceData };
 }

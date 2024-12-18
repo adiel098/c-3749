@@ -3,15 +3,48 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 interface CryptoSearchProps {
   searchOpen: boolean;
   setSearchOpen: (open: boolean) => void;
-  cryptoList: any[];
   onSelect: (symbol: string) => void;
 }
 
-export function CryptoSearch({ searchOpen, setSearchOpen, cryptoList, onSelect }: CryptoSearchProps) {
+interface CryptoData {
+  symbol: string;
+  price: string;
+  priceChange: string;
+}
+
+export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSearchProps) {
+  const [cryptoList, setCryptoList] = useState<CryptoData[]>([]);
+
+  useEffect(() => {
+    const ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const usdtPairs = data
+        .filter((item: any) => item.s.endsWith('USDT'))
+        .map((item: any) => ({
+          symbol: item.s.replace('USDT', ''),
+          price: parseFloat(item.c).toFixed(2),
+          priceChange: parseFloat(item.P).toFixed(2)
+        }))
+        .sort((a: CryptoData, b: CryptoData) => 
+          parseFloat(b.price) - parseFloat(a.price)
+        )
+        .slice(0, 100);
+      
+      setCryptoList(usdtPairs);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
   return (
     <>
       <Button
@@ -31,27 +64,28 @@ export function CryptoSearch({ searchOpen, setSearchOpen, cryptoList, onSelect }
             <CommandGroup heading="Popular Cryptocurrencies">
               {cryptoList.map((crypto) => (
                 <CommandItem
-                  key={crypto.id}
+                  key={crypto.symbol}
                   value={crypto.symbol}
-                  onSelect={() => onSelect(crypto.symbol.toUpperCase())}
+                  onSelect={() => {
+                    onSelect(crypto.symbol);
+                    setSearchOpen(false);
+                  }}
                   className="flex items-center justify-between p-2 hover:bg-accent/10 cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
-                    <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
                     <div className="flex flex-col">
-                      <span className="font-medium">{crypto.name}</span>
-                      <span className="text-sm text-muted-foreground">{crypto.symbol.toUpperCase()}</span>
+                      <span className="font-medium">{crypto.symbol}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-mono">${crypto.current_price}</span>
+                    <span className="text-sm font-mono">${crypto.price}</span>
                     <span className={cn(
                       "text-xs px-2 py-1 rounded",
-                      crypto.price_change_percentage_24h >= 0 
+                      parseFloat(crypto.priceChange) >= 0 
                         ? "text-success bg-success/10" 
                         : "text-warning bg-warning/10"
                     )}>
-                      {crypto.price_change_percentage_24h.toFixed(2)}%
+                      {crypto.priceChange}%
                     </span>
                   </div>
                 </CommandItem>
