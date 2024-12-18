@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { toastStyles } from "@/utils/toastStyles";
+import { format } from "date-fns";
 
 export function UserList() {
   const { toast } = useToast();
@@ -73,6 +74,7 @@ export function UserList() {
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
+            <TableHead>Registered</TableHead>
             <TableHead className="text-right">Balance</TableHead>
             <TableHead className="text-center">Admin</TableHead>
           </TableRow>
@@ -85,6 +87,9 @@ export function UserList() {
               </TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.phone}</TableCell>
+              <TableCell>
+                {format(new Date(user.created_at), 'dd/MM/yyyy HH:mm')}
+              </TableCell>
               <TableCell className="text-right">
                 ${user.balance?.toLocaleString()}
               </TableCell>
