@@ -75,7 +75,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
               placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="border-0 bg-secondary/20"
+              className="border border-primary/20 bg-secondary/20 focus:border-primary/40 transition-colors"
             />
 
             <div className="max-h-[400px] overflow-y-auto space-y-2 custom-scrollbar">
