@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useProfile } from "@/hooks/useProfile";
 import { usePositions } from "@/hooks/usePositions";
-import { Wallet, TrendingUp, LineChart } from "lucide-react";
+import { Wallet, TrendingUp, LineChart, Activity, BarChart3, PieChart, Scale, ArrowUpDown, Percent, Timer } from "lucide-react";
 import { TradingStats } from "@/components/portfolio/TradingStats";
 import { PnLAnalysis } from "@/components/portfolio/PnLAnalysis";
+import PortfolioCard from "@/components/PortfolioCard";
 
 const PortfolioMobile = () => {
   const { data: profile, isLoading: isLoadingProfile } = useProfile();
@@ -36,6 +37,7 @@ const PortfolioMobile = () => {
         <p className="text-sm text-muted-foreground">Track your performance</p>
       </header>
 
+      {/* First row - 3 cards */}
       <div className="grid grid-cols-3 gap-2">
         <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
           <CardHeader className="p-2">
@@ -49,13 +51,10 @@ const PortfolioMobile = () => {
               <p className="text-sm font-bold">
                 ${totalAccountValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
-              <p className="text-[10px] text-muted-foreground">
-                Real-time
-              </p>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
           <CardHeader className="p-2">
             <CardTitle className="text-xs font-medium flex items-center gap-1">
@@ -67,9 +66,6 @@ const PortfolioMobile = () => {
             <div className="space-y-0.5">
               <p className={`text-sm font-bold ${totalUnrealizedPnl >= 0 ? 'text-success' : 'text-warning'}`}>
                 ${totalUnrealizedPnl.toFixed(2)}
-              </p>
-              <p className="text-[10px] text-muted-foreground">
-                Unrealized
               </p>
             </div>
           </CardContent>
@@ -87,12 +83,104 @@ const PortfolioMobile = () => {
               <p className="text-sm font-bold">
                 ${isLoadingProfile ? "..." : (profile?.balance || 0).toFixed(2)}
               </p>
-              <p className="text-[10px] text-muted-foreground">
-                USDT
-              </p>
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Second row - 4 cards */}
+      <div className="grid grid-cols-4 gap-2">
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <Activity className="h-3 w-3 text-primary" />
+              Win Rate
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">75%</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <BarChart3 className="h-3 w-3 text-primary" />
+              ROI
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">12.5%</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <Scale className="h-3 w-3 text-primary" />
+              Risk
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">Low</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <ArrowUpDown className="h-3 w-3 text-primary" />
+              Trades
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">24</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Third row - 3 cards */}
+      <div className="grid grid-cols-3 gap-2">
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <Percent className="h-3 w-3 text-primary" />
+              Success
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">82%</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <PieChart className="h-3 w-3 text-primary" />
+              Profit
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">$1.2K</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="p-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <Timer className="h-3 w-3 text-primary" />
+              Avg Time
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <p className="text-sm font-bold">2.5h</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance Graph */}
+      <div className="mt-4">
+        <PortfolioCard />
       </div>
 
       {positions && (
