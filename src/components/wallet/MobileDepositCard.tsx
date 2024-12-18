@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bitcoin, Wallet } from "lucide-react";
+import { Bitcoin, Wallet, Check, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -18,8 +18,14 @@ export function MobileDepositCard() {
   const handleCopy = (address: string) => {
     navigator.clipboard.writeText(address);
     toast({
-      title: "Address copied",
-      description: "The deposit address has been copied to your clipboard",
+      title: "Address Copied! 📋",
+      description: (
+        <div className="flex items-center gap-2">
+          <Check className="h-4 w-4 text-success" />
+          <span>The deposit address is now in your clipboard ✨</span>
+        </div>
+      ),
+      variant: "success",
     });
   };
 
