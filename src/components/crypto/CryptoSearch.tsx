@@ -42,6 +42,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
         size="icon"
         onClick={() => setOpen(true)}
         className="bg-secondary/20 hover:bg-secondary/40 transition-colors duration-200"
+        title="Search cryptocurrencies"
       >
         <Search className="h-5 w-5 text-muted-foreground" />
       </Button>
@@ -51,13 +52,13 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
           <DialogHeader>
             <DialogTitle>Search Cryptocurrencies</DialogTitle>
             <DialogDescription>
-              Search and select from the top 100 cryptocurrencies by trading volume
+              Find and select from the top 100 cryptocurrencies. View real-time prices and 24-hour changes.
             </DialogDescription>
           </DialogHeader>
 
           <Command className="rounded-lg border border-secondary">
             <CommandInput
-              placeholder="Search by symbol..."
+              placeholder="Type a cryptocurrency symbol to search..."
               value={search}
               onValueChange={setSearch}
               className="border-none focus:ring-0"
