@@ -77,9 +77,7 @@ const AuthPage = () => {
                 </TabsList>
               </div>
               <div className="px-6 pb-10">
-                <ScrollArea className="h-[calc(100dvh-25rem)] pr-4">
-                  <SignUpForm />
-                </ScrollArea>
+                <SignUpForm />
               </div>
             </TabsContent>
           </Tabs>
