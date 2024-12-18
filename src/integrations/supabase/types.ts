@@ -19,6 +19,8 @@ export type Database = {
           id: string
           leverage: number
           liquidation_price: number
+          merged_entry_price: number | null
+          merged_position_id: string | null
           profit_loss: number | null
           status: string | null
           stop_loss: number | null
@@ -36,6 +38,8 @@ export type Database = {
           id?: string
           leverage: number
           liquidation_price: number
+          merged_entry_price?: number | null
+          merged_position_id?: string | null
           profit_loss?: number | null
           status?: string | null
           stop_loss?: number | null
@@ -53,6 +57,8 @@ export type Database = {
           id?: string
           leverage?: number
           liquidation_price?: number
+          merged_entry_price?: number | null
+          merged_position_id?: string | null
           profit_loss?: number | null
           status?: string | null
           stop_loss?: number | null
@@ -62,6 +68,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "positions_merged_position_id_fkey"
+            columns: ["merged_position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "positions_user_id_fkey"
             columns: ["user_id"]
@@ -129,7 +142,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      merge_positions: {
+        Args: {
+          p1_id: string
+          p2_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
