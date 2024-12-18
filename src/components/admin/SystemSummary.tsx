@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, TrendingUp, DollarSign, Database } from "lucide-react";
+import { Users, TrendingUp, DollarSign, Database, Wallet } from "lucide-react";
 
 export function SystemSummary() {
   const { data: stats, isLoading } = useQuery({
@@ -14,10 +14,10 @@ export function SystemSummary() {
       
       if (usersError) throw usersError;
 
-      // Get total open positions
-      const { count: openPositions, error: positionsError } = await supabase
+      // Get all open positions
+      const { data: positions, error: positionsError } = await supabase
         .from('positions')
-        .select('*', { count: 'exact', head: true })
+        .select('*')
         .eq('status', 'open');
 
       if (positionsError) throw positionsError;
@@ -35,11 +35,15 @@ export function SystemSummary() {
 
       const totalUsers = usersData.length;
       const totalBalance = usersData.reduce((sum, user) => sum + (user.balance || 0), 0);
+      const totalPositionsValue = positions?.reduce((sum, pos) => sum + pos.amount, 0) || 0;
+      const totalPositionsPnL = positions?.reduce((sum, pos) => sum + (pos.profit_loss || 0), 0) || 0;
+      const totalAccountValue = totalBalance + totalPositionsValue + totalPositionsPnL;
       
       return {
         totalUsers,
         totalBalance,
-        openPositions: openPositions || 0,
+        totalAccountValue,
+        openPositions: positions?.length || 0,
         recentTransactions: recentTransactions || 0,
       };
     },
@@ -47,8 +51,8 @@ export function SystemSummary() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        {[1, 2, 3, 4, 5].map((i) => (
           <Card key={i} className="bg-card/30 backdrop-blur-xl border-white/10">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium text-muted-foreground">Loading...</CardTitle>
@@ -80,6 +84,14 @@ export function SystemSummary() {
       className: "from-[#84FAB0] to-[#8FD3F4]",
     },
     {
+      title: "Total Account Value",
+      value: `$${(stats?.totalAccountValue || 0).toLocaleString()}`,
+      icon: Wallet,
+      description: "Including open positions",
+      trend: "+10% from last month",
+      className: "from-[#FFB199] to-[#FF0844]",
+    },
+    {
       title: "Open Positions",
       value: stats?.openPositions.toLocaleString() || "0",
       icon: TrendingUp,
@@ -98,7 +110,7 @@ export function SystemSummary() {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
       {statCards.map((stat, index) => {
         const Icon = stat.icon;
         return (
