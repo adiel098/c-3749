@@ -73,8 +73,12 @@
 
 /* Mobile Navigation Adjustments */
 @media (max-width: 768px) {
+  body {
+    @apply overflow-hidden;
+  }
+  
   .main-content {
-    @apply pb-16;
+    @apply h-[100dvh] overflow-y-auto pb-16;
   }
 }
 
