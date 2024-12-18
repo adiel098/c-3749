@@ -2,8 +2,9 @@ import { useProfile } from "@/hooks/useProfile";
 import { Navigate } from "react-router-dom";
 import { UserList } from "@/components/admin/UserList";
 import { DepositAddresses } from "@/components/admin/DepositAddresses";
+import { SystemSummary } from "@/components/admin/SystemSummary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Wallet } from "lucide-react";
+import { Users, Wallet, BarChart3 } from "lucide-react";
 
 export default function AdminPanel() {
   const { data: profile } = useProfile();
@@ -20,12 +21,19 @@ export default function AdminPanel() {
             Admin Panel
           </h1>
           <p className="text-[#E5DEFF]/80">
-            Manage users and deposit addresses from one central location
+            Manage users and monitor system performance
           </p>
         </div>
         
-        <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full max-w-[400px] grid-cols-2 bg-[#1A1F2C] p-1">
+        <Tabs defaultValue="summary" className="w-full">
+          <TabsList className="grid w-full max-w-[600px] grid-cols-3 bg-[#1A1F2C] p-1">
+            <TabsTrigger 
+              value="summary" 
+              className="flex items-center gap-2 data-[state=active]:bg-[#6E59A5] data-[state=active]:text-white"
+            >
+              <BarChart3 className="h-4 w-4" />
+              Summary
+            </TabsTrigger>
             <TabsTrigger 
               value="users" 
               className="flex items-center gap-2 data-[state=active]:bg-[#6E59A5] data-[state=active]:text-white"
@@ -41,6 +49,9 @@ export default function AdminPanel() {
               Deposit Addresses
             </TabsTrigger>
           </TabsList>
+          <TabsContent value="summary" className="mt-6">
+            <SystemSummary />
+          </TabsContent>
           <TabsContent value="users" className="mt-6">
             <UserList />
           </TabsContent>
