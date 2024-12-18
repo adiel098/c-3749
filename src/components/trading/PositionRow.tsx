@@ -1,10 +1,11 @@
-import { XCircle, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { XCircle, TrendingUp, TrendingDown, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Position } from "@/types/position";
 import { ProfitLossInfo } from "./position/ProfitLossInfo";
+import { StopLossTakeProfitDialog } from "./position/StopLossTakeProfitDialog";
 
 interface PositionRowProps {
   position: Position;
@@ -80,6 +81,16 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
             )}
             <span className="text-muted-foreground ml-1">Size:</span>
             <span>${position.amount.toFixed(2)}</span>
+            {(position.stop_loss || position.take_profit) && (
+              <>
+                {position.stop_loss && (
+                  <span className="text-warning ml-1">SL:${position.stop_loss.toFixed(2)}</span>
+                )}
+                {position.take_profit && (
+                  <span className="text-success ml-1">TP:${position.take_profit.toFixed(2)}</span>
+                )}
+              </>
+            )}
           </div>
         </div>
 
@@ -89,14 +100,25 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
             currentPrice={currentPrice}
           />
           {type === 'open' && (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleClosePosition}
-              className="bg-warning/20 text-warning hover:bg-warning/30 h-7 text-xs"
-            >
-              <XCircle className="h-3 w-3" />
-            </Button>
+            <>
+              <StopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                >
+                  <Edit2 className="h-3 w-3" />
+                </Button>
+              </StopLossTakeProfitDialog>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleClosePosition}
+                className="bg-warning/20 text-warning hover:bg-warning/30 h-7 text-xs"
+              >
+                <XCircle className="h-3 w-3" />
+              </Button>
+            </>
           )}
         </div>
       </div>
