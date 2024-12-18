@@ -128,15 +128,15 @@ export function SignUpForm() {
         <Label>Phone Number</Label>
         <div className="flex gap-2">
           <Select value={countryCode} onValueChange={setCountryCode}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] bg-card">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
+            <SelectContent className="bg-card border-primary/10 shadow-lg backdrop-blur-lg">
               {countryCodes.map((country) => (
                 <SelectItem 
                   key={country.code} 
                   value={country.code}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 hover:bg-primary/10"
                 >
                   <span className="text-lg">{country.flag}</span>
                   <span>{country.code}</span>
