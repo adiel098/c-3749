@@ -7,15 +7,20 @@ import { ProfileForm } from "@/components/settings/ProfileForm";
 import { SecurityForm } from "@/components/settings/SecurityForm";
 import { PreferencesForm } from "@/components/settings/PreferencesForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings2, UserRound, Lock, Bell } from "lucide-react";
+import { Settings2, UserRound, Lock, Bell, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
     phoneNumber: "",
-    countryCode: "+972"
+    countryCode: "+91"
   });
 
   useEffect(() => {
@@ -37,7 +42,7 @@ const Settings = () => {
             firstName: data.first_name || "",
             lastName: data.last_name || "",
             phoneNumber: phoneMatch ? phoneMatch[2] : "",
-            countryCode: phoneMatch ? phoneMatch[1] : "+972"
+            countryCode: phoneMatch ? phoneMatch[1] : "+91"
           });
         }
       } catch (error) {
@@ -48,18 +53,45 @@ const Settings = () => {
     fetchProfile();
   }, [user]);
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
+      navigate("/auth");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1 p-4 md:p-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <header className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Settings2 className="h-8 w-8 text-primary" />
-                <h1 className="text-2xl md:text-3xl font-bold gradient-text">Settings</h1>
+            <header className="flex justify-between items-center">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Settings2 className="h-8 w-8 text-primary" />
+                  <h1 className="text-2xl md:text-3xl font-bold gradient-text">Settings</h1>
+                </div>
+                <p className="text-muted-foreground">Manage your account preferences and security settings</p>
               </div>
-              <p className="text-muted-foreground">Manage your account preferences and security settings</p>
+              <Button
+                onClick={handleLogout}
+                className="bg-gradient-to-r from-[#ea384c] via-[#D946EF] to-[#F97316] hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2 px-6 py-2"
+                size="lg"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="hidden md:inline">Logout</span>
+              </Button>
             </header>
 
             <Tabs defaultValue="profile" className="space-y-6">
