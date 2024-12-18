@@ -41,7 +41,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
   };
 
   return (
-    <div className="glass-card rounded-lg p-4 lg:p-6">
+    <div className="glass-card rounded-lg p-4 lg:p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-lg lg:text-xl font-semibold gradient-text flex items-center gap-2">
@@ -86,7 +86,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
         )}
       </div>
       
-      <div className="relative w-full h-[500px]">
+      <div className="relative flex-1 w-full min-h-[600px]">
         <TradingViewWidget symbol={symbol} />
       </div>
     </div>

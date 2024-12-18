@@ -13,19 +13,7 @@
 }
 
 .crypto-chart {
-  @apply h-[300px] w-full;
-}
-
-.nav-link {
-  @apply flex items-center gap-3 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200;
-}
-
-.nav-link.active {
-  @apply bg-primary/10 text-primary;
-}
-
-.nav-link-icon {
-  @apply w-5 h-5;
+  @apply h-full w-full;
 }
 
 /* Custom Scrollbar */
