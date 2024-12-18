@@ -14,7 +14,9 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
     script.onload = () => {
       if (container.current && typeof TradingView !== 'undefined') {
         const isMobile = window.innerWidth < 768;
-        const widget = new TradingView.widget({
+        
+        // Desktop configuration
+        const desktopConfig = {
           width: "100%",
           height: "100%",
           symbol: `BINANCE:${symbol}USDT`,
@@ -23,15 +25,35 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           theme: "dark",
           style: "1",
           locale: "en",
-          toolbar_bg: "#0B1120",
+          toolbar_bg: "#1B1B1D",
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: container.current.id,
-          hide_side_toolbar: isMobile,
-          studies: isMobile ? [] : ["RSI@tv-basicstudies"],
-          show_popup_button: !isMobile,
-          hide_top_toolbar: isMobile,
-        });
+          studies: ["RSI@tv-basicstudies"],
+          show_popup_button: true,
+        };
+
+        // Mobile configuration
+        const mobileConfig = {
+          width: "100%",
+          height: "100%",
+          symbol: `BINANCE:${symbol}USDT`,
+          interval: "D",
+          timezone: "Etc/UTC",
+          theme: "dark",
+          style: "1",
+          locale: "en",
+          toolbar_bg: "#1B1B1D",
+          enable_publishing: false,
+          allow_symbol_change: true,
+          container_id: container.current.id,
+          hide_side_toolbar: true,
+          hide_top_toolbar: true,
+          studies: [],
+          show_popup_button: false,
+        };
+
+        const widget = new TradingView.widget(isMobile ? mobileConfig : desktopConfig);
 
         return () => {
           if (widget && typeof widget.remove === 'function') {
