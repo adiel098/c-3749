@@ -9,7 +9,7 @@ const AuthPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <div className="min-h-[100dvh] flex items-start justify-center p-4 auth-page overflow-y-auto">
+    <div className="min-h-[100dvh] max-h-[100dvh] flex items-start justify-center p-4 auth-page overflow-y-auto">
       <Card className="w-full max-w-md glass-effect my-4">
         <CardContent className="p-0">
           <Tabs defaultValue="login" className="w-full">
