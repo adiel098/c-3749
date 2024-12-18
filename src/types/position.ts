@@ -12,4 +12,5 @@ export interface Position {
   take_profit?: number;
   exit_price?: number;
   closed_at?: string;
+  created_at: string;
 }
