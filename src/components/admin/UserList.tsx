@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
@@ -16,11 +16,12 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { BalanceUpdateDialog } from "./BalanceUpdateDialog";
 import { UserActions } from "./UserActions";
+import { useUserManagement } from "./useUserManagement";
 
 export function UserList() {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<{ id: string; balance: number } | null>(null);
+  const { handleDeleteUser, handleBalanceUpdate } = useUserManagement();
   
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -42,8 +43,6 @@ export function UserList() {
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-
       toast({
         title: "Admin Status Updated",
         description: `User ${currentAdminStatus ? 'demoted' : 'promoted'} successfully`,
@@ -60,75 +59,17 @@ export function UserList() {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
-
-      if (error) throw error;
-
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-
-      toast({
-        title: "User Deleted",
-        description: "User has been deleted successfully",
-        className: toastStyles.success.className,
-        duration: 3000,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error Deleting User",
-        description: error.message,
-        className: toastStyles.error.className,
-        duration: 3000,
-      });
-    }
-  };
-
-  const handleBalanceUpdate = async (newBalance: number) => {
+  const onBalanceUpdate = async (newBalance: number) => {
     if (!selectedUser) return;
     
-    try {
-      // Update the user's balance in the profiles table
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ balance: newBalance })
-        .eq('id', selectedUser.id);
+    const success = await handleBalanceUpdate(
+      selectedUser.id,
+      selectedUser.balance,
+      newBalance
+    );
 
-      if (updateError) throw updateError;
-
-      // Create a transaction record for the balance adjustment
-      const balanceChange = newBalance - selectedUser.balance;
-      const { error: transactionError } = await supabase
-        .from('transactions')
-        .insert({
-          user_id: selectedUser.id,
-          type: balanceChange >= 0 ? 'deposit' : 'withdrawal',
-          amount: Math.abs(balanceChange),
-          status: 'completed'
-        });
-
-      if (transactionError) throw transactionError;
-
-      // Refresh the data
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    if (success) {
       setSelectedUser(null);
-
-      toast({
-        title: "Balance Updated",
-        description: "User balance has been updated successfully",
-        className: toastStyles.success.className,
-        duration: 3000,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error Updating Balance",
-        description: error.message,
-        className: toastStyles.error.className,
-        duration: 3000,
-      });
     }
   };
 
@@ -200,7 +141,7 @@ export function UserList() {
       <BalanceUpdateDialog
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
-        onUpdate={handleBalanceUpdate}
+        onUpdate={onBalanceUpdate}
         initialBalance={selectedUser?.balance || 0}
       />
     </>
