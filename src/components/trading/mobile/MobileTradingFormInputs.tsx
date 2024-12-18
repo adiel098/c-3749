@@ -1,5 +1,7 @@
 import { Slider } from "@/components/ui/slider";
-import type { Profile } from "@/types/position";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Profile = Tables<"profiles">;
 
 interface MobileTradingFormInputsProps {
   amount: string;
