@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import type { Position } from "@/types/position";
@@ -16,9 +16,6 @@ export function PositionsList({ positions, currentPrice, onUpdate }: PositionsLi
 
   return (
     <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
-      <CardHeader>
-        <CardTitle>Positions</CardTitle>
-      </CardHeader>
       <CardContent>
         <Tabs defaultValue="open" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-secondary/40">
