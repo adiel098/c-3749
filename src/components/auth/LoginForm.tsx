@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn, Mail, Lock } from "lucide-react";
+import { LogIn, Mail, Lock, CheckCircle, AlertCircle } from "lucide-react";
 
 interface LoginFormData {
   email: string;
@@ -30,9 +30,10 @@ export function LoginForm() {
       
       if (!data.email || !data.password) {
         toast({
-          title: "Error",
-          description: "Please enter both email and password",
+          title: "שדות חסרים 🤔",
+          description: "אנא מלא את כל השדות הנדרשים",
           variant: "destructive",
+          duration: 3000,
         });
         return;
       }
@@ -44,9 +45,15 @@ export function LoginForm() {
 
       if (error) {
         toast({
-          title: "Login Failed",
-          description: error.message || "Invalid login credentials",
+          title: "ההתחברות נכשלה ❌",
+          description: (
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              <span>הפרטים שהזנת אינם נכונים, אנא נסה שוב</span>
+            </div>
+          ),
           variant: "destructive",
+          duration: 3000,
         });
         return;
       }
@@ -54,8 +61,14 @@ export function LoginForm() {
       setSession(authData.session);
       
       toast({
-        title: "Success",
-        description: "You have been logged in successfully",
+        title: "ברוך הבא! 🎉",
+        description: (
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-primary" />
+            <span>התחברת בהצלחה למערכת</span>
+          </div>
+        ),
+        duration: 3000,
       });
 
       const from = location.state?.from?.pathname || "/";
@@ -63,9 +76,10 @@ export function LoginForm() {
 
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "שגיאה לא צפויה 😕",
+        description: "אירעה שגיאה, אנא נסה שוב מאוחר יותר",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setIsLoading(false);

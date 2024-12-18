@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { countryCodes } from "@/utils/countryPhoneCodes";
-import { UserPlus, Mail, Lock, User, Phone } from "lucide-react";
+import { UserPlus, Mail, Lock, User, Phone, CheckCircle, AlertCircle } from "lucide-react";
 
 interface SignUpFormData {
   email: string;
@@ -27,15 +27,16 @@ interface SignUpFormData {
 export function SignUpForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
   const [isLoading, setIsLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91");
+  const [countryCode, setCountryCode] = useState("+972");
   const { toast } = useToast();
 
   const onSubmit = async (data: SignUpFormData) => {
     if (data.password !== data.confirmPassword) {
       toast({
-        title: "Error",
-        description: "Passwords do not match",
+        title: "שגיאת סיסמה ⚠️",
+        description: "הסיסמאות שהזנת אינן תואמות",
         variant: "destructive",
+        duration: 3000,
       });
       return;
     }
@@ -57,14 +58,26 @@ export function SignUpForm() {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Account created successfully. Please check your email to verify your account.",
+        title: "ברוך הבא למשפחה! 🎊",
+        description: (
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-primary" />
+            <span>החשבון נוצר בהצלחה! אתה יכול להתחבר עכשיו</span>
+          </div>
+        ),
+        duration: 3000,
       });
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message,
+        title: "ההרשמה נכשלה ❌",
+        description: (
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <span>{error.message}</span>
+          </div>
+        ),
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setIsLoading(false);
