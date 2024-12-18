@@ -12,9 +12,10 @@ import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useProfile } from "@/hooks/useProfile";
 import { toastStyles } from "@/utils/toastStyles";
+import { supabase } from "@/integrations/supabase/client";
 
 const Settings = () => {
-  const { signOut, session } = useAuth();
+  const { signOut, session, setSession } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -22,8 +23,19 @@ const Settings = () => {
 
   const handleLogout = async () => {
     try {
+      // First, sign out using the auth hook
       await signOut();
-      // Clear any local state or cached data here if needed
+      
+      // Force clear the session state
+      setSession(null);
+      
+      // Additional cleanup: clear any local storage items
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Force sign out through Supabase client
+      await supabase.auth.signOut({ scope: 'global' });
+
       toast({
         title: "Logged Out Successfully! 👋",
         description: (
@@ -35,11 +47,16 @@ const Settings = () => {
         className: toastStyles.logout.className,
       });
       
-      // Force navigation to auth page and ensure session is cleared
-      if (!session) {
-        navigate("/", { replace: true });
-      }
+      // Force navigation and prevent going back
+      navigate("/", { replace: true });
+      
+      // Additional measure: reload the page after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+      
     } catch (error) {
+      console.error("Logout error:", error);
       toast({
         title: "Logout Error ❌",
         description: (
@@ -50,7 +67,6 @@ const Settings = () => {
         ),
         className: toastStyles.error.className,
       });
-      console.error("Logout error:", error);
     }
   };
 
