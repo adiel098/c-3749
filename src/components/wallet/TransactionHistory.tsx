@@ -1,14 +1,17 @@
-import { History, TrendingUp, TrendingDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Tables } from "@/integrations/supabase/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { History } from "lucide-react";
+import type { Transaction } from "@/types/transaction";
 
 interface TransactionHistoryProps {
-  transactions: Tables<"transactions">[];
+  transactions: Transaction[];
+  className?: string;
 }
 
-export function TransactionHistory({ transactions }: TransactionHistoryProps) {
+export function TransactionHistory({ transactions, className }: TransactionHistoryProps) {
   return (
-    <Card className="glass-effect overflow-hidden">
+    <Card className={`glass-effect overflow-hidden relative group ${className}`}>
+      <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History className="h-5 w-5 text-primary" />
@@ -16,50 +19,37 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
-          {!transactions?.length ? (
-            <div className="text-center text-muted-foreground py-8">
-              No transactions found
-            </div>
-          ) : (
-            transactions.map((tx) => (
-              <div 
-                key={tx.id} 
-                className="flex justify-between items-center p-4 rounded-lg glass-effect hover:bg-primary/5 transition-colors duration-200"
+        <ScrollArea className="h-[300px] md:h-[400px] pr-4">
+          <div className="space-y-4">
+            {transactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="flex items-center justify-between p-3 rounded-lg bg-secondary/20 backdrop-blur-sm border border-white/5 hover:border-primary/20 transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  {tx.type === 'deposit' ? (
-                    <TrendingUp className="h-5 w-5 text-success" />
-                  ) : (
-                    <TrendingDown className="h-5 w-5 text-warning" />
-                  )}
-                  <div>
-                    <p className="font-medium capitalize">
-                      {tx.type}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(tx.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </p>
-                  </div>
+                <div className="space-y-1">
+                  <p className="font-medium capitalize">{transaction.type}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(transaction.created_at).toLocaleDateString()}
+                  </p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-semibold ${
-                    tx.type === 'deposit' ? 'text-success' : 'text-warning'
-                  }`}>
-                    {tx.type === 'deposit' ? '+' : '-'}${tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  <p className="font-medium">
+                    {transaction.type === 'deposit' ? '+' : '-'}${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {tx.status}
+                  <p className={`text-sm ${
+                    transaction.status === 'completed' 
+                      ? 'text-success' 
+                      : transaction.status === 'pending' 
+                        ? 'text-warning' 
+                        : 'text-muted-foreground'
+                  }`}>
+                    {transaction.status}
                   </p>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );

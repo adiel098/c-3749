@@ -60,14 +60,17 @@ const Wallet = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gradient-to-b from-background to-background/95">
         <AppSidebar />
-        <div className="flex-1 p-4 md:p-8 space-y-8">
+        <div className="flex-1 p-4 md:p-8 space-y-8 overflow-y-auto">
           <header className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight gradient-text">Wallet</h1>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight gradient-text">Wallet</h1>
             <p className="text-muted-foreground">Manage your virtual funds</p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Main content with responsive grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left column */}
             <div className="space-y-6">
+              <WithdrawalCard availableBalance={profile.balance} />
               <BalanceCard 
                 balance={profile.balance} 
                 profileId={profile.id}
@@ -79,11 +82,14 @@ const Wallet = () => {
                 balance={profile.balance}
                 positions={positions}
               />
-              <WithdrawalCard availableBalance={profile.balance} />
             </div>
+            {/* Right column */}
             <div className="space-y-6">
               <DepositCard />
-              <TransactionHistory transactions={transactions || []} />
+              <TransactionHistory 
+                transactions={transactions || []} 
+                className="lg:sticky lg:top-8"
+              />
             </div>
           </div>
         </div>
