@@ -4,7 +4,7 @@ import { Edit2, TrendingUp, TrendingDown, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MobileStopLossTakeProfitDialog } from "./MobileStopLossTakeProfitDialog";
 import type { Position } from "@/types/position";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface MobilePositionRowProps {
@@ -48,15 +48,15 @@ export function MobilePositionRow({ position, currentPrice, onUpdate, type }: Mo
       if (error) throw error;
 
       toast({
-        title: "פוזיציה נסגרה בהצלחה",
-        description: `הפוזיציה נסגרה במחיר ${currentPrice}`,
+        title: "Position closed successfully",
+        description: `Position closed at $${currentPrice}`,
       });
 
       if (onUpdate) onUpdate();
     } catch (error) {
       toast({
-        title: "שגיאה בסגירת הפוזיציה",
-        description: "אנא נסה שוב מאוחר יותר",
+        title: "Error closing position",
+        description: "Please try again later",
         variant: "destructive",
       });
     }
@@ -89,43 +89,53 @@ export function MobilePositionRow({ position, currentPrice, onUpdate, type }: Mo
         </div>
 
         {type === 'open' && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleClosePosition}
-            className="bg-warning/20 hover:bg-warning/30 text-warning border border-warning/20 h-8 px-3 rounded-lg transition-all duration-200 hover:scale-105"
-          >
-            <XCircle className="h-4 w-4 mr-1" />
-            סגור
-          </Button>
+          <div className="flex items-center gap-2">
+            <MobileStopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 hover:bg-primary/10"
+              >
+                <Edit2 className="h-4 w-4 text-primary" />
+              </Button>
+            </MobileStopLossTakeProfitDialog>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleClosePosition}
+              className="bg-warning/20 hover:bg-warning/30 text-warning border border-warning/20 h-8 w-8 p-0 rounded-lg transition-all duration-200 hover:scale-105"
+            >
+              <XCircle className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-sm">
         <div className="space-y-1">
-          <p className="text-muted-foreground">מחיר כניסה</p>
+          <p className="text-muted-foreground">Entry Price</p>
           <p className="font-mono">${formatPrice(position.entry_price)}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-muted-foreground">מחיר נוכחי</p>
+          <p className="text-muted-foreground">Current Price</p>
           <p className="font-mono">${currentPrice ? formatPrice(currentPrice) : '...'}</p>
         </div>
         {position.stop_loss && (
           <div className="space-y-1">
-            <p className="text-warning">סטופ לוס</p>
+            <p className="text-warning">Stop Loss</p>
             <p className="font-mono">${formatPrice(position.stop_loss)}</p>
           </div>
         )}
         {position.take_profit && (
           <div className="space-y-1">
-            <p className="text-success">טייק פרופיט</p>
+            <p className="text-success">Take Profit</p>
             <p className="font-mono">${formatPrice(position.take_profit)}</p>
           </div>
         )}
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-white/10">
-        <span className="text-sm text-muted-foreground">גודל: ${position.amount.toFixed(2)}</span>
+        <span className="text-sm text-muted-foreground">Size: ${position.amount.toFixed(2)}</span>
         <span className={cn(
           "font-medium",
           pnl >= 0 ? "text-success" : "text-warning"
