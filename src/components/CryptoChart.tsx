@@ -1,70 +1,42 @@
-import { useEffect, useRef } from 'react';
-import { CryptoSearch } from './crypto/CryptoSearch';
-import { PriceHeader } from './crypto/PriceHeader';
-import { useWebSocketPrice } from '@/hooks/useWebSocketPrice';
-import { useCryptoPrice } from '@/hooks/useCryptoPrice';
+import { useEffect, useRef, useState } from "react";
+import { CryptoSearch } from "./crypto/CryptoSearch";
 
 interface CryptoChartProps {
   symbol: string;
   onPriceUpdate?: (price: number) => void;
-  onSearchOpen?: () => void;
 }
 
-const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
+const CryptoChart = ({ symbol, onPriceUpdate }: CryptoChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const currentPrice = useWebSocketPrice(symbol, onPriceUpdate);
-  const { data: priceData } = useCryptoPrice(symbol);
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.async = true;
-    script.onload = () => {
-      if (window.TradingView && containerRef.current) {
-        new window.TradingView.widget({
-          autosize: true,
-          symbol: `BINANCE:${symbol}USDT`,
-          interval: '1',
-          timezone: 'Etc/UTC',
-          theme: 'dark',
-          style: '1',
-          locale: 'en',
-          toolbar_bg: '#f1f3f6',
-          enable_publishing: false,
-          hide_side_toolbar: false,
-          allow_symbol_change: true,
-          container_id: 'tradingview_chart',
-        });
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const price = parseFloat(data.p);
+      setCurrentPrice(price);
+      if (onPriceUpdate) {
+        onPriceUpdate(price);
       }
     };
-    document.head.appendChild(script);
 
     return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-      const existingWidget = document.getElementById('tradingview_chart');
-      if (existingWidget) {
-        existingWidget.innerHTML = '';
-      }
+      ws.close();
     };
-  }, [symbol]);
+  }, [symbol, onPriceUpdate]);
 
   return (
     <div className="glass-card rounded-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <PriceHeader 
-          symbol={symbol} 
-          price={currentPrice} 
-          priceChange24h={priceData?.price_change_24h} 
-        />
-        <CryptoSearch 
-          searchOpen={!!onSearchOpen} 
-          setSearchOpen={(open) => onSearchOpen && onSearchOpen()} 
-          onSelect={() => {}} 
-        />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">{symbol}/USDT</h2>
+          <span className="text-lg font-mono">${currentPrice.toFixed(2)}</span>
+        </div>
+        <CryptoSearch onSelect={(newSymbol) => console.log("Selected:", newSymbol)} />
       </div>
-      <div ref={containerRef} id="tradingview_chart" className="h-[600px]" />
+      <div ref={containerRef} className="w-full h-[400px]" />
     </div>
   );
 };
