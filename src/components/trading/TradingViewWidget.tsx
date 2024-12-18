@@ -31,6 +31,8 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           container_id: container.current.id,
           studies: ["RSI@tv-basicstudies"],
           show_popup_button: true,
+          hide_side_toolbar: false,
+          hide_top_toolbar: false
         };
 
         // Mobile configuration
@@ -50,7 +52,7 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           hide_side_toolbar: true,
           hide_top_toolbar: true,
           studies: [],
-          show_popup_button: false,
+          show_popup_button: false
         };
 
         const widget = new TradingView.widget(isMobile ? mobileConfig : desktopConfig);
