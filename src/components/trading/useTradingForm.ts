@@ -13,10 +13,10 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleTrade = async (type: 'long' | 'short') => {
-    if (!currentPrice) {
+    if (!currentPrice || isNaN(currentPrice)) {
       toast({
-        title: "Error",
-        description: "Unable to get current price. Please try again.",
+        title: "שגיאה",
+        description: "לא ניתן לקבל את המחיר הנוכחי. אנא נסה שוב.",
         variant: "destructive",
       });
       return;
@@ -24,8 +24,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
 
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       toast({
-        title: "Error",
-        description: "Please enter a valid amount",
+        title: "שגיאה",
+        description: "אנא הכנס סכום תקין",
         variant: "destructive",
       });
       return;
@@ -36,8 +36,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
 
     if (!profile || tradeAmount > profile.balance) {
       toast({
-        title: "Error",
-        description: "Insufficient balance",
+        title: "שגיאה",
+        description: "אין מספיק יתרה בחשבון",
         variant: "destructive",
       });
       return;
@@ -79,8 +79,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
       await queryClient.invalidateQueries({ queryKey: ['positions'] });
 
       toast({
-        title: "Position Opened Successfully",
-        description: `${type === 'long' ? 'Bought' : 'Sold'} ${amount} USDT with ${leverage}X leverage`,
+        title: "הפוזיציה נפתחה בהצלחה",
+        description: `${type === 'long' ? 'קנית' : 'מכרת'} ${amount} USDT עם מינוף ${leverage}X`,
       });
 
       // Reset form
@@ -88,8 +88,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
     } catch (error) {
       console.error('Trade error:', error);
       toast({
-        title: "Error",
-        description: "Failed to open position. Please try again.",
+        title: "שגיאה",
+        description: "לא הצלחנו לפתוח את הפוזיציה. אנא נסה שוב.",
         variant: "destructive",
       });
     } finally {

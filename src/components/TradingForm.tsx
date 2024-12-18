@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { TradingFormHeader } from "./trading/TradingFormHeader";
 import { TradingFormInputs } from "./trading/TradingFormInputs";
 import { useTradingForm } from "./trading/useTradingForm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface TradingFormProps {
   selectedCrypto: string;
@@ -19,6 +21,21 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
     isSubmitting,
     handleTrade,
   } = useTradingForm(selectedCrypto, currentPrice);
+
+  if (!currentPrice) {
+    return (
+      <Card className="bg-secondary/80">
+        <CardContent className="pt-6">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              לא ניתן לקבל את המחיר הנוכחי. אנא נסה שוב מאוחר יותר.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-secondary/80">
@@ -41,9 +58,9 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
             <Button 
               className="w-full bg-success hover:bg-success/90 mt-4"
               onClick={() => handleTrade('long')}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !currentPrice}
             >
-              Buy/Long
+              קנייה/לונג
             </Button>
           </TabsContent>
           <TabsContent value="short">
@@ -58,9 +75,9 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
             <Button 
               className="w-full bg-warning hover:bg-warning/90 mt-4"
               onClick={() => handleTrade('short')}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !currentPrice}
             >
-              Sell/Short
+              מכירה/שורט
             </Button>
           </TabsContent>
         </Tabs>
