@@ -48,7 +48,7 @@ const AuthPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="signup">
-              <div className={`p-4 pb-2 ${isMobile ? "pt-40" : "pt-6"}`}>
+              <div className={`p-4 pb-2 ${isMobile ? "pt-35" : "pt-6"}`}>
                 <h1 className="text-4xl font-bold gradient-text mb-4">Join Us Now</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Join hundreds of traders and start your crypto trading adventure
