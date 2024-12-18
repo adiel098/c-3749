@@ -35,7 +35,7 @@ export function ProfitLossInfo({ position, currentPrice }: ProfitLossInfoProps) 
           <TrendingDown className="h-3 w-3" />
         )}
         <span>
-          {isProfitable ? '+' : ''}{profitLoss.toFixed(2)} ({isProfitable ? '+' : ''}{profitLossPercentage.toFixed(1)}%)
+          {isProfitable ? '+$' : '-$'}{Math.abs(profitLoss).toFixed(2)} ({isProfitable ? '+' : ''}{profitLossPercentage.toFixed(1)}%)
         </span>
       </div>
     </div>

@@ -32,7 +32,7 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
 
       toast({
         title: "Position closed successfully",
-        description: `Position closed at ${currentPrice}`,
+        description: `Position closed at $${currentPrice}`,
       });
 
       if (onUpdate) onUpdate();
