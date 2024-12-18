@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CryptoSearch } from "./crypto/CryptoSearch";
 import { TradingViewWidget } from "./trading/TradingViewWidget";
-import { PriceWebSocket } from "./trading/PriceWebSocket";
 import { TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useCryptoPrice } from "@/hooks/useCryptoPrice";
 
 interface CryptoChartProps {
   symbol: string;
@@ -13,7 +13,7 @@ interface CryptoChartProps {
 }
 
 const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
-  const [currentPrice, setCurrentPrice] = useState<number>();
+  const currentPrice = useCryptoPrice(symbol);
   
   // Fetch initial price and 24h change immediately and refetch every 5 seconds
   const { data: priceData, isLoading } = useQuery({
@@ -28,27 +28,17 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
         priceChange24h: parseFloat(data.priceChangePercent)
       };
     },
-    refetchInterval: 5000, // Refetch every 5 seconds
-    staleTime: 0, // Consider data immediately stale to force refetch
+    refetchInterval: 5000,
+    staleTime: 0,
     retry: 3,
   });
 
-  // Update price state and notify parent when price changes
+  // Update parent when price changes
   useEffect(() => {
-    if (priceData?.price) {
-      setCurrentPrice(priceData.price);
-      if (onPriceUpdate) {
-        onPriceUpdate(priceData.price);
-      }
+    if (currentPrice && onPriceUpdate) {
+      onPriceUpdate(currentPrice);
     }
-  }, [priceData?.price, onPriceUpdate]);
-
-  const handlePriceUpdate = (price: number) => {
-    setCurrentPrice(price);
-    if (onPriceUpdate) {
-      onPriceUpdate(price);
-    }
-  };
+  }, [currentPrice, onPriceUpdate]);
 
   return (
     <div className="glass-card rounded-lg p-6">
@@ -94,13 +84,6 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
       <div className="relative w-full">
         <TradingViewWidget symbol={symbol} />
       </div>
-      
-      {onPriceUpdate && (
-        <PriceWebSocket 
-          symbol={symbol} 
-          onPriceUpdate={handlePriceUpdate}
-        />
-      )}
     </div>
   );
 };
