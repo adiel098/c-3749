@@ -22,6 +22,7 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           theme: "dark",
           style: "1",
           locale: "en",
+          toolbar_bg: "#1B1B1D",
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: container.current.id,

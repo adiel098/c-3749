@@ -1,6 +1,8 @@
 interface TradingView {
   widget: new (config: {
-    autosize: boolean;
+    autosize?: boolean;
+    width?: string | number;
+    height?: string | number;
     symbol: string;
     interval: string;
     timezone: string;
