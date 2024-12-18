@@ -15,7 +15,7 @@ const fetchAccountPerformance = async () => {
   return transactions.map((tx: any) => {
     balance += tx.type === 'deposit' ? tx.amount : -tx.amount;
     return {
-      date: new Date(tx.created_at).toLocaleDateString('en-US', { month: 'short' }),
+      date: new Date(tx.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       balance: balance
     };
   });
@@ -63,6 +63,7 @@ const PortfolioCard = () => {
               }}
               labelStyle={{ color: '#E6E4DD' }}
               itemStyle={{ color: '#8989DE' }}
+              formatter={(value: number) => [`$${value.toFixed(2)}`, 'Balance']}
             />
             <Line 
               type="monotone" 

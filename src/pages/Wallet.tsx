@@ -10,6 +10,7 @@ import { BalanceCard } from "@/components/wallet/BalanceCard";
 import { AccountValueCard } from "@/components/wallet/AccountValueCard";
 import { TransactionHistory } from "@/components/wallet/TransactionHistory";
 import { DepositCard } from "@/components/wallet/DepositCard";
+import { WithdrawalCard } from "@/components/wallet/WithdrawalCard";
 
 const Wallet = () => {
   const queryClient = useQueryClient();
@@ -88,6 +89,7 @@ const Wallet = () => {
             </div>
             <div className="space-y-6">
               <DepositCard />
+              <WithdrawalCard availableBalance={profile.balance} />
               <TransactionHistory transactions={transactions || []} />
             </div>
           </div>
