@@ -31,7 +31,6 @@ export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingView
           hide_side_toolbar: isMobile,
           hide_top_toolbar: false,
           studies: isMobile ? [] : undefined,
-          withdateranges: false,
           hide_volume: false
         });
 
