@@ -23,16 +23,17 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
       return;
     }
 
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+    const tradeAmount = Number(amount);
+
+    if (!amount || isNaN(tradeAmount) || tradeAmount <= 0) {
       toast({
-        title: "Error",
-        description: "Please enter a valid amount",
+        title: "Invalid Amount",
+        description: "Please enter an amount greater than 0",
         variant: "destructive",
       });
       return;
     }
 
-    const tradeAmount = Number(amount);
     const leverageNum = Number(leverage);
 
     if (!profile?.id) {

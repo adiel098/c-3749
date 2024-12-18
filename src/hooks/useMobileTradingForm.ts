@@ -42,9 +42,19 @@ export function useMobileTradingForm(
   const handleTrade = async (type: 'long' | 'short') => {
     if (!currentPrice || !profile?.id) return;
 
+    const tradeAmount = Number(amount);
+
+    if (!amount || isNaN(tradeAmount) || tradeAmount <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter an amount greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsSubmitting(true);
-      const tradeAmount = Number(amount);
       const leverageNum = Number(leverage);
 
       if (tradeAmount > profile.balance) {
