@@ -32,6 +32,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
       setIsLoading(true);
       setError(null);
+      setCryptoList([]); // Reset list when opening dialog
       
       try {
         ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
