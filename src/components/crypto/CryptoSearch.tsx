@@ -26,78 +26,97 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
   useEffect(() => {
     let ws: WebSocket | null = null;
+    let retryCount = 0;
+    const maxRetries = 3;
 
     const connectWebSocket = () => {
       if (!searchOpen) return;
 
-      ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
+      try {
+        ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
 
-      ws.onopen = () => {
-        setIsLoading(true);
-        setError(null);
-        setCryptoList([]); // Reset list when opening new connection
-      };
+        ws.onopen = () => {
+          console.log('WebSocket connected successfully');
+          setIsLoading(true);
+          setError(null);
+          setCryptoList([]); // Reset list when opening new connection
+          retryCount = 0; // Reset retry count on successful connection
+        };
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (!Array.isArray(data)) {
-            console.error('Invalid data format received:', data);
-            setError('Invalid data format received');
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (!Array.isArray(data)) {
+              console.error('Invalid data format received:', data);
+              setError('Invalid data format received');
+              setIsLoading(false);
+              return;
+            }
+
+            const usdtPairs = data
+              .filter((item: any) => 
+                item.s && 
+                item.s.endsWith('USDT') && 
+                item.c && 
+                item.P
+              )
+              .map((item: any) => ({
+                symbol: item.s.replace('USDT', ''),
+                price: parseFloat(item.c).toFixed(2),
+                priceChange: parseFloat(item.P).toFixed(2)
+              }))
+              .sort((a: CryptoData, b: CryptoData) => 
+                parseFloat(b.price) - parseFloat(a.price)
+              )
+              .slice(0, 100);
+
+            if (usdtPairs.length > 0) {
+              setCryptoList(usdtPairs);
+              setIsLoading(false);
+            }
+          } catch (err) {
+            console.error('Data processing error:', err);
+            setError('Failed to process data');
             setIsLoading(false);
-            return;
           }
+        };
 
-          const usdtPairs = data
-            .filter((item: any) => 
-              item.s && 
-              item.s.endsWith('USDT') && 
-              item.c && 
-              item.P
-            )
-            .map((item: any) => ({
-              symbol: item.s.replace('USDT', ''),
-              price: parseFloat(item.c).toFixed(2),
-              priceChange: parseFloat(item.P).toFixed(2)
-            }))
-            .sort((a: CryptoData, b: CryptoData) => 
-              parseFloat(b.price) - parseFloat(a.price)
-            )
-            .slice(0, 100);
-
-          if (usdtPairs.length > 0) {
-            setCryptoList(usdtPairs);
-            setIsLoading(false);
-          }
-        } catch (err) {
-          console.error('Data processing error:', err);
-          setError('Failed to process data');
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          setError('Failed to connect to price feed');
           setIsLoading(false);
-        }
-      };
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setError('Failed to connect to price feed');
+          if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`Retrying connection... Attempt ${retryCount}`);
+            setTimeout(connectWebSocket, 2000 * retryCount); // Exponential backoff
+          } else {
+            toast({
+              title: "Connection Error",
+              description: "Failed to connect to price feed after multiple attempts",
+              variant: "destructive",
+            });
+          }
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket connection closed');
+          if (searchOpen && retryCount < maxRetries) {
+            setTimeout(connectWebSocket, 2000);
+          }
+        };
+      } catch (error) {
+        console.error('WebSocket connection error:', error);
+        setError('Failed to establish connection');
         setIsLoading(false);
-        toast({
-          title: "Connection Error",
-          description: "Failed to connect to price feed. Please try again.",
-          variant: "destructive",
-        });
-      };
-
-      ws.onclose = () => {
-        if (searchOpen) {
-          setTimeout(connectWebSocket, 5000);
-        }
-      };
+      }
     };
 
     connectWebSocket();
 
     return () => {
       if (ws) {
+        console.log('Cleaning up WebSocket connection');
         ws.close();
       }
     };
