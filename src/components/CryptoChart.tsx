@@ -18,7 +18,9 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
         <CryptoSearch onSelect={(newSymbol) => console.log("Selected:", newSymbol)} />
       </div>
       
-      <TradingViewWidget symbol={symbol} />
+      <div className="relative w-full">
+        <TradingViewWidget symbol={symbol} />
+      </div>
       
       {onPriceUpdate && (
         <PriceWebSocket 

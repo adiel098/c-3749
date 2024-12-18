@@ -8,9 +8,6 @@ const fetchCryptoData = async () => {
       throw new Error('Network response was not ok');
     }
     const data = await response.json();
-    if (!Array.isArray(data)) {
-      throw new Error('Invalid data format received');
-    }
     return data.map((crypto: any) => ({
       symbol: crypto.symbol.replace('USDT', ''),
       name: crypto.symbol.replace('USDT', ''),

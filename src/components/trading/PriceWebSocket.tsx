@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { debounce } from "lodash";
+import { useToast } from "@/hooks/use-toast";
 
 interface PriceWebSocketProps {
   symbol: string;
@@ -7,31 +8,46 @@ interface PriceWebSocketProps {
 }
 
 export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) => {
+  const { toast } = useToast();
+
+  const handlePriceUpdate = useCallback(
+    debounce((price: number) => {
+      onPriceUpdate(price);
+    }, 1000),
+    [onPriceUpdate]
+  );
+
   useEffect(() => {
-    let isMounted = true;
-    
-    // WebSocket for price updates only
     const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
-    
-    // Debounce the price update to prevent too frequent updates
-    const debouncedPriceUpdate = debounce((price: number) => {
-      if (onPriceUpdate && isMounted) {
-        onPriceUpdate(price);
-      }
-    }, 1000); // Update price maximum once per second
+
+    ws.onopen = () => {
+      console.log('WebSocket Connected');
+    };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const price = parseFloat(data.p);
-      debouncedPriceUpdate(price);
+      try {
+        const data = JSON.parse(event.data);
+        if (data.p) {
+          handlePriceUpdate(parseFloat(data.p));
+        }
+      } catch (error) {
+        console.error('Error processing price data:', error);
+      }
+    };
+
+    ws.onerror = () => {
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect to price feed",
+        variant: "destructive",
+      });
     };
 
     return () => {
-      isMounted = false;
+      handlePriceUpdate.cancel();
       ws.close();
-      debouncedPriceUpdate.cancel();
     };
-  }, [symbol, onPriceUpdate]);
+  }, [symbol, handlePriceUpdate, toast]);
 
   return null;
 };
