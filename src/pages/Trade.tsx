@@ -9,6 +9,14 @@ import { usePositions } from "@/hooks/usePositions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PositionsList } from "@/components/trading/PositionsList";
 
+const SUPPORTED_CRYPTOS = [
+  { symbol: "BTC", name: "Bitcoin" },
+  { symbol: "ETH", name: "Ethereum" },
+  { symbol: "BNB", name: "Binance Coin" },
+  { symbol: "XRP", name: "Ripple" },
+  { symbol: "SOL", name: "Solana" }
+];
+
 const Trade = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
   const [currentPrice, setCurrentPrice] = useState<number>();
@@ -18,11 +26,36 @@ const Trade = () => {
   const { data: cryptoList } = useQuery({
     queryKey: ['cryptoList'],
     queryFn: async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false"
-      );
-      return response.json();
-    }
+      try {
+        const symbols = SUPPORTED_CRYPTOS.map(c => `"${c.symbol}USDT"`).join(',');
+        const response = await fetch(
+          `https://api.binance.com/api/v3/ticker/24hr?symbols=[${symbols}]`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch crypto data');
+        }
+        const data = await response.json();
+        return SUPPORTED_CRYPTOS.map((crypto, index) => ({
+          id: crypto.symbol.toLowerCase(),
+          symbol: crypto.symbol,
+          name: crypto.name,
+          image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${crypto.symbol.toLowerCase()}.png`,
+          current_price: parseFloat(data[index].lastPrice),
+          price_change_24h: parseFloat(data[index].priceChangePercent)
+        }));
+      } catch (error) {
+        console.error('Error fetching crypto data:', error);
+        return SUPPORTED_CRYPTOS.map(crypto => ({
+          id: crypto.symbol.toLowerCase(),
+          symbol: crypto.symbol,
+          name: crypto.name,
+          image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${crypto.symbol.toLowerCase()}.png`,
+          current_price: 0,
+          price_change_24h: 0
+        }));
+      }
+    },
+    refetchInterval: 30000 // Refetch every 30 seconds
   });
 
   const handlePriceUpdate = (price: number) => {
@@ -56,16 +89,24 @@ const Trade = () => {
                   <CommandList className="max-h-[300px] overflow-y-auto">
                     <CommandEmpty>No results found</CommandEmpty>
                     <CommandGroup heading="Popular Cryptocurrencies">
-                      {cryptoList?.map((crypto: any) => (
+                      {cryptoList?.map((crypto) => (
                         <CommandItem
                           key={crypto.id}
                           value={crypto.symbol}
-                          onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
+                          onSelect={() => handleCryptoSelect(crypto.symbol)}
                           className="flex items-center gap-2 cursor-pointer p-2 hover:bg-accent/10"
                         >
-                          <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
+                          <img 
+                            src={crypto.image} 
+                            alt={crypto.name} 
+                            className="w-6 h-6"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/placeholder.svg';
+                            }}
+                          />
                           <span>{crypto.name}</span>
-                          <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
+                          <span className="text-muted-foreground">({crypto.symbol})</span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
