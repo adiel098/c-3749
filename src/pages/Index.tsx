@@ -1,19 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-
-const fetchBTCPrice = async () => {
-  const response = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
-  );
-  const data = await response.json();
-  return data.bitcoin.usd;
-};
+import CryptoChart from "@/components/CryptoChart";
 
 const Index = () => {
   const { toast } = useToast();
@@ -22,7 +14,13 @@ const Index = () => {
 
   const { data: btcPrice, isLoading } = useQuery({
     queryKey: ['btcPrice'],
-    queryFn: fetchBTCPrice,
+    queryFn: async () => {
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+      );
+      const data = await response.json();
+      return data.bitcoin.usd;
+    },
     refetchInterval: 10000,
   });
 
@@ -58,24 +56,7 @@ const Index = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>BTC/USDT</CardTitle>
-                {!isLoading && <p className="text-2xl font-bold">${btcPrice?.toLocaleString()}</p>}
-              </CardHeader>
-              <CardContent>
-                <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={[]}>
-                      <XAxis dataKey="time" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="price" stroke="#8989DE" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+            <CryptoChart />
           </div>
 
           <div>
