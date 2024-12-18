@@ -25,7 +25,7 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
       script.async = true;
       script.onload = () => {
         if (typeof window.TradingView !== 'undefined') {
-          new window.TradingView.widget({
+          const widget = new window.TradingView.widget({
             width: '100%',
             height: 500,
             symbol: `BINANCE:${symbol}USDT`,
@@ -38,6 +38,26 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
             enable_publishing: false,
             allow_symbol_change: true,
             container_id: 'tradingview_chart',
+            autosize: true,
+            studies: [],
+            save_image: false,
+            hide_side_toolbar: false,
+            withdateranges: true,
+            hide_volume: false,
+          });
+
+          // Listen for price updates
+          widget.onChartReady(() => {
+            widget.activeChart().onSymbolChange().subscribe(null, () => {
+              const price = widget.activeChart().symbol().price;
+              window.postMessage({ name: 'tradingview-price', price }, '*');
+            });
+            
+            // Update price every second
+            setInterval(() => {
+              const price = widget.activeChart().symbol().price;
+              window.postMessage({ name: 'tradingview-price', price }, '*');
+            }, 1000);
           });
         }
       };
