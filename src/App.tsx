@@ -10,9 +10,11 @@ import Settings from "@/pages/Settings";
 import AuthPage from "@/pages/auth/AuthPage";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
+import { useAuth } from "@/hooks/useAuth";
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { session } = useAuth();
 
   return (
     <Router>
@@ -60,7 +62,7 @@ function App() {
             }
           />
         </Routes>
-        {isMobile && <MobileNavBar />}
+        {isMobile && session && <MobileNavBar />}
         <Toaster />
       </div>
     </Router>
