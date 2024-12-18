@@ -26,7 +26,6 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: container.current.id,
-          studies: ["RSI@tv-basicstudies"],
           show_popup_button: true,
           hide_side_toolbar: false,
           hide_top_toolbar: false
