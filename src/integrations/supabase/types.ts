@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      deposit_addresses: {
+        Row: {
+          address: string
+          currency: string
+          id: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          address: string
+          currency: string
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          address?: string
+          currency?: string
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deposit_addresses_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       positions: {
         Row: {
           amount: number
@@ -90,6 +122,7 @@ export type Database = {
           created_at: string
           first_name: string | null
           id: string
+          is_admin: boolean | null
           last_name: string | null
           phone: string | null
         }
@@ -98,6 +131,7 @@ export type Database = {
           created_at?: string
           first_name?: string | null
           id: string
+          is_admin?: boolean | null
           last_name?: string | null
           phone?: string | null
         }
@@ -106,6 +140,7 @@ export type Database = {
           created_at?: string
           first_name?: string | null
           id?: string
+          is_admin?: boolean | null
           last_name?: string | null
           phone?: string | null
         }

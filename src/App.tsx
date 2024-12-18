@@ -8,20 +8,39 @@ import Wallet from "@/pages/Wallet";
 import History from "@/pages/History";
 import Settings from "@/pages/Settings";
 import AuthPage from "@/pages/auth/AuthPage";
+import AdminPanel from "@/pages/admin/AdminPanel";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { session } = useAuth();
+  const { data: profile } = useProfile();
 
   return (
     <div className="relative min-h-screen">
       <Routes>
         <Route path="/" element={
-          session ? <Navigate to="/trade" replace /> : <AuthPage />
+          session ? (
+            profile?.is_admin ? (
+              <Navigate to="/admin" replace />
+            ) : (
+              <Navigate to="/trade" replace />
+            )
+          ) : (
+            <AuthPage />
+          )
         } />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/trade"
           element={
@@ -74,7 +93,7 @@ function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {isMobile && session && <MobileNavBar />}
+      {isMobile && session && !profile?.is_admin && <MobileNavBar />}
       <Toaster />
     </div>
   );
