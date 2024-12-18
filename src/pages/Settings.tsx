@@ -11,11 +11,13 @@ import { Settings2, UserRound, Lock, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
@@ -80,7 +82,7 @@ const Settings = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 md:p-8">
+        <div className={`flex-1 p-4 md:p-8 ${isMobile ? "h-[calc(100dvh-4rem)] overflow-y-auto pb-20" : ""}`}>
           <div className="max-w-4xl mx-auto space-y-8">
             <header className="space-y-2">
               <div className="flex items-center gap-2">
