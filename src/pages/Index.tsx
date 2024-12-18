@@ -27,16 +27,9 @@ const Index = () => {
     }
   });
 
-  // Get real-time price from TradingView widget
-  useEffect(() => {
-    const handlePriceUpdate = (event: any) => {
-      if (event.data && event.data.name === 'tradingview-price') {
-        setCurrentPrice(event.data.price);
-      }
-    };
-    window.addEventListener('message', handlePriceUpdate);
-    return () => window.removeEventListener('message', handlePriceUpdate);
-  }, []);
+  const handlePriceUpdate = (price: number) => {
+    setCurrentPrice(price);
+  };
 
   const handleCryptoSelect = (symbol: string) => {
     setSelectedCrypto(symbol);
@@ -91,7 +84,10 @@ const Index = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <CryptoChart symbol={selectedCrypto} />
+                <CryptoChart 
+                  symbol={selectedCrypto} 
+                  onPriceUpdate={handlePriceUpdate}
+                />
               </div>
               <TradingForm selectedCrypto={selectedCrypto} currentPrice={currentPrice} />
             </div>
