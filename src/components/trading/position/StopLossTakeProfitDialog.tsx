@@ -38,6 +38,7 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
       setOpen(false);
       onUpdate();
     } catch (error) {
+      console.error('Error updating levels:', error);
       toast({
         title: "Error updating levels",
         variant: "destructive",
@@ -64,6 +65,7 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
       setOpen(false);
       onUpdate();
     } catch (error) {
+      console.error('Error removing levels:', error);
       toast({
         title: "Error removing levels",
         variant: "destructive",
