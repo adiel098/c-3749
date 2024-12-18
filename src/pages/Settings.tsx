@@ -14,7 +14,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { toastStyles } from "@/utils/toastStyles";
 
 const Settings = () => {
-  const { signOut } = useAuth();
+  const { signOut, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -23,6 +23,7 @@ const Settings = () => {
   const handleLogout = async () => {
     try {
       await signOut();
+      // Clear any local state or cached data here if needed
       toast({
         title: "Logged Out Successfully! 👋",
         description: (
@@ -33,7 +34,11 @@ const Settings = () => {
         ),
         className: toastStyles.logout.className,
       });
-      navigate("/");
+      
+      // Force navigation to auth page and ensure session is cleared
+      if (!session) {
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       toast({
         title: "Logout Error ❌",
@@ -45,6 +50,7 @@ const Settings = () => {
         ),
         className: toastStyles.error.className,
       });
+      console.error("Logout error:", error);
     }
   };
 
