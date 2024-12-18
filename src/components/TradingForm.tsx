@@ -9,9 +9,16 @@ import { AlertCircle } from "lucide-react";
 interface TradingFormProps {
   selectedCrypto: string;
   currentPrice?: number;
+  initialType?: 'long' | 'short';
+  onClose?: () => void;
 }
 
-export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) {
+export function TradingForm({ 
+  selectedCrypto, 
+  currentPrice, 
+  initialType = 'long', 
+  onClose 
+}: TradingFormProps) {
   const {
     amount,
     setAmount,
