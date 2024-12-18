@@ -20,14 +20,20 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function Sidebar({ children }: { children: React.ReactNode }) {
+interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
+  children: React.ReactNode
+}
+
+export function Sidebar({ children, className, ...props }: SidebarProps) {
   const { collapsed } = React.useContext(SidebarContext)
   return (
     <aside
       className={cn(
         "h-screen sticky top-0 border-l bg-card text-card-foreground",
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-16" : "w-64",
+        className
       )}
+      {...props}
     >
       {children}
     </aside>
@@ -72,21 +78,27 @@ export function SidebarMenuItem({ children }: { children: React.ReactNode }) {
   return <div>{children}</div>
 }
 
+interface SidebarMenuButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode
+  asChild?: boolean
+}
+
 export function SidebarMenuButton({
   children,
   asChild,
-}: {
-  children: React.ReactNode
-  asChild?: boolean
-}) {
+  className,
+  ...props
+}: SidebarMenuButtonProps) {
   const { collapsed } = React.useContext(SidebarContext)
   const Comp = asChild ? React.Fragment : "button"
   return (
     <Comp
       className={cn(
         "flex items-center w-full px-2 py-2 text-sm rounded-lg hover:bg-accent group",
-        collapsed && "justify-center"
+        collapsed && "justify-center",
+        className
       )}
+      {...props}
     >
       {children}
     </Comp>
