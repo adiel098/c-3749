@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { usePositions } from "@/hooks/usePositions";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { History as HistoryIcon, Calendar, TrendingUp, TrendingDown, DollarSign, Percent } from "lucide-react";
+import { History as HistoryIcon, Calendar, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const History = () => {
@@ -45,16 +45,16 @@ const History = () => {
           <header className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight gradient-text flex items-center gap-2">
               <HistoryIcon className="h-8 w-8 text-primary" />
-              היסטוריית מסחר
+              Trading History
             </h1>
-            <p className="text-muted-foreground">צפה בפוזיציות הסגורות וביצועי המסחר שלך</p>
+            <p className="text-muted-foreground">View your closed positions and trading performance</p>
           </header>
 
           <Card className="glass-effect overflow-hidden">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                פוזיציות סגורות
+                Closed Positions
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -69,7 +69,7 @@ const History = () => {
                 ) : !closedPositions.length ? (
                   <div className="text-center text-muted-foreground py-8 glass-effect rounded-lg p-6">
                     <Calendar className="h-12 w-12 mx-auto mb-3 text-primary/50" />
-                    אין פוזיציות סגורות
+                    No closed positions yet
                   </div>
                 ) : (
                   closedPositions.map((position) => {
@@ -79,18 +79,30 @@ const History = () => {
                     return (
                       <div
                         key={position.id}
-                        className="glass-effect p-6 rounded-lg hover:bg-primary/5 transition-all duration-300 space-y-4"
+                        className="glass-effect p-6 rounded-lg hover:bg-card/40 transition-all duration-300 space-y-4"
                       >
                         <div className="flex justify-between items-start">
                           <div className="space-y-3">
                             <div className="flex items-center gap-2">
                               <span className="font-semibold text-xl">{position.symbol}</span>
-                              <Badge variant={position.type === 'long' ? 'default' : 'destructive'} className="uppercase">
-                                {position.type === 'long' ? 'LONG' : 'SHORT'} {position.leverage}X
+                              <Badge 
+                                variant={position.type === 'long' ? 'default' : 'destructive'} 
+                                className={`uppercase ${
+                                  position.type === 'long' 
+                                    ? 'bg-success/20 text-success hover:bg-success/30' 
+                                    : 'bg-warning/20 text-warning hover:bg-warning/30'
+                                }`}
+                              >
+                                {position.type === 'long' ? (
+                                  <TrendingUp className="w-4 h-4 mr-1" />
+                                ) : (
+                                  <TrendingDown className="w-4 h-4 mr-1" />
+                                )}
+                                {position.type.toUpperCase()} {position.leverage}X
                               </Badge>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              נסגר ב-{new Date(position.closed_at || '').toLocaleDateString('he-IL', {
+                              Closed on {new Date(position.closed_at || '').toLocaleString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -108,14 +120,13 @@ const History = () => {
                               ) : (
                                 <TrendingDown className="h-6 w-6" />
                               )}
-                              <span>
+                              <span className="text-3xl">
                                 {isProfitable ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
                               </span>
                             </div>
-                            <div className={`flex items-center gap-1 justify-end text-lg ${
+                            <div className={`flex items-center gap-1 justify-end text-xl ${
                               isProfitable ? 'text-success/80' : 'text-warning/80'
                             }`}>
-                              <Percent className="h-4 w-4" />
                               <span>
                                 {isProfitable ? '+' : ''}{profitPercentage.toFixed(2)}%
                               </span>
@@ -124,21 +135,21 @@ const History = () => {
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-white/10">
                           <div>
-                            <p className="text-sm text-muted-foreground">מחיר כניסה</p>
+                            <p className="text-sm text-muted-foreground">Entry Price</p>
                             <p className="font-medium text-lg flex items-center gap-1">
                               <DollarSign className="h-4 w-4 text-primary" />
                               {position.entry_price}
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">מחיר יציאה</p>
+                            <p className="text-sm text-muted-foreground">Exit Price</p>
                             <p className="font-medium text-lg flex items-center gap-1">
                               <DollarSign className="h-4 w-4 text-primary" />
                               {position.exit_price}
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">גודל פוזיציה</p>
+                            <p className="text-sm text-muted-foreground">Position Size</p>
                             <p className="font-medium text-lg flex items-center gap-1">
                               <DollarSign className="h-4 w-4 text-primary" />
                               {position.amount}
