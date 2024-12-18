@@ -8,23 +8,31 @@ const AuthPage = () => {
     <div className="min-h-screen flex items-center justify-center p-4 auth-page">
       <Card className="w-full max-w-md glass-effect">
         <CardContent className="p-0">
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <Tabs defaultValue="signup" className="w-full">
+            <div className="p-6 pb-2">
+              <h1 className="text-4xl font-bold text-primary mb-4">Join Us Today</h1>
+              <p className="text-xl text-foreground/90 mb-6">
+                Join hundreds of traders and start your crypto trading adventure
+              </p>
+            </div>
+            <TabsList className="grid w-full grid-cols-2 p-6">
+              <TabsTrigger 
+                value="login" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger 
+                value="signup"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                Sign Up
+              </TabsTrigger>
             </TabsList>
-            <TabsContent value="login" className="p-6">
-              <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold gradient-text mb-2">Welcome Back!</h1>
-                <p className="text-muted-foreground">Enter your credentials to access your account</p>
-              </div>
+            <TabsContent value="login" className="p-6 pt-2">
               <LoginForm />
             </TabsContent>
-            <TabsContent value="signup" className="p-6">
-              <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold gradient-text mb-2">Create Account</h1>
-                <p className="text-muted-foreground">Join us and start trading today</p>
-              </div>
+            <TabsContent value="signup" className="p-6 pt-2">
               <SignUpForm />
             </TabsContent>
           </Tabs>

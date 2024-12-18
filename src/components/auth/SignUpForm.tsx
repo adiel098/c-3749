@@ -11,7 +11,7 @@ import { toastStyles, ToastClose, toastConfig } from "@/utils/toastStyles";
 export function SignUpForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
   const [isLoading, setIsLoading] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91"); // Changed default to India's code
+  const [countryCode, setCountryCode] = useState("+91");
   const { toast } = useToast();
 
   const onSubmit = async (data: SignUpFormData) => {
@@ -99,7 +99,7 @@ export function SignUpForm() {
 
       <Button 
         type="submit" 
-        className="w-full bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity h-11"
+        className="w-full bg-primary hover:opacity-90 transition-opacity h-12 text-base"
         disabled={isLoading}
       >
         {isLoading ? (

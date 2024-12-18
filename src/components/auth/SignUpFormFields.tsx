@@ -18,13 +18,13 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
     <>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-base">
+            <User className="w-5 h-5 text-primary" />
             First Name
           </Label>
           <Input
             {...register("firstName", { required: "First name is required" })}
-            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors h-12 text-base"
             placeholder="Enter first name"
           />
           {errors.firstName && (
@@ -33,13 +33,13 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
         </div>
 
         <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-base">
+            <User className="w-5 h-5 text-primary" />
             Last Name
           </Label>
           <Input
             {...register("lastName", { required: "Last name is required" })}
-            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors h-12 text-base"
             placeholder="Enter last name"
           />
           {errors.lastName && (
@@ -49,8 +49,8 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
       </div>
 
       <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Mail className="w-4 h-4 text-primary" />
+        <Label className="flex items-center gap-2 text-base">
+          <Mail className="w-5 h-5 text-primary" />
           Email
         </Label>
         <Input
@@ -62,7 +62,7 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
               message: "Please enter a valid email address"
             }
           })}
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors h-12 text-base"
           placeholder="Enter your email"
         />
         {errors.email && (
@@ -71,13 +71,13 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
       </div>
 
       <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Phone className="w-4 h-4 text-primary" />
+        <Label className="flex items-center gap-2 text-base">
+          <Phone className="w-5 h-5 text-primary" />
           Phone Number
         </Label>
         <div className="flex gap-2">
           <Select value={countryCode} onValueChange={setCountryCode}>
-            <SelectTrigger className="w-[100px] bg-card/50 border-primary/10 focus:border-primary/20">
+            <SelectTrigger className="w-[120px] bg-card/50 border-primary/10 focus:border-primary/20 h-12">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/10">
@@ -110,7 +110,7 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
                 message: "Phone number cannot exceed 15 digits"
               }
             })}
-            className="flex-1 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            className="flex-1 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors h-12 text-base"
             placeholder="Enter phone number"
           />
         </div>
@@ -120,8 +120,8 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
       </div>
 
       <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-primary" />
+        <Label className="flex items-center gap-2 text-base">
+          <Lock className="w-5 h-5 text-primary" />
           Password
         </Label>
         <Input
@@ -133,7 +133,7 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
               message: "Password must be at least 6 characters"
             }
           })}
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors h-12 text-base"
           placeholder="Create a password"
         />
         {errors.password && (
@@ -142,14 +142,14 @@ export function SignUpFormFields({ register, errors, countryCode, setCountryCode
       </div>
 
       <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-primary" />
+        <Label className="flex items-center gap-2 text-base">
+          <Lock className="w-5 h-5 text-primary" />
           Confirm Password
         </Label>
         <Input
           type="password"
           {...register("confirmPassword", { required: "Please confirm your password" })}
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors h-12 text-base"
           placeholder="Confirm your password"
         />
         {errors.confirmPassword && (
