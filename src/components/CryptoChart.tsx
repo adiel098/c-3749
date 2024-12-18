@@ -41,10 +41,10 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
   };
 
   return (
-    <div className="glass-card rounded-lg p-6">
+    <div className="glass-card rounded-lg p-4 lg:p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
+          <h2 className="text-lg lg:text-xl font-semibold gradient-text flex items-center gap-2">
             {symbol}/USDT
           </h2>
           <CryptoSearch 
@@ -60,16 +60,16 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
         {isLoading ? (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Loading price data...
+            <span className="text-sm">Loading...</span>
           </div>
         ) : (
-          <div className="flex items-center gap-4">
-            <span className="text-lg font-mono bg-secondary/20 px-3 py-1 rounded-lg">
+          <div className="flex items-center gap-2 lg:gap-4">
+            <span className="text-base lg:text-lg font-mono bg-secondary/20 px-2 lg:px-3 py-1 rounded-lg">
               ${priceData?.price ? formatPrice(priceData.price) : '0.00'}
             </span>
             {priceData?.priceChange24h !== undefined && (
               <span className={cn(
-                "flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium",
+                "flex items-center gap-1 px-2 lg:px-3 py-1 rounded-lg text-xs lg:text-sm font-medium",
                 priceData.priceChange24h >= 0 
                   ? "text-success bg-success/10" 
                   : "text-warning bg-warning/10"
@@ -86,7 +86,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
         )}
       </div>
       
-      <div className="relative w-full">
+      <div className="relative w-full h-[300px] lg:h-[500px]">
         <TradingViewWidget symbol={symbol} />
       </div>
     </div>

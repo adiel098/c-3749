@@ -13,9 +13,10 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
     script.async = true;
     script.onload = () => {
       if (container.current && typeof TradingView !== 'undefined') {
+        const isMobile = window.innerWidth < 768;
         const widget = new TradingView.widget({
           width: "100%",
-          height: 500,
+          height: "100%",
           symbol: `BINANCE:${symbol}USDT`,
           interval: "D",
           timezone: "Etc/UTC",
@@ -26,9 +27,11 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: container.current.id,
-          hide_side_toolbar: false,
-          studies: ["RSI@tv-basicstudies"],
-          show_popup_button: true,
+          hide_side_toolbar: isMobile,
+          hide_volume: isMobile,
+          toolbar_bg: "#0B1120",
+          studies: isMobile ? [] : ["RSI@tv-basicstudies"],
+          show_popup_button: !isMobile,
         });
 
         return () => {
@@ -54,7 +57,7 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
     <div 
       ref={container}
       id={`tradingview_${Math.random().toString(36).substring(7)}`}
-      className="w-full h-[500px] bg-card/30"
+      className="w-full h-full bg-card/30"
     />
   );
 });

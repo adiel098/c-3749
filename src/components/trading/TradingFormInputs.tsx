@@ -22,7 +22,7 @@ export function TradingFormInputs({
   const maxAmount = profile?.balance || 0;
   
   return (
-    <div className="space-y-6 pt-4">
+    <div className="space-y-6">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <label className="text-sm font-medium text-gray-300">Amount (USDT)</label>
@@ -38,6 +38,17 @@ export function TradingFormInputs({
           disabled={isSubmitting}
           className="py-4"
         />
+        <div className="grid grid-cols-4 gap-2">
+          {[25, 50, 75, 100].map((percent) => (
+            <button
+              key={percent}
+              onClick={() => setAmount((maxAmount * (percent / 100)).toString())}
+              className="px-2 py-1 text-xs rounded bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+            >
+              {percent}%
+            </button>
+          ))}
+        </div>
       </div>
       
       <div className="space-y-4">
@@ -54,6 +65,17 @@ export function TradingFormInputs({
           disabled={isSubmitting}
           className="py-4"
         />
+        <div className="grid grid-cols-4 gap-2">
+          {[5, 10, 20, 50].map((lev) => (
+            <button
+              key={lev}
+              onClick={() => setLeverage(lev.toString())}
+              className="px-2 py-1 text-xs rounded bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+            >
+              {lev}x
+            </button>
+          ))}
+        </div>
       </div>
 
       {currentPrice && (

@@ -8,6 +8,9 @@ import { TradingForm } from "@/components/TradingForm";
 import { usePositions } from "@/hooks/usePositions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PositionsList } from "@/components/trading/PositionsList";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, TrendingDown } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const SUPPORTED_CRYPTOS = [
   { symbol: "BTC", name: "Bitcoin" },
@@ -22,6 +25,8 @@ const Trade = () => {
   const [currentPrice, setCurrentPrice] = useState<number>();
   const [searchOpen, setSearchOpen] = useState(false);
   const { data: positions, refetch: refetchPositions } = usePositions();
+  const [isTradeFormOpen, setIsTradeFormOpen] = useState(false);
+  const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
 
   const { data: cryptoList } = useQuery({
     queryKey: ['cryptoList'],
@@ -66,6 +71,11 @@ const Trade = () => {
     console.log("Trade page: Selected crypto:", symbol);
     setSelectedCrypto(symbol);
     setSearchOpen(false);
+  };
+
+  const openTradeForm = (type: 'long' | 'short') => {
+    setTradeType(type);
+    setIsTradeFormOpen(true);
   };
 
   return (
@@ -124,7 +134,7 @@ const Trade = () => {
                   onSymbolChange={handleCryptoSelect}
                 />
               </div>
-              <div className="glass-card rounded-lg">
+              <div className="glass-card rounded-lg hidden lg:block">
                 <TradingForm selectedCrypto={selectedCrypto} currentPrice={currentPrice} />
               </div>
             </div>
@@ -137,6 +147,45 @@ const Trade = () => {
               />
             </div>
           </div>
+        </div>
+
+        {/* Mobile Trading Buttons */}
+        <div className="fixed bottom-16 left-0 right-0 p-4 flex gap-4 lg:hidden bg-background/80 backdrop-blur-md border-t border-white/10">
+          <Sheet open={isTradeFormOpen} onOpenChange={setIsTradeFormOpen}>
+            <SheetTrigger asChild>
+              <Button
+                className="flex-1 h-14 bg-success hover:bg-success/90"
+                onClick={() => openTradeForm('long')}
+              >
+                <div className="flex flex-col items-center">
+                  <TrendingUp className="h-6 w-6 mb-1" />
+                  <span>Long</span>
+                </div>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[80vh]">
+              <TradingForm 
+                selectedCrypto={selectedCrypto} 
+                currentPrice={currentPrice} 
+                initialType={tradeType}
+                onClose={() => setIsTradeFormOpen(false)}
+              />
+            </SheetContent>
+          </Sheet>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                className="flex-1 h-14 bg-warning hover:bg-warning/90"
+                onClick={() => openTradeForm('short')}
+              >
+                <div className="flex flex-col items-center">
+                  <TrendingDown className="h-6 w-6 mb-1" />
+                  <span>Short</span>
+                </div>
+              </Button>
+            </SheetTrigger>
+          </Sheet>
         </div>
       </div>
     </SidebarProvider>
