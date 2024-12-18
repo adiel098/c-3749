@@ -39,14 +39,14 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
           };
         })
         .sort((a: any, b: any) => b.volume - a.volume) // Sort by volume
-        .slice(0, 50); // Take top 50 by volume to keep list stable
+        .slice(0, 100); // Take top 100 by volume
       
       console.log("Formatted crypto list:", formattedData);
       return formattedData;
     },
-    staleTime: 30000, // Data is considered fresh for 30 seconds
-    gcTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes
-    refetchInterval: 30000, // Refetch every 30 seconds
+    staleTime: 30000,
+    gcTime: 5 * 60 * 1000,
+    refetchInterval: 30000,
   });
 
   const filteredCryptos = cryptoList.filter((crypto: any) =>
@@ -67,18 +67,18 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>חיפוש מטבעות</DialogTitle>
+            <DialogTitle>Search Cryptocurrencies</DialogTitle>
           </DialogHeader>
 
           <div className="flex flex-col gap-4">
             <Input
-              placeholder="הקלד לחיפוש..."
+              placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="border-0 bg-secondary/20"
             />
 
-            <div className="max-h-[300px] overflow-y-auto space-y-2">
+            <div className="max-h-[400px] overflow-y-auto space-y-2 custom-scrollbar">
               {isLoading ? (
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
@@ -91,7 +91,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
                       onSelect(crypto.symbol);
                       setOpen(false);
                     }}
-                    className="w-full flex items-center justify-between p-2 hover:bg-secondary/20 rounded-lg transition-colors"
+                    className="w-full flex items-center justify-between p-3 hover:bg-secondary/20 rounded-lg transition-colors glass-effect"
                   >
                     <div className="flex items-center gap-3">
                       <img
