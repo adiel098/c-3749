@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { LogIn, UserPlus } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const AuthPage = () => {
   return (
@@ -73,7 +74,9 @@ const AuthPage = () => {
                 </TabsList>
               </div>
               <div className="px-6 pb-6">
-                <SignUpForm />
+                <ScrollArea className="h-[400px] pr-4">
+                  <SignUpForm />
+                </ScrollArea>
               </div>
             </TabsContent>
           </Tabs>
