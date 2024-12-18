@@ -83,25 +83,44 @@ const History = () => {
                       >
                         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-1.5">
                           <div className="space-y-0.5 md:space-y-1">
-                            <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
-                              <span className="font-semibold text-xs md:text-lg">{position.symbol}</span>
-                              <Badge 
-                                variant={position.type === 'long' ? 'default' : 'destructive'} 
-                                className={`uppercase text-[8px] md:text-xs ${
-                                  position.type === 'long' 
-                                    ? 'bg-success/20 text-success hover:bg-success/30' 
-                                    : 'bg-warning/20 text-warning hover:bg-warning/30'
-                                }`}
-                              >
-                                {position.type === 'long' ? (
-                                  <TrendingUp className="w-2 h-2 md:w-2.5 md:h-2.5 mr-0.5" />
+                            <div className="flex items-center justify-between md:justify-start gap-1 md:gap-1.5 flex-wrap">
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold text-[11px] md:text-lg">{position.symbol}</span>
+                                <Badge 
+                                  variant={position.type === 'long' ? 'default' : 'destructive'} 
+                                  className={`uppercase text-[8px] md:text-xs ${
+                                    position.type === 'long' 
+                                      ? 'bg-success/20 text-success hover:bg-success/30' 
+                                      : 'bg-warning/20 text-warning hover:bg-warning/30'
+                                  }`}
+                                >
+                                  {position.type === 'long' ? (
+                                    <TrendingUp className="w-2 h-2 md:w-2.5 md:h-2.5 mr-0.5" />
+                                  ) : (
+                                    <TrendingDown className="w-2 h-2 md:w-2.5 md:h-2.5 mr-0.5" />
+                                  )}
+                                  {position.type} {position.leverage}X
+                                </Badge>
+                              </div>
+                              <div className={`flex items-center gap-1 md:gap-1.5 ${
+                                isProfitable ? 'text-success' : 'text-warning'
+                              }`}>
+                                {isProfitable ? (
+                                  <TrendingUp className="h-3 w-3 md:h-5 md:w-5" />
                                 ) : (
-                                  <TrendingDown className="w-2 h-2 md:w-2.5 md:h-2.5 mr-0.5" />
+                                  <TrendingDown className="h-3 w-3 md:h-5 md:w-5" />
                                 )}
-                                {position.type} {position.leverage}X
-                              </Badge>
+                                <div className="text-right">
+                                  <div className="font-bold text-[11px] md:text-xl">
+                                    {isProfitable ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
+                                  </div>
+                                  <div className="text-[11px] md:text-base">
+                                    {isProfitable ? '+' : ''}{profitPercentage.toFixed(2)}%
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <p className="text-[8px] md:text-xs text-muted-foreground">
+                            <p className="text-[9px] md:text-xs text-muted-foreground">
                               {new Date(position.closed_at || '').toLocaleString('en-US', {
                                 year: '2-digit',
                                 month: 'short',
@@ -111,41 +130,24 @@ const History = () => {
                               })}
                             </p>
                           </div>
-                          <div className={`flex items-center gap-1 md:gap-1.5 ${
-                            isProfitable ? 'text-success' : 'text-warning'
-                          }`}>
-                            {isProfitable ? (
-                              <TrendingUp className="h-3 w-3 md:h-5 md:w-5" />
-                            ) : (
-                              <TrendingDown className="h-3 w-3 md:h-5 md:w-5" />
-                            )}
-                            <div className="text-right">
-                              <div className="font-bold text-xs md:text-xl">
-                                {isProfitable ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
-                              </div>
-                              <div className="text-[10px] md:text-base">
-                                {isProfitable ? '+' : ''}{profitPercentage.toFixed(2)}%
-                              </div>
-                            </div>
-                          </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-1 md:gap-1.5 pt-1 md:pt-1.5 border-t border-white/10 text-[10px] md:text-sm">
+                        <div className="grid grid-cols-3 gap-1 md:gap-1.5 pt-1 md:pt-1.5 border-t border-white/10 text-[11px] md:text-sm">
                           <div>
-                            <p className="text-[8px] md:text-[10px] text-muted-foreground">Entry</p>
+                            <p className="text-[9px] md:text-[10px] text-muted-foreground">Entry</p>
                             <p className="font-medium flex items-center gap-0.5">
                               <DollarSign className="h-2 w-2 md:h-2.5 md:w-2.5 text-primary" />
                               {position.entry_price}
                             </p>
                           </div>
                           <div>
-                            <p className="text-[8px] md:text-[10px] text-muted-foreground">Exit</p>
+                            <p className="text-[9px] md:text-[10px] text-muted-foreground">Exit</p>
                             <p className="font-medium flex items-center gap-0.5">
                               <DollarSign className="h-2 w-2 md:h-2.5 md:w-2.5 text-primary" />
                               {position.exit_price}
                             </p>
                           </div>
                           <div>
-                            <p className="text-[8px] md:text-[10px] text-muted-foreground">Size</p>
+                            <p className="text-[9px] md:text-[10px] text-muted-foreground">Size</p>
                             <p className="font-medium flex items-center gap-0.5">
                               <DollarSign className="h-2 w-2 md:h-2.5 md:w-2.5 text-primary" />
                               {position.amount}
