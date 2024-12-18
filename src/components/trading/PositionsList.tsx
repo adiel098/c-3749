@@ -2,27 +2,55 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Position } from "@/types/position";
 import { PositionRow } from "./PositionRow";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { checkAndClosePosition } from "@/utils/positionManagement";
+import { useCryptoPrice } from "@/hooks/useCryptoPrice";
 
 interface PositionsListProps {
   positions: Position[];
-  currentPrice?: number;
   onUpdate: () => void;
 }
 
-export function PositionsList({ positions, currentPrice, onUpdate }: PositionsListProps) {
+export function PositionsList({ positions, onUpdate }: PositionsListProps) {
   const openPositions = positions.filter(p => p.status === 'open');
   const closedPositions = positions.filter(p => p.status === 'closed');
+  const [prices, setPrices] = useState<Record<string, number>>({});
+
+  // Fetch prices for all unique symbols in open positions
+  useEffect(() => {
+    const fetchPrices = async () => {
+      const uniqueSymbols = [...new Set(openPositions.map(p => p.symbol))];
+      const newPrices: Record<string, number> = {};
+
+      for (const symbol of uniqueSymbols) {
+        try {
+          const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}USDT`);
+          const data = await response.json();
+          newPrices[symbol] = parseFloat(data.price);
+        } catch (error) {
+          console.error(`Error fetching price for ${symbol}:`, error);
+        }
+      }
+
+      setPrices(newPrices);
+    };
+
+    if (openPositions.length > 0) {
+      fetchPrices();
+      const interval = setInterval(fetchPrices, 5000); // Update every 5 seconds
+      return () => clearInterval(interval);
+    }
+  }, [openPositions]);
 
   // Check for stop loss and take profit triggers
   useEffect(() => {
-    if (!currentPrice) return;
-    
     openPositions.forEach(position => {
-      checkAndClosePosition(position, currentPrice);
+      const currentPrice = prices[position.symbol];
+      if (currentPrice) {
+        checkAndClosePosition(position, currentPrice);
+      }
     });
-  }, [currentPrice, openPositions]);
+  }, [prices, openPositions]);
 
   return (
     <div className="w-full">
@@ -52,7 +80,7 @@ export function PositionsList({ positions, currentPrice, onUpdate }: PositionsLi
                 <PositionRow
                   key={position.id}
                   position={position}
-                  currentPrice={currentPrice}
+                  currentPrice={prices[position.symbol]}
                   onUpdate={onUpdate}
                   type="open"
                 />
