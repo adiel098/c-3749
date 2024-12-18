@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import CryptoChart from "@/components/CryptoChart";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import { Search } from "lucide-react";
 
 const Index = () => {
   const { toast } = useToast();
   const [amount, setAmount] = useState("");
   const [leverage, setLeverage] = useState("10");
+  const [selectedCrypto, setSelectedCrypto] = useState("BTC");
 
   const { data: btcPrice, isLoading } = useQuery({
     queryKey: ['btcPrice'],
@@ -22,6 +25,16 @@ const Index = () => {
       return data.bitcoin.usd;
     },
     refetchInterval: 10000,
+  });
+
+  const { data: cryptoList } = useQuery({
+    queryKey: ['cryptoList'],
+    queryFn: async () => {
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false"
+      );
+      return response.json();
+    }
   });
 
   const handleTrade = (type: 'long' | 'short') => {
@@ -40,6 +53,10 @@ const Index = () => {
     });
   };
 
+  const handleCryptoSelect = (symbol: string) => {
+    setSelectedCrypto(symbol);
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-8" dir="rtl">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -54,9 +71,31 @@ const Index = () => {
           </div>
         </header>
 
+        <div className="w-full max-w-sm">
+          <Command className="rounded-lg border shadow-md">
+            <CommandInput placeholder="חפש מטבע..." />
+            <CommandList>
+              <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+              <CommandGroup heading="מטבעות פופולריים">
+                {cryptoList?.map((crypto: any) => (
+                  <CommandItem
+                    key={crypto.symbol}
+                    onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
+                    <span>{crypto.name}</span>
+                    <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <CryptoChart />
+            <CryptoChart symbol={selectedCrypto} />
           </div>
 
           <div>
