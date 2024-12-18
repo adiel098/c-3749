@@ -40,9 +40,10 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
   };
 
   return (
-    <div className="glass-card rounded-lg p-4 h-full">
+    <div className="glass-card rounded-lg p-4 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold">{symbol}/USDT</h2>
           <CryptoSearch 
             onSelect={(newSymbol) => {
               console.log("Selected new symbol:", newSymbol);
@@ -51,6 +52,21 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
               }
             }} 
           />
+          {!isLoading && priceData?.priceChange24h !== undefined && (
+            <span className={cn(
+              "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium",
+              priceData.priceChange24h >= 0 
+                ? "text-success bg-success/10" 
+                : "text-warning bg-warning/10"
+            )}>
+              {priceData.priceChange24h >= 0 ? (
+                <TrendingUp className="h-3 w-3" />
+              ) : (
+                <TrendingDown className="h-3 w-3" />
+              )}
+              {Math.abs(priceData.priceChange24h).toFixed(2)}%
+            </span>
+          )}
         </div>
 
         {isLoading ? (
@@ -59,30 +75,15 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
             <span className="text-sm">Loading...</span>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <span className="text-base font-mono bg-secondary/20 px-2 py-1 rounded">
               ${priceData?.price ? formatPrice(priceData.price) : '0.00'}
             </span>
-            {priceData?.priceChange24h !== undefined && (
-              <span className={cn(
-                "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium",
-                priceData.priceChange24h >= 0 
-                  ? "text-success bg-success/10" 
-                  : "text-warning bg-warning/10"
-              )}>
-                {priceData.priceChange24h >= 0 ? (
-                  <TrendingUp className="h-3 w-3" />
-                ) : (
-                  <TrendingDown className="h-3 w-3" />
-                )}
-                {Math.abs(priceData.priceChange24h).toFixed(2)}%
-              </span>
-            )}
           </div>
         )}
       </div>
       
-      <div className="relative flex-1 w-full h-[200px] bg-card/30 rounded-lg">
+      <div className="flex-1 min-h-[200px] relative w-full bg-card/30 rounded-lg overflow-hidden">
         <TradingViewWidget symbol={symbol} isMobile={true} />
       </div>
     </div>

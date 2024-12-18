@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { useQuery } from "@tanstack/react-query";
 import { TradingForm } from "@/components/trading/TradingFormMobile";
 import { usePositions } from "@/hooks/usePositions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -9,14 +8,7 @@ import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { MobilePositionsList } from "@/components/trading/MobilePositionsList";
 import { MobileCryptoChart } from "@/components/MobileCryptoChart";
-
-const SUPPORTED_CRYPTOS = [
-  { symbol: "BTC", name: "Bitcoin" },
-  { symbol: "ETH", name: "Ethereum" },
-  { symbol: "BNB", name: "Binance Coin" },
-  { symbol: "XRP", name: "Ripple" },
-  { symbol: "SOL", name: "Solana" }
-];
+import { MobileNavBar } from "@/components/MobileNavBar";
 
 const TradeMobile = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
@@ -38,18 +30,9 @@ const TradeMobile = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 bg-background pb-24">
+        <div className="flex-1 p-4 bg-background pb-32">
           <div className="space-y-4">
-            <header>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                {selectedCrypto}/USDT
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Current Price: ${currentPrice?.toFixed(2) || '...'}
-              </p>
-            </header>
-
-            <div className="h-[250px]">
+            <div className="h-[300px]">
               <MobileCryptoChart 
                 symbol={selectedCrypto} 
                 onPriceUpdate={handlePriceUpdate}
@@ -105,6 +88,8 @@ const TradeMobile = () => {
             </SheetTrigger>
           </Sheet>
         </div>
+
+        <MobileNavBar />
       </div>
     </SidebarProvider>
   );
