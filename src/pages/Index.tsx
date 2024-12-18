@@ -99,24 +99,12 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="space-y-8">
-              <div className="glass-card rounded-lg p-6">
-                <PositionsList
-                  positions={positions || []}
-                  currentPrice={currentPrice}
-                  onUpdate={refetchPositions}
-                  type="open"
-                />
-              </div>
-
-              <div className="glass-card rounded-lg p-6">
-                <PositionsList
-                  positions={positions || []}
-                  currentPrice={currentPrice}
-                  onUpdate={refetchPositions}
-                  type="closed"
-                />
-              </div>
+            <div className="glass-card rounded-lg p-6">
+              <PositionsList
+                positions={positions || []}
+                currentPrice={currentPrice}
+                onUpdate={refetchPositions}
+              />
             </div>
           </div>
         </div>
