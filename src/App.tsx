@@ -37,7 +37,11 @@ function App() {
           path="/admin"
           element={
             <ProtectedRoute>
-              <AdminPanel />
+              {profile?.is_admin ? (
+                <AdminPanel />
+              ) : (
+                <Navigate to="/trade" replace />
+              )}
             </ProtectedRoute>
           }
         />
@@ -45,9 +49,13 @@ function App() {
           path="/trade"
           element={
             <ProtectedRoute>
-              <div className={isMobile ? "main-content" : ""}>
-                {isMobile ? <TradeMobile /> : <Trade />}
-              </div>
+              {profile?.is_admin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <div className={isMobile ? "main-content" : ""}>
+                  {isMobile ? <TradeMobile /> : <Trade />}
+                </div>
+              )}
             </ProtectedRoute>
           }
         />
@@ -55,9 +63,13 @@ function App() {
           path="/portfolio"
           element={
             <ProtectedRoute>
-              <div className={isMobile ? "main-content" : ""}>
-                <Portfolio />
-              </div>
+              {profile?.is_admin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <div className={isMobile ? "main-content" : ""}>
+                  <Portfolio />
+                </div>
+              )}
             </ProtectedRoute>
           }
         />
@@ -65,9 +77,13 @@ function App() {
           path="/wallet"
           element={
             <ProtectedRoute>
-              <div className={isMobile ? "main-content" : ""}>
-                <Wallet />
-              </div>
+              {profile?.is_admin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <div className={isMobile ? "main-content" : ""}>
+                  <Wallet />
+                </div>
+              )}
             </ProtectedRoute>
           }
         />
@@ -75,9 +91,13 @@ function App() {
           path="/history"
           element={
             <ProtectedRoute>
-              <div className={isMobile ? "main-content" : ""}>
-                <History />
-              </div>
+              {profile?.is_admin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <div className={isMobile ? "main-content" : ""}>
+                  <History />
+                </div>
+              )}
             </ProtectedRoute>
           }
         />
@@ -85,9 +105,13 @@ function App() {
           path="/settings"
           element={
             <ProtectedRoute>
-              <div className={isMobile ? "main-content" : ""}>
-                <Settings />
-              </div>
+              {profile?.is_admin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <div className={isMobile ? "main-content" : ""}>
+                  <Settings />
+                </div>
+              )}
             </ProtectedRoute>
           }
         />
