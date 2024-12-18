@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
 import { useQueryClient } from "@tanstack/react-query";
+import { checkPositionRequirements, handlePositionMerge } from "@/utils/positionManagement";
 
 export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
   const { toast } = useToast();
@@ -15,8 +16,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
   const handleTrade = async (type: 'long' | 'short') => {
     if (!currentPrice || isNaN(currentPrice)) {
       toast({
-        title: "שגיאה",
-        description: "לא ניתן לקבל את המחיר הנוכחי. אנא נסה שוב.",
+        title: "Error",
+        description: "Cannot get current price. Please try again.",
         variant: "destructive",
       });
       return;
@@ -24,8 +25,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
 
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       toast({
-        title: "שגיאה",
-        description: "אנא הכנס סכום תקין",
+        title: "Error",
+        description: "Please enter a valid amount",
         variant: "destructive",
       });
       return;
@@ -34,10 +35,10 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
     const tradeAmount = Number(amount);
     const leverageNum = Number(leverage);
 
-    if (!profile || tradeAmount > profile.balance) {
+    if (!profile?.id) {
       toast({
-        title: "שגיאה",
-        description: "אין מספיק יתרה בחשבון",
+        title: "Error",
+        description: "Please log in to trade",
         variant: "destructive",
       });
       return;
@@ -46,25 +47,48 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
     try {
       setIsSubmitting(true);
 
-      // Calculate liquidation price (simplified for demo)
-      const liquidationPrice = type === 'long' 
-        ? currentPrice * (1 - 1/leverageNum)
-        : currentPrice * (1 + 1/leverageNum);
+      // Check requirements
+      const requirementsMet = await checkPositionRequirements(
+        profile.id,
+        selectedCrypto,
+        type,
+        tradeAmount,
+        leverageNum
+      );
 
-      // Insert position
-      const { error: positionError } = await supabase
-        .from('positions')
-        .insert({
-          user_id: profile.id,
-          symbol: selectedCrypto,
-          type,
-          amount: tradeAmount,
-          leverage: leverageNum,
-          entry_price: currentPrice,
-          liquidation_price: liquidationPrice,
-        });
+      if (!requirementsMet) return;
 
-      if (positionError) throw positionError;
+      // Try to merge with existing position
+      const merged = await handlePositionMerge(
+        profile.id,
+        selectedCrypto,
+        type,
+        tradeAmount,
+        leverageNum,
+        currentPrice
+      );
+
+      if (!merged) {
+        // Calculate liquidation price
+        const liquidationPrice = type === 'long' 
+          ? currentPrice * (1 - 1/leverageNum)
+          : currentPrice * (1 + 1/leverageNum);
+
+        // Insert new position
+        const { error: positionError } = await supabase
+          .from('positions')
+          .insert({
+            user_id: profile.id,
+            symbol: selectedCrypto,
+            type,
+            amount: tradeAmount,
+            leverage: leverageNum,
+            entry_price: currentPrice,
+            liquidation_price: liquidationPrice,
+          });
+
+        if (positionError) throw positionError;
+      }
 
       // Update user balance
       const { error: balanceError } = await supabase
@@ -79,8 +103,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
       await queryClient.invalidateQueries({ queryKey: ['positions'] });
 
       toast({
-        title: "הפוזיציה נפתחה בהצלחה",
-        description: `${type === 'long' ? 'קנית' : 'מכרת'} ${amount} USDT עם מינוף ${leverage}X`,
+        title: "Position opened successfully",
+        description: `${type === 'long' ? 'Bought' : 'Sold'} ${amount} USDT with ${leverage}X leverage`,
       });
 
       // Reset form
@@ -88,8 +112,8 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
     } catch (error) {
       console.error('Trade error:', error);
       toast({
-        title: "שגיאה",
-        description: "לא הצלחנו לפתוח את הפוזיציה. אנא נסה שוב.",
+        title: "Error",
+        description: "Could not open position. Please try again.",
         variant: "destructive",
       });
     } finally {

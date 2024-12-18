@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Position } from "@/types/position";
 import { PositionRow } from "./PositionRow";
+import { useEffect } from "react";
+import { checkAndClosePosition } from "@/utils/positionManagement";
 
 interface PositionsListProps {
   positions: Position[];
@@ -12,6 +14,15 @@ interface PositionsListProps {
 export function PositionsList({ positions, currentPrice, onUpdate }: PositionsListProps) {
   const openPositions = positions.filter(p => p.status === 'open');
   const closedPositions = positions.filter(p => p.status === 'closed');
+
+  // Check for stop loss and take profit triggers
+  useEffect(() => {
+    if (!currentPrice) return;
+    
+    openPositions.forEach(position => {
+      checkAndClosePosition(position, currentPrice);
+    });
+  }, [currentPrice, openPositions]);
 
   return (
     <div className="w-full">
