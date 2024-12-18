@@ -105,7 +105,10 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="email" className="flex items-center gap-2">
+        <Label 
+          htmlFor="email" 
+          className="flex items-center gap-2 mb-2" // Added mb-2 for bottom margin
+        >
           <Mail className="w-4 h-4 text-primary" />
           Email
         </Label>
@@ -118,7 +121,10 @@ export function LoginForm() {
         />
       </div>
       <div>
-        <Label htmlFor="password" className="flex items-center gap-2">
+        <Label 
+          htmlFor="password" 
+          className="flex items-center gap-2 mb-2" // Added mb-2 for bottom margin
+        >
           <Lock className="w-4 h-4 text-primary" />
           Password
         </Label>
