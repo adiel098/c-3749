@@ -31,7 +31,7 @@ export const AppSidebar = () => {
   ];
 
   return (
-    <Sidebar className="border-r border-border/40 bg-gradient-to-b from-background/95 to-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <Sidebar className="hidden lg:block border-r border-border/40 bg-gradient-to-b from-background/95 to-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <SidebarContent>
         <SidebarGroup>
           <div className="flex h-[60px] items-center px-6">

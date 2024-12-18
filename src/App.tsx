@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { MobileNavBar } from "@/components/MobileNavBar";
 import AuthPage from "./pages/auth/AuthPage";
 import Trade from "./pages/Trade";
 import Portfolio from "./pages/Portfolio";
@@ -64,6 +65,7 @@ const App = () => (
               }
             />
           </Routes>
+          <MobileNavBar />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
