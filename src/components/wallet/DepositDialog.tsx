@@ -41,24 +41,36 @@ export function DepositDialog({ children }: DepositDialogProps) {
         <div className="grid gap-6">
           <div className="flex gap-2">
             <Button
-              variant={selectedMethod === "bitcoin" ? "default" : "outline"}
-              className="flex-1 gap-2"
+              variant={selectedMethod === "bitcoin" ? "default" : "secondary"}
+              className={`flex-1 gap-2 transition-all duration-300 ${
+                selectedMethod === "bitcoin" 
+                  ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
+                  : "hover:bg-secondary/80"
+              }`}
               onClick={() => setSelectedMethod("bitcoin")}
             >
               <Bitcoin className="h-4 w-4" />
               Bitcoin
             </Button>
             <Button
-              variant={selectedMethod === "ethereum" ? "default" : "outline"}
-              className="flex-1 gap-2"
+              variant={selectedMethod === "ethereum" ? "default" : "secondary"}
+              className={`flex-1 gap-2 transition-all duration-300 ${
+                selectedMethod === "ethereum" 
+                  ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
+                  : "hover:bg-secondary/80"
+              }`}
               onClick={() => setSelectedMethod("ethereum")}
             >
               <Wallet className="h-4 w-4" />
               Ethereum
             </Button>
             <Button
-              variant={selectedMethod === "usdt" ? "default" : "outline"}
-              className="flex-1 gap-2"
+              variant={selectedMethod === "usdt" ? "default" : "secondary"}
+              className={`flex-1 gap-2 transition-all duration-300 ${
+                selectedMethod === "usdt" 
+                  ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
+                  : "hover:bg-secondary/80"
+              }`}
               onClick={() => setSelectedMethod("usdt")}
             >
               <span className="font-bold">₮</span>
@@ -81,12 +93,13 @@ export function DepositDialog({ children }: DepositDialogProps) {
                 <Input
                   value={addresses[selectedMethod as keyof typeof addresses]}
                   readOnly
-                  className="font-mono text-sm"
+                  className="font-mono text-sm bg-secondary/20 border-secondary"
                 />
                 <Button
                   size="icon"
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => handleCopy(addresses[selectedMethod as keyof typeof addresses])}
+                  className="hover:bg-secondary/80 transition-colors"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>

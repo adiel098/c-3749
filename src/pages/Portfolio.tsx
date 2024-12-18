@@ -12,13 +12,24 @@ const Portfolio = () => {
   const { data: profile, isLoading: isLoadingProfile } = useProfile();
   const { data: positions } = usePositions();
 
-  // Calculate total unrealized PNL
-  const totalUnrealizedPnl = positions?.reduce((total, position) => {
-    if (position.status === 'open') {
-      return total + (position.profit_loss || 0);
-    }
-    return total;
-  }, 0) || 0;
+  const calculateAccountValue = () => {
+    if (!profile || !positions) return 0;
+
+    const openPositions = positions.filter(p => p.status === 'open');
+    
+    // Calculate total margin used in open positions
+    const totalMargin = openPositions.reduce((sum, pos) => sum + pos.amount, 0);
+    
+    // Calculate total P&L from open positions
+    const totalPnL = openPositions.reduce((sum, pos) => sum + (pos.profit_loss || 0), 0);
+
+    // Total account value = Available Balance + Margin Used + Total P&L
+    return profile.balance + totalMargin + totalPnL;
+  };
+
+  const totalAccountValue = calculateAccountValue();
+  const marginUsed = positions?.filter(p => p.status === 'open')
+    .reduce((sum, pos) => sum + pos.amount, 0) || 0;
 
   return (
     <SidebarProvider>
@@ -38,13 +49,13 @@ const Portfolio = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
                     <Wallet className="h-4 w-4 text-primary" />
-                    Total Portfolio Value
+                    Total Account Value
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">
                     <p className="text-2xl font-bold">
-                      ${isLoadingProfile ? "..." : (profile?.balance || 0).toFixed(2)}
+                      ${totalAccountValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Updated in real-time
