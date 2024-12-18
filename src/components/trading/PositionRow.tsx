@@ -45,6 +45,10 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
     }
   };
 
+  const formatPrice = (price: number) => {
+    return price < 1 ? price.toFixed(6) : price.toFixed(2);
+  };
+
   return (
     <div className="glass-effect p-2 rounded-lg hover:bg-card/40 transition-all duration-300">
       <div className="flex items-center justify-between">
@@ -67,16 +71,16 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
           </Badge>
           <div className="flex items-center gap-1 text-sm">
             <span className="text-muted-foreground">Entry:</span>
-            <span>${position.entry_price.toFixed(2)}</span>
+            <span>${formatPrice(position.entry_price)}</span>
             {type === 'open' ? (
               <>
                 <span className="text-muted-foreground ml-1">Current:</span>
-                <span>${currentPrice?.toFixed(2) || '...'}</span>
+                <span>${currentPrice ? formatPrice(currentPrice) : '...'}</span>
               </>
             ) : (
               <>
                 <span className="text-muted-foreground ml-1">Exit:</span>
-                <span>${position.exit_price?.toFixed(2)}</span>
+                <span>${position.exit_price ? formatPrice(position.exit_price) : '...'}</span>
               </>
             )}
             <span className="text-muted-foreground ml-1">Size:</span>
@@ -98,10 +102,10 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
             {(position.stop_loss || position.take_profit) && (
               <>
                 {position.stop_loss && (
-                  <span className="text-warning ml-1">SL:${position.stop_loss.toFixed(2)}</span>
+                  <span className="text-warning ml-1">SL:${formatPrice(position.stop_loss)}</span>
                 )}
                 {position.take_profit && (
-                  <span className="text-success ml-1">TP:${position.take_profit.toFixed(2)}</span>
+                  <span className="text-success ml-1">TP:${formatPrice(position.take_profit)}</span>
                 )}
                 {type === 'open' && (
                   <StopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
