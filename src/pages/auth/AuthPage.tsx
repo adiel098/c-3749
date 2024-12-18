@@ -10,7 +10,7 @@ const AuthPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 auth-page">
+    <div className="h-[100dvh] flex items-center justify-center p-4 auth-page overflow-hidden">
       <Card className="w-full max-w-md glass-effect">
         <CardContent className="p-0">
           <Tabs defaultValue="login" className="w-full">
@@ -77,7 +77,7 @@ const AuthPage = () => {
                 </TabsList>
               </div>
               <div className="px-6 pb-10">
-                <ScrollArea className="h-[400px] pr-4">
+                <ScrollArea className="h-[calc(100dvh-25rem)] pr-4">
                   <SignUpForm />
                 </ScrollArea>
               </div>
