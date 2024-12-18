@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MobileNavBar } from "@/components/MobileNavBar";
 import Trade from "@/pages/Trade";
@@ -17,68 +17,66 @@ function App() {
   const { session } = useAuth();
 
   return (
-    <Router>
-      <div className="relative min-h-screen">
-        <Routes>
-          <Route path="/" element={
-            session ? <Navigate to="/trade" replace /> : <AuthPage />
-          } />
-          <Route
-            path="/trade"
-            element={
-              <ProtectedRoute>
-                <div className={isMobile ? "main-content" : ""}>
-                  {isMobile ? <TradeMobile /> : <Trade />}
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/portfolio"
-            element={
-              <ProtectedRoute>
-                <div className="main-content">
-                  <Portfolio />
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/wallet"
-            element={
-              <ProtectedRoute>
-                <div className="main-content">
-                  <Wallet />
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/history"
-            element={
-              <ProtectedRoute>
-                <div className="main-content">
-                  <History />
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <div className="main-content">
-                  <Settings />
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        {isMobile && session && <MobileNavBar />}
-        <Toaster />
-      </div>
-    </Router>
+    <div className="relative min-h-screen">
+      <Routes>
+        <Route path="/" element={
+          session ? <Navigate to="/trade" replace /> : <AuthPage />
+        } />
+        <Route
+          path="/trade"
+          element={
+            <ProtectedRoute>
+              <div className={isMobile ? "main-content" : ""}>
+                {isMobile ? <TradeMobile /> : <Trade />}
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/portfolio"
+          element={
+            <ProtectedRoute>
+              <div className="main-content">
+                <Portfolio />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/wallet"
+          element={
+            <ProtectedRoute>
+              <div className="main-content">
+                <Wallet />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <div className="main-content">
+                <History />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <div className="main-content">
+                <Settings />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      {isMobile && session && <MobileNavBar />}
+      <Toaster />
+    </div>
   );
 }
 
