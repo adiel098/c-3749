@@ -2,15 +2,15 @@ import { AlertCircle, CheckCircle, Info, X } from "lucide-react";
 
 export const toastStyles = {
   success: {
-    className: "bg-success/10 text-success border border-success/20 shadow-lg",
+    className: "bg-success/20 text-success border border-success/30 shadow-lg backdrop-blur-sm",
     icon: <CheckCircle className="h-5 w-5" />,
   },
   error: {
-    className: "bg-warning/10 text-warning border border-warning/20 shadow-lg",
+    className: "bg-warning/20 text-warning border border-warning/30 shadow-lg backdrop-blur-sm",
     icon: <AlertCircle className="h-5 w-5" />,
   },
   info: {
-    className: "bg-primary/10 text-primary border border-primary/20 shadow-lg",
+    className: "bg-primary/20 text-primary border border-primary/30 shadow-lg backdrop-blur-sm",
     icon: <Info className="h-5 w-5" />,
   },
 };
