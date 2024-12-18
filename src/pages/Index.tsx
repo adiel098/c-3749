@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Search } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -10,6 +10,7 @@ import { usePositions } from "@/hooks/usePositions";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PositionsList } from "@/components/trading/PositionsList";
+import MarketStats from "@/components/MarketStats";
 
 const Index = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
@@ -44,31 +45,35 @@ const Index = () => {
           <div className="max-w-7xl mx-auto space-y-8">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">Crypto Trading Demo</h1>
+                <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Crypto Trading Platform
+                </h1>
                 <p className="text-muted-foreground">Practice trading with virtual funds</p>
               </div>
             </header>
+
+            <MarketStats />
 
             <div className="relative w-full">
               <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="w-full flex items-center gap-2 justify-start">
                     <Search className="h-5 w-5" />
-                    <span>חפש מטבע...</span>
+                    <span>Search for a cryptocurrency...</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <Command className="rounded-lg">
-                    <CommandInput placeholder="חפש מטבע..." className="border-0" />
+                    <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
                     <CommandList className="max-h-[300px] overflow-y-auto">
-                      <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
-                      <CommandGroup heading="מטבעות פופולריים">
+                      <CommandEmpty>No results found</CommandEmpty>
+                      <CommandGroup heading="Popular Cryptocurrencies">
                         {cryptoList?.map((crypto: any) => (
                           <CommandItem
                             key={crypto.id}
                             value={crypto.symbol}
                             onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
-                            className="flex items-center gap-2 cursor-pointer p-2"
+                            className="flex items-center gap-2 cursor-pointer p-2 hover:bg-accent/10"
                           >
                             <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
                             <span>{crypto.name}</span>
@@ -89,22 +94,30 @@ const Index = () => {
                   onPriceUpdate={handlePriceUpdate}
                 />
               </div>
-              <TradingForm selectedCrypto={selectedCrypto} currentPrice={currentPrice} />
+              <div className="glass-card rounded-lg">
+                <TradingForm selectedCrypto={selectedCrypto} currentPrice={currentPrice} />
+              </div>
             </div>
 
-            <PositionsList
-              positions={positions || []}
-              currentPrice={currentPrice}
-              onUpdate={refetchPositions}
-              type="open"
-            />
+            <div className="space-y-8">
+              <div className="glass-card rounded-lg p-6">
+                <PositionsList
+                  positions={positions || []}
+                  currentPrice={currentPrice}
+                  onUpdate={refetchPositions}
+                  type="open"
+                />
+              </div>
 
-            <PositionsList
-              positions={positions || []}
-              currentPrice={currentPrice}
-              onUpdate={refetchPositions}
-              type="closed"
-            />
+              <div className="glass-card rounded-lg p-6">
+                <PositionsList
+                  positions={positions || []}
+                  currentPrice={currentPrice}
+                  onUpdate={refetchPositions}
+                  type="closed"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

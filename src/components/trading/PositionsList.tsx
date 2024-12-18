@@ -31,14 +31,14 @@ export function PositionsList({ positions, currentPrice, onUpdate, type }: Posit
   );
 
   return (
-    <Card>
+    <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
       <CardHeader>
-        <CardTitle>{type === 'open' ? 'פוזיציות פתוחות' : 'פוזיציות סגורות'}</CardTitle>
+        <CardTitle>{type === 'open' ? 'Open Positions' : 'Closed Positions'}</CardTitle>
       </CardHeader>
       <CardContent>
         {!filteredPositions.length ? (
           <div className="text-center text-muted-foreground py-8">
-            {type === 'open' ? 'אין פוזיציות פתוחות' : 'אין פוזיציות סגורות'}
+            {type === 'open' ? 'No open positions' : 'No closed positions'}
           </div>
         ) : (
           <div className="space-y-4">
@@ -51,7 +51,7 @@ export function PositionsList({ positions, currentPrice, onUpdate, type }: Posit
                   onUpdate={onUpdate}
                 />
               ) : (
-                <div key={position.id} className="flex justify-between items-center p-4 border rounded-lg">
+                <div key={position.id} className="flex justify-between items-center p-4 border border-white/10 rounded-lg bg-secondary/30 backdrop-blur-sm hover:bg-secondary/40 transition-colors">
                   <div>
                     <p className="font-semibold">{position.symbol}</p>
                     <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export function PositionsList({ positions, currentPrice, onUpdate, type }: Posit
                       <span>{position.type.toUpperCase()}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      כניסה: ${position.entry_price} | יציאה: ${position.exit_price}
+                      Entry: ${position.entry_price} | Exit: ${position.exit_price}
                     </p>
                   </div>
                   <div className="text-right">
@@ -72,7 +72,7 @@ export function PositionsList({ positions, currentPrice, onUpdate, type }: Posit
                       {position.profit_loss >= 0 ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      נסגר: {position.closed_at ? new Date(position.closed_at).toLocaleDateString() : ''}
+                      Closed: {position.closed_at ? new Date(position.closed_at).toLocaleDateString() : ''}
                     </p>
                   </div>
                 </div>

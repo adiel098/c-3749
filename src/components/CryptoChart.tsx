@@ -5,6 +5,12 @@ interface CryptoChartProps {
   onPriceUpdate?: (price: number) => void;
 }
 
+declare global {
+  interface Window {
+    TradingView: any;
+  }
+}
+
 const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const ws = useRef<WebSocket | null>(null);
@@ -45,8 +51,8 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
     script.src = 'https://s3.tradingview.com/tv.js';
     script.async = true;
     script.onload = () => {
-      if (typeof TradingView !== 'undefined' && containerRef.current) {
-        new (window as any).TradingView.widget({
+      if (containerRef.current) {
+        new window.TradingView.widget({
           "width": "100%",
           "height": "100%",
           "symbol": `BINANCE:${symbol}USDT`,
@@ -54,11 +60,16 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
           "timezone": "exchange",
           "theme": "dark",
           "style": "1",
-          "locale": "he_IL",
-          "toolbar_bg": "#f1f3f6",
+          "locale": "en",
+          "toolbar_bg": "#1A1F2C",
           "enable_publishing": false,
           "allow_symbol_change": true,
-          "container_id": "tradingview_chart"
+          "container_id": "tradingview_chart",
+          "hide_side_toolbar": false,
+          "studies": [
+            "Volume@tv-basicstudies",
+            "RSI@tv-basicstudies"
+          ]
         });
       }
     };
@@ -80,10 +91,10 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
   }, [symbol]);
 
   return (
-    <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden border bg-card">
-      <div className="flex justify-between items-center p-4 border-b">
+    <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden border border-white/10 bg-secondary/20 backdrop-blur-lg">
+      <div className="flex justify-between items-center p-4 border-b border-white/10">
         <h2 className="text-xl font-semibold">{symbol}/USDT Live Price</h2>
-        <span className="text-lg font-mono">
+        <span className="text-lg font-mono bg-secondary/40 px-3 py-1 rounded-lg">
           ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       </div>

@@ -24,12 +24,12 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
 
   if (!currentPrice) {
     return (
-      <Card className="bg-secondary/80">
+      <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
         <CardContent className="pt-6">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              לא ניתן לקבל את המחיר הנוכחי. אנא נסה שוב מאוחר יותר.
+              Unable to fetch current price. Please try again later.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -38,11 +38,11 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
   }
 
   return (
-    <Card className="bg-secondary/80">
+    <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
       <TradingFormHeader selectedCrypto={selectedCrypto} />
       <CardContent>
         <Tabs defaultValue="long" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 bg-secondary/40">
             <TabsTrigger value="long">Long</TabsTrigger>
             <TabsTrigger value="short">Short</TabsTrigger>
           </TabsList>
@@ -60,7 +60,7 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
               onClick={() => handleTrade('long')}
               disabled={isSubmitting || !currentPrice}
             >
-              קנייה/לונג
+              Buy/Long
             </Button>
           </TabsContent>
           <TabsContent value="short">
@@ -77,7 +77,7 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
               onClick={() => handleTrade('short')}
               disabled={isSubmitting || !currentPrice}
             >
-              מכירה/שורט
+              Sell/Short
             </Button>
           </TabsContent>
         </Tabs>
