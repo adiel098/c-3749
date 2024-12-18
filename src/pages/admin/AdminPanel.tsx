@@ -24,14 +24,14 @@ export default function AdminPanel() {
     try {
       await signOut();
       toast({
-        title: "התנתקת בהצלחה",
-        description: "להתראות! מקווים לראותך שוב בקרוב",
+        title: "Successfully logged out",
+        description: "Goodbye! We hope to see you again soon",
       });
       navigate("/auth");
     } catch (error) {
       toast({
-        title: "שגיאה",
-        description: "אירעה שגיאה בהתנתקות. אנא נסה שוב.",
+        title: "Error",
+        description: "An error occurred while logging out. Please try again.",
         variant: "destructive",
       });
     }
@@ -57,7 +57,7 @@ export default function AdminPanel() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-transparent to-red-600/20 animate-shimmer" />
             <LogOut className="w-5 h-5 transition-transform group-hover:-translate-y-0.5 group-hover:scale-110" />
-            <span className="relative transition-transform group-hover:-translate-y-0.5">התנתק</span>
+            <span className="relative transition-transform group-hover:-translate-y-0.5">Logout</span>
           </Button>
         </div>
         
