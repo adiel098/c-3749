@@ -46,7 +46,7 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
             <TabsTrigger value="long">Long</TabsTrigger>
             <TabsTrigger value="short">Short</TabsTrigger>
           </TabsList>
-          <TabsContent value="long">
+          <TabsContent value="long" className="space-y-4">
             <TradingFormInputs
               amount={amount}
               setAmount={setAmount}
@@ -56,14 +56,14 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
               currentPrice={currentPrice}
             />
             <Button 
-              className="w-full bg-success hover:bg-success/90 mt-4"
+              className="w-full bg-success hover:bg-success/90"
               onClick={() => handleTrade('long')}
               disabled={isSubmitting || !currentPrice}
             >
-              Buy/Long
+              Open Long Position
             </Button>
           </TabsContent>
-          <TabsContent value="short">
+          <TabsContent value="short" className="space-y-4">
             <TradingFormInputs
               amount={amount}
               setAmount={setAmount}
@@ -73,11 +73,11 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
               currentPrice={currentPrice}
             />
             <Button 
-              className="w-full bg-warning hover:bg-warning/90 mt-4"
+              className="w-full bg-warning hover:bg-warning/90"
               onClick={() => handleTrade('short')}
               disabled={isSubmitting || !currentPrice}
             >
-              Sell/Short
+              Open Short Position
             </Button>
           </TabsContent>
         </Tabs>
