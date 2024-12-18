@@ -41,10 +41,10 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
       return formattedData;
     },
     staleTime: 30000, // Data is considered fresh for 30 seconds
-    cacheTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes
+    gcTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes (renamed from cacheTime)
     refetchInterval: 30000, // Refetch every 30 seconds
-    refetchOnMount: true, // Refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const filteredCryptos = cryptoList.filter((crypto: any) =>
