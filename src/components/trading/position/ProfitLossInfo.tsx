@@ -7,7 +7,6 @@ interface ProfitLossInfoProps {
 }
 
 export function ProfitLossInfo({ position, currentPrice }: ProfitLossInfoProps) {
-  // Calculate profit/loss based on leverage and position size
   const calculatePnL = () => {
     if (!currentPrice && !position.exit_price) return 0;
     
@@ -15,9 +14,6 @@ export function ProfitLossInfo({ position, currentPrice }: ProfitLossInfoProps) 
     const priceChange = exitPrice - position.entry_price;
     const direction = position.type === 'long' ? 1 : -1;
     
-    // Calculate P&L considering leverage
-    // Formula: (Current Price - Entry Price) * Position Size * Direction
-    // Position Size = Amount * Leverage
     const positionSize = position.amount * position.leverage;
     const pnl = (priceChange / position.entry_price) * positionSize * direction;
     
@@ -29,18 +25,26 @@ export function ProfitLossInfo({ position, currentPrice }: ProfitLossInfoProps) 
   const profitLossPercentage = (profitLoss / position.amount) * 100;
 
   return (
-    <div className={`flex items-center gap-1 ${isProfitable ? 'text-green-500' : 'text-red-500'}`}>
-      {isProfitable ? (
-        <TrendingUp className="h-4 w-4" />
-      ) : (
-        <TrendingDown className="h-4 w-4" />
-      )}
-      <span className="font-medium whitespace-nowrap">
-        {isProfitable ? '+' : ''}{profitLoss.toFixed(2)} USDT
-      </span>
-      <span className="text-sm">
-        ({profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%)
-      </span>
+    <div className="text-right space-y-2">
+      <div className={`flex items-center gap-2 justify-end text-2xl font-bold ${
+        isProfitable ? 'text-success' : 'text-warning'
+      }`}>
+        {isProfitable ? (
+          <TrendingUp className="h-6 w-6" />
+        ) : (
+          <TrendingDown className="h-6 w-6" />
+        )}
+        <span className="text-3xl">
+          {isProfitable ? '+' : ''}{profitLoss.toFixed(2)} USDT
+        </span>
+      </div>
+      <div className={`flex items-center gap-1 justify-end text-xl ${
+        isProfitable ? 'text-success/80' : 'text-warning/80'
+      }`}>
+        <span>
+          {isProfitable ? '+' : ''}{profitLossPercentage.toFixed(2)}%
+        </span>
+      </div>
     </div>
   );
 }

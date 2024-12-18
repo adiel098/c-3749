@@ -1,5 +1,6 @@
-import { XCircle } from "lucide-react";
+import { XCircle, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Position } from "@/types/position";
@@ -46,36 +47,105 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
   };
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-card/30 backdrop-blur-sm border border-white/10 hover:bg-card/40 transition-all duration-200">
-      <div className="flex items-center gap-4">
-        <PositionInfo 
-          position={position}
-          currentPrice={currentPrice}
-          type={type}
-        />
-        
-        {type === 'open' && (
-          <StopLossTakeProfitInfo 
-            position={position}
-            onUpdate={onUpdate || (() => {})}
-          />
-        )}
-      </div>
+    <div className="glass-effect p-4 rounded-lg hover:bg-card/40 transition-all duration-300 space-y-4">
+      <div className="flex justify-between items-start">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-xl">{position.symbol}</span>
+            <Badge 
+              variant={position.type === 'long' ? 'default' : 'destructive'} 
+              className={`uppercase ${
+                position.type === 'long' 
+                  ? 'bg-success/20 text-success hover:bg-success/30' 
+                  : 'bg-warning/20 text-warning hover:bg-warning/30'
+              }`}
+            >
+              {position.type === 'long' ? (
+                <TrendingUp className="w-4 h-4 mr-1" />
+              ) : (
+                <TrendingDown className="w-4 h-4 mr-1" />
+              )}
+              {position.type.toUpperCase()} {position.leverage}X
+            </Badge>
+          </div>
+          
+          {type === 'closed' && (
+            <p className="text-sm text-muted-foreground">
+              Closed on {new Date(position.closed_at || '').toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </p>
+          )}
+        </div>
 
-      <div className="flex items-center gap-4">
         <ProfitLossInfo 
           position={position}
           currentPrice={currentPrice}
         />
+      </div>
 
-        {type === 'open' && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleClosePosition}
-          >
-            <XCircle className="h-4 w-4" />
-          </Button>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-white/10">
+        <div>
+          <p className="text-sm text-muted-foreground">Entry Price</p>
+          <p className="font-medium text-lg flex items-center gap-1">
+            <DollarSign className="h-4 w-4 text-primary" />
+            {position.entry_price}
+          </p>
+        </div>
+        
+        {type === 'open' ? (
+          <>
+            <div>
+              <p className="text-sm text-muted-foreground">Current Price</p>
+              <p className="font-medium text-lg flex items-center gap-1">
+                <DollarSign className="h-4 w-4 text-primary" />
+                {currentPrice?.toFixed(2) || '...'}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Position Size</p>
+              <p className="font-medium text-lg flex items-center gap-1">
+                <DollarSign className="h-4 w-4 text-primary" />
+                {position.amount}
+              </p>
+            </div>
+            <StopLossTakeProfitInfo 
+              position={position}
+              onUpdate={onUpdate || (() => {})}
+            />
+            <div className="flex justify-end col-span-full">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleClosePosition}
+                className="bg-warning/20 text-warning hover:bg-warning/30"
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Close Position
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <p className="text-sm text-muted-foreground">Exit Price</p>
+              <p className="font-medium text-lg flex items-center gap-1">
+                <DollarSign className="h-4 w-4 text-primary" />
+                {position.exit_price}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Position Size</p>
+              <p className="font-medium text-lg flex items-center gap-1">
+                <DollarSign className="h-4 w-4 text-primary" />
+                {position.amount}
+              </p>
+            </div>
+          </>
         )}
       </div>
     </div>
