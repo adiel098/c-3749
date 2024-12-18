@@ -27,9 +27,18 @@ const Portfolio = () => {
     return profile.balance + totalMargin + totalPnL;
   };
 
+  // Calculate total unrealized PnL from open positions
+  const calculateTotalUnrealizedPnL = () => {
+    if (!positions) return 0;
+    return positions
+      .filter(p => p.status === 'open')
+      .reduce((sum, pos) => sum + (pos.profit_loss || 0), 0);
+  };
+
   const totalAccountValue = calculateAccountValue();
   const marginUsed = positions?.filter(p => p.status === 'open')
     .reduce((sum, pos) => sum + pos.amount, 0) || 0;
+  const totalUnrealizedPnl = calculateTotalUnrealizedPnL();
 
   return (
     <SidebarProvider>
