@@ -35,7 +35,9 @@ function App() {
             path="/portfolio"
             element={
               <ProtectedRoute>
-                <Portfolio />
+                <div className="pb-16 md:pb-0">
+                  <Portfolio />
+                </div>
               </ProtectedRoute>
             }
           />
@@ -43,7 +45,9 @@ function App() {
             path="/wallet"
             element={
               <ProtectedRoute>
-                <Wallet />
+                <div className="pb-16 md:pb-0">
+                  <Wallet />
+                </div>
               </ProtectedRoute>
             }
           />
@@ -51,7 +55,9 @@ function App() {
             path="/history"
             element={
               <ProtectedRoute>
-                <History />
+                <div className="pb-16 md:pb-0">
+                  <History />
+                </div>
               </ProtectedRoute>
             }
           />
@@ -59,7 +65,9 @@ function App() {
             path="/settings"
             element={
               <ProtectedRoute>
-                <Settings />
+                <div className="pb-16 md:pb-0">
+                  <Settings />
+                </div>
               </ProtectedRoute>
             }
           />

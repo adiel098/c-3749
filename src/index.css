@@ -72,13 +72,20 @@
 }
 
 /* Mobile Navigation Adjustments */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .main-content {
     @apply pb-16;
   }
 }
 
-/* Ensure mobile navigation is always visible */
+/* Ensure mobile navigation is always visible and content is properly spaced */
 .mobile-nav {
   @apply fixed bottom-0 left-0 right-0 z-50;
+}
+
+/* Add padding to main content area on mobile to prevent content from being hidden behind the navigation bar */
+@media (max-width: 768px) {
+  .main-content {
+    padding-bottom: 4rem;
+  }
 }
