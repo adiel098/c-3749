@@ -3,6 +3,8 @@ import type { Position } from "@/types/position";
 import { checkAndClosePosition } from "@/utils/positionManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MobilePositionRow } from "./position/MobilePositionRow";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface MobilePositionsListProps {
   positions: Position[];
@@ -10,9 +12,34 @@ interface MobilePositionsListProps {
 }
 
 export function MobilePositionsList({ positions, onUpdate }: MobilePositionsListProps) {
+  const queryClient = useQueryClient();
   const openPositions = positions.filter(p => p.status === 'open');
   const closedPositions = positions.filter(p => p.status === 'closed');
   const [prices, setPrices] = useState<Record<string, number>>({});
+
+  // Set up real-time subscription for positions updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('positions-changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'positions' 
+        },
+        () => {
+          // Invalidate and refetch positions data
+          queryClient.invalidateQueries({ queryKey: ['positions'] });
+          onUpdate();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient, onUpdate]);
 
   // Fetch prices for all unique symbols in open positions
   useEffect(() => {

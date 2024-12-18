@@ -5,9 +5,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useProfile } from "@/hooks/useProfile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TradingFormProps {
   selectedCrypto: string;
@@ -23,10 +24,34 @@ export function TradingForm({
   onClose 
 }: TradingFormProps) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: profile } = useProfile();
   const [amount, setAmount] = useState("");
   const [leverage, setLeverage] = useState("10");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Set up real-time subscription for positions updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('positions-changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'positions' 
+        },
+        () => {
+          // Invalidate and refetch positions data
+          queryClient.invalidateQueries({ queryKey: ['positions'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const handleTrade = async (type: 'long' | 'short') => {
     if (!currentPrice || !profile?.id) return;
@@ -83,6 +108,8 @@ export function TradingForm({
         description: `${type.toUpperCase()} ${amount} USDT with ${leverage}X leverage`,
       });
 
+      // Reset form and close modal
+      setAmount("");
       if (onClose) onClose();
     } catch (error) {
       console.error('Trade error:', error);
