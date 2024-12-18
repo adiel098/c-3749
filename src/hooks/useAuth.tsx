@@ -17,21 +17,27 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("AuthProvider - Initial session:", session ? "Exists" : "None");
+      console.log("AuthProvider - Initial session fetch:", session ? "Exists" : "None");
       setSession(session);
       setUser(session?.user ?? null);
+      setIsLoading(false);
     });
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log("AuthProvider - Auth state changed:", _event);
-      console.log("AuthProvider - New session:", session ? "Exists" : "None");
+      console.log("AuthProvider - New session state:", session ? "Exists" : "None");
+      
+      // Add a small delay to ensure state is properly updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       setSession(session);
       setUser(session?.user ?? null);
     });
@@ -42,6 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
   };
+
+  // Don't render children until initial session is loaded
+  if (isLoading) {
+    console.log("AuthProvider - Still loading initial session");
+    return null;
+  }
 
   return (
     <AuthContext.Provider value={{ session, user, signOut }}>
