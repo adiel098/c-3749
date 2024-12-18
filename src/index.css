@@ -29,27 +29,27 @@
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   @apply bg-background;
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/30 transition-colors;
 }
 
 /* Gradient Text */
 .gradient-text {
-  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent;
 }
 
 /* Glass Effect */
 .glass-effect {
-  @apply bg-card/30 backdrop-blur-xl border border-white/10;
+  @apply bg-card/30 backdrop-blur-xl border border-white/10 shadow-lg hover:border-primary/20 transition-colors duration-300;
 }
 
 /* Glow Effect */
