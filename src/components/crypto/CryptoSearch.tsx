@@ -3,7 +3,6 @@ import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Command, CommandInput } from "@/components/ui/command";
-import { useWebSocketData } from "./useWebSocketData";
 import { CryptoSearchResults } from "./CryptoSearchResults";
 
 interface CryptoSearchProps {
@@ -13,12 +12,6 @@ interface CryptoSearchProps {
 export function CryptoSearch({ onSelect }: CryptoSearchProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-
-  const { cryptoList, isLoading, error } = useWebSocketData(open);
-
-  const filteredCryptos = cryptoList.filter((crypto) =>
-    crypto.symbol.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <>
@@ -34,12 +27,12 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Search Cryptocurrencies</DialogTitle>
+            <DialogTitle>חיפוש מטבעות</DialogTitle>
           </DialogHeader>
 
-          <Command className="rounded-lg border">
+          <Command className="rounded-lg border shadow-sm">
             <CommandInput
-              placeholder="Search by name..."
+              placeholder="חפש לפי שם או סימול..."
               value={search}
               onValueChange={setSearch}
               className="border-none focus:ring-0"
@@ -47,9 +40,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
 
             <div className="max-h-[400px] overflow-y-auto space-y-2 custom-scrollbar">
               <CryptoSearchResults
-                cryptoList={filteredCryptos}
-                isLoading={isLoading}
-                error={error}
+                searchTerm={search}
                 onSelect={onSelect}
                 onClose={() => setOpen(false)}
               />
