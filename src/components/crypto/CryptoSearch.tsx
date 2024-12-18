@@ -69,12 +69,17 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               )
               .slice(0, 100);
 
-            setCryptoList(usdtPairs || []);
+            if (Array.isArray(usdtPairs)) {
+              setCryptoList(usdtPairs);
+            } else {
+              setCryptoList([]);
+            }
             setIsLoading(false);
           } catch (err) {
             console.error('Data processing error:', err);
             setError('Failed to process data');
             setIsLoading(false);
+            setCryptoList([]);
           }
         };
 
@@ -82,6 +87,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           console.error('WebSocket error:', error);
           setError('Failed to connect to price feed');
           setIsLoading(false);
+          setCryptoList([]);
 
           if (retryCount < maxRetries) {
             retryCount++;
@@ -106,6 +112,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
         console.error('WebSocket connection error:', error);
         setError('Failed to establish connection');
         setIsLoading(false);
+        setCryptoList([]);
       }
     };
 
