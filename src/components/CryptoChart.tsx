@@ -25,7 +25,7 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
       script.async = true;
       script.onload = () => {
         if (typeof window.TradingView !== 'undefined') {
-          const widget = new window.TradingView.widget({
+          new window.TradingView.widget({
             width: '100%',
             height: 500,
             symbol: `BINANCE:${symbol}USDT`,
@@ -44,20 +44,29 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
             hide_side_toolbar: false,
             withdateranges: true,
             hide_volume: false,
-          });
+            // Add event handlers through the widget configuration
+            onSymbolChange: (symbolData: any) => {
+              if (symbolData && symbolData.price) {
+                window.postMessage({ name: 'tradingview-price', price: symbolData.price }, '*');
+              }
+            },
+            // Add a callback function that will be called when the chart is ready
+            onReady: () => {
+              console.log('Chart is ready');
+              // Start polling for price updates
+              const priceUpdateInterval = setInterval(() => {
+                const chartElement = document.querySelector('#tradingview_chart iframe');
+                if (chartElement) {
+                  const price = (chartElement as any).contentWindow?.document?.querySelector('.price-KxHzP6nH')?.textContent;
+                  if (price) {
+                    window.postMessage({ name: 'tradingview-price', price: parseFloat(price) }, '*');
+                  }
+                }
+              }, 1000);
 
-          // Listen for price updates
-          widget.onChartReady(() => {
-            widget.activeChart().onSymbolChange().subscribe(null, () => {
-              const price = widget.activeChart().symbol().price;
-              window.postMessage({ name: 'tradingview-price', price }, '*');
-            });
-            
-            // Update price every second
-            setInterval(() => {
-              const price = widget.activeChart().symbol().price;
-              window.postMessage({ name: 'tradingview-price', price }, '*');
-            }, 1000);
+              // Cleanup interval on component unmount
+              return () => clearInterval(priceUpdateInterval);
+            }
           });
         }
       };
