@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { useToast } from "@/hooks/use-toast";
 import { useProfile } from "@/hooks/useProfile";
 import { usePositions } from "@/hooks/usePositions";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -10,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { BalanceCard } from "@/components/wallet/BalanceCard";
 import { AccountValueCard } from "@/components/wallet/AccountValueCard";
 import { TransactionHistory } from "@/components/wallet/TransactionHistory";
-import { DepositDialog } from "@/components/wallet/DepositDialog";
+import { DepositCard } from "@/components/wallet/DepositCard";
 
 const Wallet = () => {
   const queryClient = useQueryClient();
@@ -40,7 +39,6 @@ const Wallet = () => {
     return profile.balance + totalMargin + totalPnL;
   };
 
-  // Set up real-time listeners for transactions and profile updates
   useEffect(() => {
     const channel = supabase
       .channel('db-changes')
@@ -81,18 +79,23 @@ const Wallet = () => {
             <p className="text-muted-foreground">Manage your virtual funds</p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <BalanceCard 
-              balance={profile.balance} 
-              profileId={profile.id}
-              onDeposit={() => {}} 
-            />
-            <AccountValueCard 
-              totalAccountValue={totalAccountValue}
-              marginUsed={marginUsed}
-              balance={profile.balance}
-            />
-            <TransactionHistory transactions={transactions || []} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <BalanceCard 
+                balance={profile.balance} 
+                profileId={profile.id}
+                onDeposit={() => {}} 
+              />
+              <AccountValueCard 
+                totalAccountValue={totalAccountValue}
+                marginUsed={marginUsed}
+                balance={profile.balance}
+              />
+            </div>
+            <div className="space-y-6">
+              <DepositCard />
+              <TransactionHistory transactions={transactions || []} />
+            </div>
           </div>
         </div>
       </div>

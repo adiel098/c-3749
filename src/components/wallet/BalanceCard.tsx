@@ -10,7 +10,7 @@ interface BalanceCardProps {
   onDeposit: () => void;
 }
 
-export function BalanceCard({ balance, profileId, onDeposit }: BalanceCardProps) {
+export function BalanceCard({ balance, profileId }: BalanceCardProps) {
   const { toast } = useToast();
 
   const handleDemoDeposit = async () => {
@@ -67,18 +67,12 @@ export function BalanceCard({ balance, profileId, onDeposit }: BalanceCardProps)
           </p>
           <p className="text-sm text-muted-foreground">Available USDT</p>
         </div>
-        <div className="space-y-2">
+        <div>
           <Button 
             onClick={handleDemoDeposit} 
             className="w-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-[1.02]"
           >
             Add Demo Funds
-          </Button>
-          <Button
-            onClick={onDeposit}
-            className="w-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-[1.02]"
-          >
-            Deposit Crypto
           </Button>
         </div>
       </CardContent>
