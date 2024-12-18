@@ -21,22 +21,27 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data: authData } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
       if (error) throw error;
 
+      console.log("Login successful, redirecting...");
+      
       toast({
         title: "Success",
         description: "You have been logged in successfully",
       });
 
-      // Redirect to trading page after successful login
-      navigate("/");
-      
+      // Ensure we have a session before redirecting
+      if (authData?.session) {
+        navigate("/");
+      }
+
     } catch (error: any) {
+      console.error("Login error:", error);
       toast({
         title: "Error",
         description: error.message,
