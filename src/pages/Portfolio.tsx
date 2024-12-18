@@ -9,18 +9,18 @@ const Portfolio = () => {
   const { data: positions, isLoading: isLoadingPositions } = usePositions();
 
   const calculateTotalValue = () => {
-    if (!positions || !profile) return 0;
+    if (!positions || !profile?.balance) return 0;
     const positionsValue = positions
-      .filter((p: any) => p.status === 'open')
-      .reduce((acc: number, pos: any) => acc + (pos.amount * pos.entry_price), 0);
+      .filter((p) => p.status === 'open')
+      .reduce((acc, pos) => acc + (pos.amount * pos.entry_price), 0);
     return profile.balance + positionsValue;
   };
 
   const calculateUnrealizedPnL = () => {
     if (!positions) return 0;
     return positions
-      .filter((p: any) => p.status === 'open')
-      .reduce((acc: number, pos: any) => acc + (pos.profit_loss || 0), 0);
+      .filter((p) => p.status === 'open')
+      .reduce((acc, pos) => acc + (pos.profit_loss || 0), 0);
   };
 
   return (

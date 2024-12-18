@@ -12,7 +12,7 @@ const Trade = () => {
   const { data: profile } = useProfile();
   const { data: positions } = usePositions();
 
-  const openPositions = positions?.filter((p: any) => p.status === 'open' && p.symbol === selectedCrypto) || [];
+  const openPositions = positions?.filter((p) => p.status === 'open' && p.symbol === selectedCrypto) || [];
 
   return (
     <SidebarProvider>

@@ -15,11 +15,12 @@ const Wallet = () => {
   const handleDeposit = async () => {
     try {
       const { error } = await supabase
-        .from('transactions')
+        .from("transactions")
         .insert({
-          type: 'deposit',
+          type: 'deposit' as const,
           amount: 10000,
-          status: 'completed'
+          status: 'completed' as const,
+          user_id: profile?.id
         });
 
       if (error) throw error;
