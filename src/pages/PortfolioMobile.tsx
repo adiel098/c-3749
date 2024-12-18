@@ -29,7 +29,7 @@ const PortfolioMobile = () => {
   const totalUnrealizedPnl = calculateTotalUnrealizedPnL();
 
   return (
-    <div className="p-4 space-y-4 overflow-y-auto h-[calc(100dvh-4rem)]">
+    <div className="p-4 space-y-6 overflow-y-auto h-[calc(100dvh-4rem)]">
       <header className="mb-4">
         <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           Portfolio Overview
@@ -37,6 +37,7 @@ const PortfolioMobile = () => {
         <p className="text-sm text-muted-foreground">Track your performance</p>
       </header>
 
+      {/* Top 3 Cards */}
       <div className="grid grid-cols-3 gap-3">
         <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
           <CardHeader className="pb-2">
@@ -87,17 +88,24 @@ const PortfolioMobile = () => {
         </Card>
       </div>
 
-      {/* Performance Graph */}
-      <div className="mt-4">
+      {/* Trading Stats - 2 cards per row */}
+      {positions && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-3">
+            <TradingStats positions={positions} />
+          </div>
+          
+          {/* PnL Analysis - 2 cards per row */}
+          <div className="grid grid-cols-2 gap-3">
+            <PnLAnalysis positions={positions} />
+          </div>
+        </div>
+      )}
+
+      {/* Performance Graph at the bottom */}
+      <div className="mt-6">
         <PortfolioCard />
       </div>
-
-      {positions && (
-        <>
-          <TradingStats positions={positions} />
-          <PnLAnalysis positions={positions} />
-        </>
-      )}
     </div>
   );
 };
