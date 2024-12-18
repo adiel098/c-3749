@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Search, TrendingUp, TrendingDown, ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { CryptoSearch } from './crypto/CryptoSearch';
+import { PriceHeader } from './crypto/PriceHeader';
+import { useCryptoPrice } from '@/hooks/useCryptoPrice';
 
 interface CryptoChartProps {
   symbol?: string;
@@ -21,7 +19,6 @@ declare global {
 
 const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
-  const [priceChange24h, setPriceChange24h] = useState<number>(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cryptoList, setCryptoList] = useState<any[]>([]);
   const ws = useRef<WebSocket | null>(null);
@@ -29,25 +26,7 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChar
   const { toast } = useToast();
 
   // Fetch 24h price change
-  const { data: priceData } = useQuery({
-    queryKey: ['cryptoPrice', symbol],
-    queryFn: async () => {
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd&include_24hr_change=true`
-      );
-      if (!response.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-      return response.json();
-    },
-    onError: () => {
-      toast({
-        title: "Error fetching price data",
-        description: "Could not fetch the latest price changes",
-        variant: "destructive",
-      });
-    }
-  });
+  const { data: priceData } = useCryptoPrice(symbol);
 
   // Fetch crypto list for search
   useEffect(() => {
@@ -146,76 +125,23 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChar
     }
   };
 
+  const priceChange24h = priceData?.[symbol.toLowerCase()]?.usd_24h_change || 0;
+
   return (
     <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden border border-white/10 bg-secondary/20 backdrop-blur-lg">
-      <div className="flex justify-between items-center p-4 border-b border-white/10 bg-card/30 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold gradient-text">{symbol}/USDT</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSearchOpen(true)}
-              className="hover:bg-secondary/40"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-          </div>
-          {priceData && (
-            <div className={cn(
-              "flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium",
-              priceChange24h >= 0 ? "text-success bg-success/10" : "text-warning bg-warning/10"
-            )}>
-              {priceChange24h >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-              {priceChange24h?.toFixed(2)}%
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-lg font-mono bg-secondary/40 px-4 py-2 rounded-lg border border-white/5">
-            ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        </div>
-      </div>
+      <PriceHeader 
+        symbol={symbol} 
+        currentPrice={currentPrice} 
+        priceChange24h={priceChange24h}
+      >
+        <CryptoSearch
+          searchOpen={searchOpen}
+          setSearchOpen={setSearchOpen}
+          cryptoList={cryptoList}
+          onSelect={handleCryptoSelect}
+        />
+      </PriceHeader>
       <div ref={containerRef} className="h-[calc(100%-4rem)]" />
-
-      <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <DialogContent className="max-w-md">
-          <Command className="rounded-lg">
-            <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
-            <CommandEmpty>No results found</CommandEmpty>
-            <CommandGroup heading="Popular Cryptocurrencies">
-              {cryptoList.map((crypto) => (
-                <CommandItem
-                  key={crypto.id}
-                  value={crypto.symbol}
-                  onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
-                  className="flex items-center justify-between p-2 hover:bg-accent/10 cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
-                    <div className="flex flex-col">
-                      <span className="font-medium">{crypto.name}</span>
-                      <span className="text-sm text-muted-foreground">{crypto.symbol.toUpperCase()}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-mono">${crypto.current_price}</span>
-                    <span className={cn(
-                      "text-xs px-2 py-1 rounded",
-                      crypto.price_change_percentage_24h >= 0 
-                        ? "text-success bg-success/10" 
-                        : "text-warning bg-warning/10"
-                    )}>
-                      {crypto.price_change_percentage_24h.toFixed(2)}%
-                    </span>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
