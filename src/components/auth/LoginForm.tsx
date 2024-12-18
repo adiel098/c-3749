@@ -21,14 +21,36 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true);
+      
+      // Validate email and password are not empty
+      if (!data.email || !data.password) {
+        toast({
+          title: "Error",
+          description: "Please enter both email and password",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error, data: authData } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
-      if (error) throw error;
+      // Detailed error handling
+      if (error) {
+        console.error("Login error details:", error);
+        
+        toast({
+          title: "Login Failed",
+          description: error.message || "Invalid login credentials",
+          variant: "destructive",
+        });
+        
+        return;
+      }
 
-      console.log("Login successful, redirecting...");
+      console.log("Login successful, session:", authData?.session);
       
       toast({
         title: "Success",
@@ -41,10 +63,11 @@ export function LoginForm() {
       }
 
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("Unexpected login error:", error);
+      
       toast({
         title: "Error",
-        description: error.message,
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -59,7 +82,13 @@ export function LoginForm() {
         <Input
           id="email"
           type="email"
-          {...register("email", { required: "Email is required" })}
+          {...register("email", { 
+            required: "Email is required",
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: "Entered value does not match email format"
+            }
+          })}
         />
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
@@ -70,7 +99,13 @@ export function LoginForm() {
         <Input
           id="password"
           type="password"
-          {...register("password", { required: "Password is required" })}
+          {...register("password", { 
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters"
+            }
+          })}
         />
         {errors.password && (
           <p className="text-sm text-destructive">{errors.password.message}</p>
