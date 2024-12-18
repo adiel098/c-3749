@@ -45,7 +45,7 @@ const AuthPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="signup">
-              <div className="p-4 pb-2">
+              <div className="pt-6 p-4 pb-2">
                 <h1 className="text-4xl font-bold gradient-text mb-4">Join Us Now</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Join hundreds of traders and start your crypto trading adventure
@@ -73,7 +73,7 @@ const AuthPage = () => {
                   </TabsTrigger>
                 </TabsList>
               </div>
-              <div className="px-6 pb-6">
+              <div className="px-6 pb-10">
                 <ScrollArea className="h-[400px] pr-4">
                   <SignUpForm />
                 </ScrollArea>
