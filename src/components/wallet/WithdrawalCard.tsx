@@ -16,6 +16,14 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
   const [address, setAddress] = useState<string>("");
   const { toast } = useToast();
 
+  const handleMethodSelect = (method: string) => {
+    setSelectedMethod(method);
+    toast({
+      title: `${method.toUpperCase()} selected`,
+      description: `You will withdraw using ${method.toUpperCase()}`,
+    });
+  };
+
   const handleWithdraw = () => {
     const withdrawalAmount = parseFloat(amount);
     if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
@@ -71,7 +79,7 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
-            onClick={() => setSelectedMethod("bitcoin")}
+            onClick={() => handleMethodSelect("bitcoin")}
           >
             <Bitcoin className="h-4 w-4" />
             Bitcoin
@@ -83,7 +91,7 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
-            onClick={() => setSelectedMethod("ethereum")}
+            onClick={() => handleMethodSelect("ethereum")}
           >
             <Wallet className="h-4 w-4" />
             Ethereum
@@ -95,7 +103,7 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
-            onClick={() => setSelectedMethod("usdt")}
+            onClick={() => handleMethodSelect("usdt")}
           >
             <span className="font-bold">₮</span>
             USDT

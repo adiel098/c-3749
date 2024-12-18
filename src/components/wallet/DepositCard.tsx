@@ -26,6 +26,14 @@ export function DepositCard() {
     });
   };
 
+  const handleMethodSelect = (method: string) => {
+    setSelectedMethod(method);
+    toast({
+      title: `${method.toUpperCase()} selected`,
+      description: `You will deposit using ${method.toUpperCase()}`,
+    });
+  };
+
   return (
     <Card className="glass-effect overflow-hidden relative group">
       <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -44,7 +52,7 @@ export function DepositCard() {
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
-            onClick={() => setSelectedMethod("bitcoin")}
+            onClick={() => handleMethodSelect("bitcoin")}
           >
             <Bitcoin className="h-4 w-4" />
             Bitcoin
@@ -56,7 +64,7 @@ export function DepositCard() {
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
-            onClick={() => setSelectedMethod("ethereum")}
+            onClick={() => handleMethodSelect("ethereum")}
           >
             <Wallet className="h-4 w-4" />
             Ethereum
@@ -68,7 +76,7 @@ export function DepositCard() {
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
-            onClick={() => setSelectedMethod("usdt")}
+            onClick={() => handleMethodSelect("usdt")}
           >
             <span className="font-bold">₮</span>
             USDT
