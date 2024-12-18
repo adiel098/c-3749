@@ -31,7 +31,7 @@ export function LoginForm() {
         return;
       }
 
-      const { error, data: authData } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
@@ -48,16 +48,10 @@ export function LoginForm() {
         return;
       }
 
-      console.log("Login successful, redirecting...");
-      
       toast({
         title: "Success",
         description: "You have been logged in successfully",
       });
-
-      if (authData?.session) {
-        navigate("/", { replace: true });
-      }
 
     } catch (error: any) {
       console.error("Unexpected login error:", error);

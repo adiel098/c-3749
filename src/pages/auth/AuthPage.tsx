@@ -14,9 +14,10 @@ const AuthPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session);
-      if (session) {
-        navigate("/", { replace: true });
+      if (event === 'SIGNED_IN' && session) {
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 100);
       }
     });
 
@@ -25,9 +26,7 @@ const AuthPage = () => {
     };
   }, [navigate]);
 
-  // If already authenticated, redirect to home
   if (session) {
-    console.log("Session exists, redirecting to home");
     return <Navigate to="/" replace />;
   }
 
