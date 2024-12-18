@@ -11,9 +11,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useProfile } from "@/hooks/useProfile";
+import { toastStyles } from "@/utils/toastStyles";
 
 const Settings = () => {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -23,15 +24,26 @@ const Settings = () => {
     try {
       await signOut();
       toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account",
+        title: "התנתקת בהצלחה! 👋",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.logout.icon}
+            <span>להתראות! מקווים לראות אותך בקרוב</span>
+          </div>
+        ),
+        className: toastStyles.logout.className,
       });
-      navigate("/auth");
+      navigate("/");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to log out. Please try again.",
-        variant: "destructive",
+        title: "שגיאה בהתנתקות ❌",
+        description: (
+          <div className="flex items-center gap-2">
+            {toastStyles.error.icon}
+            <span>אירעה שגיאה בתהליך ההתנתקות. אנא נסה שוב</span>
+          </div>
+        ),
+        className: toastStyles.error.className,
       });
     }
   };
@@ -44,25 +56,17 @@ const Settings = () => {
     );
   }
 
-  console.log("Profile data from database:", profile); // Debug log
-
-  // Parse phone number to separate country code and number
   const parsePhoneNumber = (phone: string | null) => {
     if (!phone) return { countryCode: "+972", phoneNumber: "" };
     
-    // Find the country code by matching the plus sign and subsequent digits
     const countryCodeMatch = phone.match(/^\+\d+/);
     const countryCode = countryCodeMatch ? countryCodeMatch[0] : "+972";
-    
-    // The rest is the phone number
     const phoneNumber = phone.replace(countryCode, "");
     
     return { countryCode, phoneNumber };
   };
 
   const { countryCode, phoneNumber } = parsePhoneNumber(profile?.phone);
-
-  console.log("Parsed phone data:", { countryCode, phoneNumber }); // Debug log
 
   const profileData = {
     firstName: profile?.first_name || "",
@@ -80,24 +84,24 @@ const Settings = () => {
             <header className="space-y-2">
               <div className="flex items-center gap-2">
                 <Settings2 className="h-8 w-8 text-primary" />
-                <h1 className="text-2xl md:text-3xl font-bold gradient-text">Settings</h1>
+                <h1 className="text-2xl md:text-3xl font-bold gradient-text">הגדרות</h1>
               </div>
-              <p className="text-muted-foreground">Manage your account preferences and security settings</p>
+              <p className="text-muted-foreground">נהל את העדפות החשבון והגדרות האבטחה שלך</p>
             </header>
 
             <Tabs defaultValue="profile" className="space-y-6">
               <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-card/30 backdrop-blur-sm">
                 <TabsTrigger value="profile" className="flex items-center gap-2 py-3">
                   <UserRound className="h-4 w-4" />
-                  <span className="hidden md:inline">Profile</span>
+                  <span className="hidden md:inline">פרופיל</span>
                 </TabsTrigger>
                 <TabsTrigger value="security" className="flex items-center gap-2 py-3">
                   <Lock className="h-4 w-4" />
-                  <span className="hidden md:inline">Security</span>
+                  <span className="hidden md:inline">אבטחה</span>
                 </TabsTrigger>
                 <TabsTrigger value="preferences" className="flex items-center gap-2 py-3">
                   <Bell className="h-4 w-4" />
-                  <span className="hidden md:inline">Preferences</span>
+                  <span className="hidden md:inline">העדפות</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -122,7 +126,7 @@ const Settings = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-transparent to-red-600/20 animate-shimmer" />
                 <LogOut className="w-6 h-6 transition-transform group-hover:-translate-y-0.5 group-hover:scale-110" />
-                <span className="relative transition-transform group-hover:-translate-y-0.5">Logout</span>
+                <span className="relative transition-transform group-hover:-translate-y-0.5">התנתק</span>
               </Button>
             </div>
           </div>
