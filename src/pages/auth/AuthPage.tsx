@@ -6,6 +6,7 @@ import { SignUpForm } from "@/components/auth/SignUpForm";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -19,13 +20,12 @@ const AuthPage = () => {
   }
 
   return (
-    <div className={`min-h-screen flex items-start justify-center bg-gradient-to-b from-background via-background/95 to-background/90 ${isMobile ? 'p-0' : 'p-4'}`}>
-      <div className={`w-full ${isMobile ? 'min-h-[100dvh]' : 'max-w-md'}`}>
-        <Card className={`glass-effect relative overflow-hidden ${isMobile ? 'min-h-[100dvh] rounded-none' : ''}`}>
-          <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent animate-pulse-subtle" />
-          <div className={`${isMobile ? 'min-h-[100dvh] flex flex-col' : ''}`}>
+    <div className={`min-h-[100dvh] flex items-start justify-center bg-gradient-to-b from-background via-background/95 to-background/90 ${isMobile ? 'p-0' : 'p-4'}`}>
+      <div className={`w-full ${isMobile ? 'h-[100dvh]' : 'max-w-md'}`}>
+        <Card className={`glass-effect relative overflow-hidden ${isMobile ? 'h-full rounded-none' : ''}`}>
+          <div className={`${isMobile ? 'h-full flex flex-col' : ''}`}>
             <CardHeader className="space-y-4 relative">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <CardTitle className="text-3xl font-bold gradient-text">
                 {activeTab === "login" ? "Welcome Back" : "Join Us Today"}
               </CardTitle>
               <CardDescription className="space-y-3">
@@ -55,19 +55,21 @@ const AuthPage = () => {
                     Sign Up
                   </TabsTrigger>
                 </TabsList>
-                <div className={`${isMobile ? 'flex-1 overflow-y-auto' : ''}`}>
-                  <TabsContent 
-                    value="login" 
-                    className={`space-y-4 [&>*]:relative ${isMobile ? 'h-full p-4' : ''}`}
-                  >
-                    <LoginForm />
-                  </TabsContent>
-                  <TabsContent 
-                    value="signup" 
-                    className={`space-y-4 [&>*]:relative ${isMobile ? 'h-full p-4' : ''}`}
-                  >
-                    <SignUpForm />
-                  </TabsContent>
+                <div className={`${isMobile ? 'flex-1 overflow-hidden' : ''}`}>
+                  <ScrollArea className={`${isMobile ? 'h-[calc(100dvh-13rem)] pr-4' : ''}`}>
+                    <TabsContent 
+                      value="login" 
+                      className={`space-y-4 [&>*]:relative ${isMobile ? 'pb-8' : ''}`}
+                    >
+                      <LoginForm />
+                    </TabsContent>
+                    <TabsContent 
+                      value="signup" 
+                      className={`space-y-4 [&>*]:relative ${isMobile ? 'pb-8' : ''}`}
+                    >
+                      <SignUpForm />
+                    </TabsContent>
+                  </ScrollArea>
                 </div>
               </Tabs>
             </CardContent>
