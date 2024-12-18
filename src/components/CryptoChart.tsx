@@ -20,8 +20,8 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
     script.src = 'https://s3.tradingview.com/tv.js';
     script.async = true;
     script.onload = () => {
-      if (typeof TradingView !== 'undefined' && containerRef.current) {
-        new TradingView.widget({
+      if (window.TradingView && containerRef.current) {
+        new window.TradingView.widget({
           autosize: true,
           symbol: `BINANCE:${symbol}USDT`,
           interval: '1',
@@ -56,7 +56,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
         <PriceHeader 
           symbol={symbol} 
           price={currentPrice} 
-          priceChange={priceData?.price_change_24h} 
+          priceChange24h={priceData?.price_change_24h} 
         />
         <CryptoSearch 
           searchOpen={!!onSearchOpen} 

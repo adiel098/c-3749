@@ -3,12 +3,12 @@ import { cn } from '@/lib/utils';
 
 interface PriceHeaderProps {
   symbol: string;
-  currentPrice: number;
-  priceChange24h: number;
+  price: number;
+  priceChange24h?: number;
   children?: React.ReactNode;
 }
 
-export function PriceHeader({ symbol, currentPrice, priceChange24h, children }: PriceHeaderProps) {
+export function PriceHeader({ symbol, price, priceChange24h = 0, children }: PriceHeaderProps) {
   return (
     <div className="flex justify-between items-center p-4 border-b border-white/10 bg-card/30 backdrop-blur-xl">
       <div className="flex items-center gap-4">
@@ -26,7 +26,7 @@ export function PriceHeader({ symbol, currentPrice, priceChange24h, children }: 
       </div>
       <div className="flex items-center gap-4">
         <span className="text-lg font-mono bg-secondary/40 px-4 py-2 rounded-lg border border-white/5">
-          ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          ${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       </div>
     </div>
