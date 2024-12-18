@@ -8,10 +8,11 @@ import type { Position } from "@/types/position";
 interface MobilePositionRowProps {
   position: Position;
   currentPrice?: number;
-  onUpdate: () => void;
+  onUpdate?: () => void;
+  type: 'open' | 'closed';  // Added this line to fix the TypeScript error
 }
 
-export function MobilePositionRow({ position, currentPrice, onUpdate }: MobilePositionRowProps) {
+export function MobilePositionRow({ position, currentPrice, onUpdate, type }: MobilePositionRowProps) {
   const formatPrice = (price: number) => {
     return price < 1 ? price.toFixed(6) : price.toFixed(2);
   };
@@ -50,15 +51,17 @@ export function MobilePositionRow({ position, currentPrice, onUpdate }: MobilePo
           </Badge>
         </div>
 
-        <MobileStopLossTakeProfitDialog position={position} onUpdate={onUpdate}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-          >
-            <Edit2 className="h-4 w-4" />
-          </Button>
-        </MobileStopLossTakeProfitDialog>
+        {type === 'open' && (
+          <MobileStopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+            >
+              <Edit2 className="h-4 w-4" />
+            </Button>
+          </MobileStopLossTakeProfitDialog>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-sm">
