@@ -39,11 +39,15 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           console.log('WebSocket connected successfully');
           setIsLoading(true);
           setError(null);
+          // Initialize with empty array
+          setCryptoList([]);
         };
 
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
+            
+            // Validate data is an array
             if (!Array.isArray(data)) {
               console.error('Invalid data format received:', data);
               setError('Invalid data format received');
@@ -52,8 +56,10 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               return;
             }
 
+            // Process and filter data
             const usdtPairs = data
               .filter((item: any) => 
+                item && 
                 item.s && 
                 item.s.endsWith('USDT') && 
                 item.c && 
@@ -69,8 +75,15 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               )
               .slice(0, 100);
 
-            setCryptoList(usdtPairs);
-            setIsLoading(false);
+            // Ensure usdtPairs is an array before setting state
+            if (Array.isArray(usdtPairs)) {
+              setCryptoList(usdtPairs);
+              setIsLoading(false);
+            } else {
+              setCryptoList([]);
+              setIsLoading(false);
+              setError('Failed to process data');
+            }
           } catch (err) {
             console.error('Data processing error:', err);
             setError('Failed to process data');
@@ -136,56 +149,56 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Search Cryptocurrencies</DialogTitle>
+            <DialogTitle>חיפוש מטבעות</DialogTitle>
             <DialogDescription>
-              Search and select from available cryptocurrencies
+              חפש ובחר מטבע קריפטו
             </DialogDescription>
           </DialogHeader>
           
           <Command className="rounded-lg border-0">
-            <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
-            <CommandEmpty>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-6">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                </div>
-              ) : error ? (
-                <div className="text-destructive">{error}</div>
-              ) : (
-                'No results found'
-              )}
-            </CommandEmpty>
-            {!isLoading && !error && cryptoList.length > 0 && (
-              <CommandGroup heading="Popular Cryptocurrencies">
-                {cryptoList.map((crypto) => (
-                  <CommandItem
-                    key={crypto.symbol}
-                    value={crypto.symbol}
-                    onSelect={() => {
-                      onSelect(crypto.symbol);
-                      setSearchOpen(false);
-                    }}
-                    className="flex items-center justify-between p-2 hover:bg-accent/10 cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-col">
-                        <span className="font-medium">{crypto.symbol}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-mono">${crypto.price}</span>
-                      <span className={cn(
-                        "text-xs px-2 py-1 rounded",
-                        parseFloat(crypto.priceChange) >= 0 
-                          ? "text-success bg-success/10" 
-                          : "text-warning bg-warning/10"
-                      )}>
-                        {crypto.priceChange}%
-                      </span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+            <CommandInput placeholder="חפש מטבעות..." className="border-0" />
+            {isLoading ? (
+              <div className="flex items-center justify-center py-6">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              </div>
+            ) : error ? (
+              <div className="text-destructive p-4 text-center">{error}</div>
+            ) : (
+              <>
+                <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+                {cryptoList.length > 0 && (
+                  <CommandGroup heading="מטבעות פופולריים">
+                    {cryptoList.map((crypto) => (
+                      <CommandItem
+                        key={crypto.symbol}
+                        value={crypto.symbol}
+                        onSelect={() => {
+                          onSelect(crypto.symbol);
+                          setSearchOpen(false);
+                        }}
+                        className="flex items-center justify-between p-2 hover:bg-accent/10 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col">
+                            <span className="font-medium">{crypto.symbol}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-mono">${crypto.price}</span>
+                          <span className={cn(
+                            "text-xs px-2 py-1 rounded",
+                            parseFloat(crypto.priceChange) >= 0 
+                              ? "text-success bg-success/10" 
+                              : "text-warning bg-warning/10"
+                          )}>
+                            {crypto.priceChange}%
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </>
             )}
           </Command>
         </DialogContent>
