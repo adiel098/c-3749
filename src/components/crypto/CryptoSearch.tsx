@@ -19,6 +19,9 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
     queryFn: async () => {
       console.log("Fetching crypto list...");
       const response = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+      if (!response.ok) {
+        throw new Error('Failed to fetch crypto data');
+      }
       const data = await response.json();
       
       // Filter for USDT pairs and format the data
@@ -35,16 +38,14 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
           };
         })
         .sort((a: any, b: any) => b.volume - a.volume) // Sort by volume
-        .slice(0, 100); // Take top 100 by volume
+        .slice(0, 50); // Take top 50 by volume to keep list stable
       
       console.log("Formatted crypto list:", formattedData);
       return formattedData;
     },
     staleTime: 30000, // Data is considered fresh for 30 seconds
-    gcTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes (renamed from cacheTime)
+    gcTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes
     refetchInterval: 30000, // Refetch every 30 seconds
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
   });
 
   const filteredCryptos = cryptoList.filter((crypto: any) =>
