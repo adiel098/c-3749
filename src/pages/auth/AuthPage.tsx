@@ -21,12 +21,19 @@ const AuthPage = () => {
       <div className="w-full max-w-md">
         <Card className="glass-effect relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent animate-pulse-subtle" />
-          <CardHeader className="space-y-2 relative">
+          <CardHeader className="space-y-4 relative">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              Welcome Back
+              {activeTab === "login" ? "ברוכים הבאים בחזרה" : "הצטרפו אלינו"}
             </CardTitle>
-            <CardDescription className="text-lg text-foreground/80">
-              {activeTab === "login" ? "Sign in to your account" : "Create your account"}
+            <CardDescription className="space-y-3">
+              <p className="text-lg text-foreground/90 font-medium">
+                הפלטפורמה המובילה למסחר בקריפטו - ללא עמלות!
+              </p>
+              <p className="text-foreground/80">
+                {activeTab === "login" 
+                  ? "שמחים לראות אתכם שוב! התחברו כדי להמשיך במסחר שלכם" 
+                  : "הצטרפו למאות הסוחרים שכבר נהנים מחווית מסחר מתקדמת וידידותית"}
+              </p>
             </CardDescription>
           </CardHeader>
           <CardContent className="relative">
@@ -36,13 +43,13 @@ const AuthPage = () => {
                   value="login"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all duration-300"
                 >
-                  Login
+                  התחברות
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all duration-300"
                 >
-                  Sign Up
+                  הרשמה
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="login" className="space-y-4 [&>*]:relative">
