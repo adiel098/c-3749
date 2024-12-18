@@ -1,4 +1,4 @@
-import { Home, LineChart, Settings, Wallet } from "lucide-react";
+import { LineChart, Settings, Wallet, History, Home, ChartBar } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,22 +12,32 @@ import {
 
 const items = [
   {
-    title: "דף הבית",
+    title: "Dashboard",
     url: "/",
     icon: Home,
   },
   {
-    title: "מסחר",
+    title: "Trade",
     url: "/trade",
     icon: LineChart,
   },
   {
-    title: "ארנק",
+    title: "Portfolio",
+    url: "/portfolio",
+    icon: ChartBar,
+  },
+  {
+    title: "History",
+    url: "/history",
+    icon: History,
+  },
+  {
+    title: "Wallet",
     url: "/wallet",
     icon: Wallet,
   },
   {
-    title: "הגדרות",
+    title: "Settings",
     url: "/settings",
     icon: Settings,
   },
@@ -38,7 +48,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>תפריט ראשי</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

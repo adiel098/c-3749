@@ -1,33 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import CryptoChart from "@/components/CryptoChart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Search } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { useQuery } from "@tanstack/react-query";
+import CryptoChart from "@/components/CryptoChart";
+import { TradingForm } from "@/components/TradingForm";
 
 const Index = () => {
-  const { toast } = useToast();
-  const [amount, setAmount] = useState("");
-  const [leverage, setLeverage] = useState("10");
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
-
-  const { data: btcPrice, isLoading } = useQuery({
-    queryKey: ['btcPrice'],
-    queryFn: async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
-      );
-      const data = await response.json();
-      return data.bitcoin.usd;
-    },
-    refetchInterval: 10000,
-  });
 
   const { data: cryptoList } = useQuery({
     queryKey: ['cryptoList'],
@@ -39,39 +21,23 @@ const Index = () => {
     }
   });
 
-  const handleTrade = (type: 'long' | 'short') => {
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      toast({
-        title: "שגיאה",
-        description: "אנא הכנס סכום תקין",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "העסקה נפתחה בהצלחה",
-      description: `${type === 'long' ? 'קנייה' : 'מכירה'} של ${amount} USDT במינוף ${leverage}X`,
-    });
-  };
-
   const handleCryptoSelect = (symbol: string) => {
     setSelectedCrypto(symbol);
   };
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full" dir="rtl">
+      <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 md:p-8">
+        <div className="flex-1 p-4 md:p-8 bg-background">
           <div className="max-w-7xl mx-auto space-y-8">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">מסחר דמו בקריפטו</h1>
-                <p className="text-muted-foreground">התאמן במסחר עם כספים וירטואליים</p>
+                <h1 className="text-2xl md:text-3xl font-bold">Crypto Trading Demo</h1>
+                <p className="text-muted-foreground">Practice trading with virtual funds</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-muted-foreground">יתרה זמינה</p>
+                <p className="text-sm text-muted-foreground">Available Balance</p>
                 <p className="text-xl font-bold">$100,000.00</p>
               </div>
             </header>
@@ -79,10 +45,10 @@ const Index = () => {
             <div className="w-full flex items-center gap-2 bg-secondary/20 p-2 rounded-lg border border-secondary/30">
               <Search className="h-5 w-5 text-muted-foreground" />
               <Command className="rounded-lg border-0 shadow-none bg-transparent">
-                <CommandInput placeholder="חפש מטבע..." className="border-0 bg-transparent focus:ring-0" />
+                <CommandInput placeholder="Search cryptocurrency..." className="border-0 bg-transparent focus:ring-0" />
                 <CommandList className="absolute top-full mt-2 w-full bg-background border rounded-lg shadow-lg">
-                  <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
-                  <CommandGroup heading="מטבעות פופולריים">
+                  <CommandEmpty>No results found</CommandEmpty>
+                  <CommandGroup heading="Popular Cryptocurrencies">
                     {cryptoList?.map((crypto: any) => (
                       <CommandItem
                         key={crypto.symbol}
@@ -103,98 +69,19 @@ const Index = () => {
               <div className="lg:col-span-2">
                 <CryptoChart symbol={selectedCrypto} />
               </div>
+              <TradingForm selectedCrypto={selectedCrypto} />
+            </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>מסחר</CardTitle>
+                <CardTitle>Open Positions</CardTitle>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="long" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="long">Long</TabsTrigger>
-                    <TabsTrigger value="short">Short</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="long">
-                    <div className="space-y-4 pt-4">
-                      <div>
-                        <label className="text-sm font-medium">סכום (USDT)</label>
-                        <Input
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          placeholder="הכנס סכום"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium">מינוף</label>
-                        <select
-                          value={leverage}
-                          onChange={(e) => setLeverage(e.target.value)}
-                          className="w-full mt-1 p-2 rounded-md border border-input bg-background"
-                        >
-                          <option value="5">5x</option>
-                          <option value="10">10x</option>
-                          <option value="20">20x</option>
-                          <option value="50">50x</option>
-                          <option value="100">100x</option>
-                        </select>
-                      </div>
-                      <Button 
-                        className="w-full bg-success hover:bg-success/90"
-                        onClick={() => handleTrade('long')}
-                      >
-                        פתיחת פוזיציית Long
-                      </Button>
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="short">
-                    <div className="space-y-4 pt-4">
-                      <div>
-                        <label className="text-sm font-medium">סכום (USDT)</label>
-                        <Input
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          placeholder="הכנס סכום"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium">מינוף</label>
-                        <select
-                          value={leverage}
-                          onChange={(e) => setLeverage(e.target.value)}
-                          className="w-full mt-1 p-2 rounded-md border border-input bg-background"
-                        >
-                          <option value="5">5x</option>
-                          <option value="10">10x</option>
-                          <option value="20">20x</option>
-                          <option value="50">50x</option>
-                          <option value="100">100x</option>
-                        </select>
-                      </div>
-                      <Button 
-                        className="w-full bg-warning hover:bg-warning/90"
-                        onClick={() => handleTrade('short')}
-                      >
-                        פתיחת פוזיציית Short
-                      </Button>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                <div className="text-center text-muted-foreground py-8">
+                  No open positions
+                </div>
               </CardContent>
             </Card>
-            </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>פוזיציות פתוחות</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center text-muted-foreground py-8">
-              אין פוזיציות פתוחות
-            </div>
-          </CardContent>
-        </Card>
           </div>
         </div>
       </div>
