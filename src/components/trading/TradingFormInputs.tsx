@@ -25,8 +25,8 @@ export function TradingFormInputs({
     <div className="space-y-6 pt-4">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium">Amount (USDT)</label>
-          <span className="text-sm text-muted-foreground">
+          <label className="text-sm font-medium text-gray-300">Amount (USDT)</label>
+          <span className="text-sm text-gray-400">
             {Number(amount).toFixed(2)} / {maxAmount.toFixed(2)} USDT
           </span>
         </div>
@@ -42,8 +42,8 @@ export function TradingFormInputs({
       
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium">Leverage</label>
-          <span className="text-sm text-muted-foreground">{leverage}x</span>
+          <label className="text-sm font-medium text-gray-300">Leverage</label>
+          <span className="text-sm text-gray-400">{leverage}x</span>
         </div>
         <Slider
           value={[Number(leverage)]}
@@ -57,18 +57,18 @@ export function TradingFormInputs({
       </div>
 
       {currentPrice && (
-        <div className="space-y-2 p-4 rounded-lg bg-secondary/20 backdrop-blur-sm">
+        <div className="space-y-2 p-4 rounded-lg bg-gray-800/20 backdrop-blur-sm border border-gray-700">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Current Price</span>
-            <span className="font-medium">${currentPrice.toFixed(2)}</span>
+            <span className="text-gray-400">Current Price</span>
+            <span className="font-medium text-white">${currentPrice.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Required Margin</span>
-            <span className="font-medium">${(Number(amount) || 0).toFixed(2)}</span>
+            <span className="text-gray-400">Required Margin</span>
+            <span className="font-medium text-white">${(Number(amount) || 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Position Size</span>
-            <span className="font-medium">${((Number(amount) || 0) * Number(leverage)).toFixed(2)}</span>
+            <span className="text-gray-400">Position Size</span>
+            <span className="font-medium text-white">${((Number(amount) || 0) * Number(leverage)).toFixed(2)}</span>
           </div>
         </div>
       )}

@@ -23,7 +23,7 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
 
   if (!currentPrice) {
     return (
-      <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+      <Card className="bg-secondary/20 backdrop-blur-lg border border-gray-700">
         <CardContent className="pt-6">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
@@ -37,7 +37,7 @@ export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) 
   }
 
   return (
-    <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+    <Card className="bg-secondary/20 backdrop-blur-lg border border-gray-700">
       <TradingFormHeader selectedCrypto={selectedCrypto} />
       <CardContent>
         <div className="space-y-6">
