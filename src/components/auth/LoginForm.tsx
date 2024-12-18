@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface LoginFormData {
   email: string;
@@ -18,6 +19,7 @@ export function LoginForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -54,7 +56,7 @@ export function LoginForm() {
         description: "You have been logged in successfully",
       });
 
-      // Navigate to the intended page or home
+      // Navigate to the intended page or home based on device type
       const from = location.state?.from?.pathname || "/";
       navigate(from, { replace: true });
 
