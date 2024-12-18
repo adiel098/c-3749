@@ -142,14 +142,12 @@ const Trade = () => {
             <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-6 border border-white/10 shadow-lg">
               <PositionsList
                 positions={positions || []}
-                currentPrice={currentPrice}
                 onUpdate={refetchPositions}
               />
             </div>
           </div>
         </div>
 
-        {/* Mobile Trading Buttons */}
         <div className="fixed bottom-16 left-0 right-0 p-4 flex gap-4 lg:hidden bg-background/80 backdrop-blur-md border-t border-white/10">
           <Sheet open={isTradeFormOpen} onOpenChange={setIsTradeFormOpen}>
             <SheetTrigger asChild>

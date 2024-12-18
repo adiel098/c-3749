@@ -43,7 +43,6 @@ const TradeMobile = () => {
             <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
               <MobilePositionsList
                 positions={positions || []}
-                currentPrice={currentPrice}
                 onUpdate={refetchPositions}
               />
             </div>
