@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface LoginFormData {
   email: string;
@@ -17,6 +17,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -53,8 +54,9 @@ export function LoginForm() {
         description: "You have been logged in successfully",
       });
 
-      // Navigate to the trading page after successful login
-      navigate("/", { replace: true });
+      // Navigate to the intended page or home
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
 
     } catch (error: any) {
       console.error("Unexpected login error:", error);

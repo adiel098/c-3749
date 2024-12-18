@@ -6,6 +6,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const location = useLocation();
 
   if (!session) {
+    // Redirect to /auth and save the attempted location
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
