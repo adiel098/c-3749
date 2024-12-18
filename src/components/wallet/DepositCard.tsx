@@ -3,19 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bitcoin, Wallet } from "lucide-react";
+import { Bitcoin, Wallet, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
+import { useDepositAddresses } from "@/hooks/useDepositAddresses";
 
 export function DepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
   const [amount, setAmount] = useState<string>("");
   const { toast } = useToast();
+  const { data: depositAddresses, isLoading } = useDepositAddresses();
   
-  const addresses = {
-    bitcoin: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-    ethereum: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-    usdt: "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6"
+  const getAddress = (currency: string) => {
+    return depositAddresses?.find(addr => addr.currency.toLowerCase() === currency)?.address || '';
   };
 
   const handleMethodSelect = (method: string) => {
@@ -33,6 +33,16 @@ export function DepositCard() {
       description: "The deposit address has been copied to your clipboard",
     });
   };
+
+  if (isLoading) {
+    return (
+      <Card className="glass-effect overflow-hidden relative group">
+        <CardContent className="flex items-center justify-center p-8">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="glass-effect overflow-hidden relative group">
@@ -97,7 +107,7 @@ export function DepositCard() {
 
           <div className="flex justify-center">
             <QRCodeSVG 
-              value={addresses[selectedMethod as keyof typeof addresses]} 
+              value={getAddress(selectedMethod)} 
               size={200}
               className="p-2 bg-white rounded-lg"
             />
@@ -107,14 +117,14 @@ export function DepositCard() {
             <Label>Deposit Address</Label>
             <div className="flex gap-2">
               <Input
-                value={addresses[selectedMethod as keyof typeof addresses]}
+                value={getAddress(selectedMethod)}
                 readOnly
                 className="font-mono text-sm bg-secondary/20 border-secondary"
               />
               <Button
                 size="icon"
                 variant="secondary"
-                onClick={() => handleCopy(addresses[selectedMethod as keyof typeof addresses])}
+                onClick={() => handleCopy(getAddress(selectedMethod))}
                 className="hover:bg-secondary/80 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bitcoin, Wallet, Check, Copy } from "lucide-react";
+import { Bitcoin, Wallet, Check, Copy, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
+import { useDepositAddresses } from "@/hooks/useDepositAddresses";
 
 export function MobileDepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
   const { toast } = useToast();
+  const { data: depositAddresses, isLoading } = useDepositAddresses();
   
-  const addresses = {
-    bitcoin: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-    ethereum: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-    usdt: "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6"
+  const getAddress = (currency: string) => {
+    return depositAddresses?.find(addr => addr.currency.toLowerCase() === currency)?.address || '';
   };
 
   const handleCopy = (address: string) => {
@@ -28,6 +28,16 @@ export function MobileDepositCard() {
       variant: "default"
     });
   };
+
+  if (isLoading) {
+    return (
+      <Card className="glass-effect">
+        <CardContent className="flex items-center justify-center p-8">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="glass-effect">
@@ -76,7 +86,7 @@ export function MobileDepositCard() {
 
         <div className="flex justify-center bg-white p-2 rounded-lg">
           <QRCodeSVG 
-            value={addresses[selectedMethod as keyof typeof addresses]} 
+            value={getAddress(selectedMethod)} 
             size={150}
           />
         </div>
@@ -84,14 +94,14 @@ export function MobileDepositCard() {
         <div className="space-y-2">
           <div className="flex gap-2">
             <input
-              value={addresses[selectedMethod as keyof typeof addresses]}
+              value={getAddress(selectedMethod)}
               readOnly
               className="flex-1 text-xs bg-secondary/20 border-secondary rounded px-2 py-1.5"
             />
             <Button
               size="sm"
               variant="secondary"
-              onClick={() => handleCopy(addresses[selectedMethod as keyof typeof addresses])}
+              onClick={() => handleCopy(getAddress(selectedMethod))}
               className="hover:bg-secondary/80 transition-colors"
             >
               Copy
