@@ -23,16 +23,16 @@ const AuthPage = () => {
           <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent animate-pulse-subtle" />
           <CardHeader className="space-y-4 relative">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              {activeTab === "login" ? "ברוכים הבאים בחזרה" : "הצטרפו אלינו"}
+              {activeTab === "login" ? "Welcome Back" : "Join Us Today"}
             </CardTitle>
             <CardDescription className="space-y-3">
               <p className="text-lg text-foreground/90 font-medium">
-                הפלטפורמה המובילה למסחר בקריפטו - ללא עמלות!
+                The Leading Commission-Free Crypto Trading Platform
               </p>
               <p className="text-foreground/80">
                 {activeTab === "login" 
-                  ? "שמחים לראות אתכם שוב! התחברו כדי להמשיך במסחר שלכם" 
-                  : "הצטרפו למאות הסוחרים שכבר נהנים מחווית מסחר מתקדמת וידידותית"}
+                  ? "Great to see you again! Log in to continue your trading journey" 
+                  : "Join hundreds of traders already enjoying our advanced and user-friendly trading experience"}
               </p>
             </CardDescription>
           </CardHeader>
@@ -43,13 +43,13 @@ const AuthPage = () => {
                   value="login"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all duration-300"
                 >
-                  התחברות
+                  Login
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all duration-300"
                 >
-                  הרשמה
+                  Sign Up
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="login" className="space-y-4 [&>*]:relative">
