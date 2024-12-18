@@ -77,24 +77,24 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
               <>
                 <span className="text-muted-foreground ml-1">Exit:</span>
                 <span>${position.exit_price?.toFixed(2)}</span>
-                {position.closed_at && (
-                  <div className="flex items-center gap-1 ml-2 text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>
-                      {new Date(position.closed_at).toLocaleString('he-IL', {
-                        year: 'numeric',
-                        month: 'numeric',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
-                  </div>
-                )}
               </>
             )}
             <span className="text-muted-foreground ml-1">Size:</span>
             <span>${position.amount.toFixed(2)}</span>
+            {type === 'closed' && position.closed_at && (
+              <div className="flex items-center gap-1 ml-2 text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>
+                  {new Date(position.closed_at).toLocaleString('he-IL', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+            )}
             {(position.stop_loss || position.take_profit) && (
               <>
                 {position.stop_loss && (
