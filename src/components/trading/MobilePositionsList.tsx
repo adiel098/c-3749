@@ -1,8 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Position } from "@/types/position";
-import { MobilePositionRow } from "./position/MobilePositionRow";
 import { useEffect } from "react";
+import type { Position } from "@/types/position";
 import { checkAndClosePosition } from "@/utils/positionManagement";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MobilePositionRow } from "./position/MobilePositionRow";
 
 interface MobilePositionsListProps {
   positions: Position[];
