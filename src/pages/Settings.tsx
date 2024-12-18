@@ -24,11 +24,11 @@ const Settings = () => {
     try {
       await signOut();
       toast({
-        title: "התנתקת בהצלחה! 👋",
+        title: "Logged Out Successfully! 👋",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.logout.icon}
-            <span>להתראות! מקווים לראות אותך בקרוב</span>
+            <span>Goodbye! We hope to see you again soon</span>
           </div>
         ),
         className: toastStyles.logout.className,
@@ -36,11 +36,11 @@ const Settings = () => {
       navigate("/");
     } catch (error) {
       toast({
-        title: "שגיאה בהתנתקות ❌",
+        title: "Logout Error ❌",
         description: (
           <div className="flex items-center gap-2">
             {toastStyles.error.icon}
-            <span>אירעה שגיאה בתהליך ההתנתקות. אנא נסה שוב</span>
+            <span>An error occurred while logging out. Please try again</span>
           </div>
         ),
         className: toastStyles.error.className,
@@ -84,24 +84,24 @@ const Settings = () => {
             <header className="space-y-2">
               <div className="flex items-center gap-2">
                 <Settings2 className="h-8 w-8 text-primary" />
-                <h1 className="text-2xl md:text-3xl font-bold gradient-text">הגדרות</h1>
+                <h1 className="text-2xl md:text-3xl font-bold gradient-text">Settings</h1>
               </div>
-              <p className="text-muted-foreground">נהל את העדפות החשבון והגדרות האבטחה שלך</p>
+              <p className="text-muted-foreground">Manage your account preferences and security settings</p>
             </header>
 
             <Tabs defaultValue="profile" className="space-y-6">
               <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-card/30 backdrop-blur-sm">
                 <TabsTrigger value="profile" className="flex items-center gap-2 py-3">
                   <UserRound className="h-4 w-4" />
-                  <span className="hidden md:inline">פרופיל</span>
+                  <span className="hidden md:inline">Profile</span>
                 </TabsTrigger>
                 <TabsTrigger value="security" className="flex items-center gap-2 py-3">
                   <Lock className="h-4 w-4" />
-                  <span className="hidden md:inline">אבטחה</span>
+                  <span className="hidden md:inline">Security</span>
                 </TabsTrigger>
                 <TabsTrigger value="preferences" className="flex items-center gap-2 py-3">
                   <Bell className="h-4 w-4" />
-                  <span className="hidden md:inline">העדפות</span>
+                  <span className="hidden md:inline">Preferences</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -126,7 +126,7 @@ const Settings = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-transparent to-red-600/20 animate-shimmer" />
                 <LogOut className="w-6 h-6 transition-transform group-hover:-translate-y-0.5 group-hover:scale-110" />
-                <span className="relative transition-transform group-hover:-translate-y-0.5">התנתק</span>
+                <span className="relative transition-transform group-hover:-translate-y-0.5">Logout</span>
               </Button>
             </div>
           </div>
