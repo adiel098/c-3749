@@ -1,4 +1,4 @@
-import { XCircle, TrendingUp, TrendingDown, Edit2, Clock, Check } from "lucide-react";
+import { XCircle, TrendingUp, TrendingDown, Edit2, Clock, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -34,11 +34,11 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
         title: "Position Closed Successfully! ✨",
         description: (
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-success" />
+            <Check className="h-4 w-4 text-green-500" />
             <span>Position closed at ${currentPrice?.toFixed(2)} 📊</span>
           </div>
         ),
-        variant: "success",
+        variant: "default"
       });
 
       if (onUpdate) onUpdate();
@@ -47,11 +47,11 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
         title: "Oops! Something went wrong 😕",
         description: (
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-warning" />
+            <AlertCircle className="h-4 w-4 text-red-500" />
             <span>Please try again in a moment</span>
           </div>
         ),
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };

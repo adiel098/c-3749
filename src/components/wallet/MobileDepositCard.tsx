@@ -21,11 +21,11 @@ export function MobileDepositCard() {
       title: "Address Copied! 📋",
       description: (
         <div className="flex items-center gap-2">
-          <Check className="h-4 w-4 text-success" />
+          <Check className="h-4 w-4 text-green-500" />
           <span>The deposit address is now in your clipboard ✨</span>
         </div>
       ),
-      variant: "success",
+      variant: "default"
     });
   };
 
