@@ -19,12 +19,12 @@ const AuthPage = () => {
   }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center bg-gradient-to-b from-background via-background/95 to-background/90 ${isMobile ? 'p-0' : 'p-4'}`}>
-      <div className={`w-full ${isMobile ? 'h-[100dvh]' : 'max-w-md'}`}>
-        <Card className={`glass-effect relative overflow-hidden ${isMobile ? 'h-full rounded-none' : ''}`}>
+    <div className={`min-h-screen flex items-start justify-center bg-gradient-to-b from-background via-background/95 to-background/90 ${isMobile ? 'p-0' : 'p-4'}`}>
+      <div className={`w-full ${isMobile ? 'min-h-[100dvh]' : 'max-w-md'}`}>
+        <Card className={`glass-effect relative overflow-hidden ${isMobile ? 'min-h-[100dvh] rounded-none' : ''}`}>
           <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent animate-pulse-subtle" />
-          <div className={`${isMobile ? 'h-full flex flex-col' : ''}`}>
-            <CardHeader className={`space-y-4 relative ${isMobile ? 'pt-4' : ''}`}>
+          <div className={`${isMobile ? 'min-h-[100dvh] flex flex-col' : ''}`}>
+            <CardHeader className="space-y-4 relative">
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 {activeTab === "login" ? "Welcome Back" : "Join Us Today"}
               </CardTitle>
