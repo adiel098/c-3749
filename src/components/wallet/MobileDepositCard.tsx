@@ -117,6 +117,14 @@ export function MobileDepositCard() {
             Send only {selectedMethod.toUpperCase()} to this address
           </p>
         </div>
+
+        {/* New friendly informative text */}
+        <div className="bg-secondary/10 p-3 rounded-lg border border-primary/10">
+          <p className="text-xs text-muted-foreground text-center">
+            Deposit transactions are automatically synchronized. Once sufficient confirmations are received, your account balance will be updated instantly. 
+            Our system ensures seamless and secure fund management for a smooth trading experience. 🚀💸
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
