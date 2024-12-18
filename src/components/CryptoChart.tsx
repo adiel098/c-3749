@@ -15,10 +15,11 @@ interface CryptoChartProps {
 const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
   const [currentPrice, setCurrentPrice] = useState<number>();
   
-  // Fetch initial price and 24h change
+  // Fetch initial price and 24h change immediately and refetch every 5 seconds
   const { data: priceData, isLoading } = useQuery({
     queryKey: ['crypto-price', symbol],
     queryFn: async () => {
+      console.log('Fetching price data for:', symbol);
       const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`);
       if (!response.ok) throw new Error('Failed to fetch price data');
       const data = await response.json();
@@ -27,8 +28,20 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
         priceChange24h: parseFloat(data.priceChangePercent)
       };
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchInterval: 5000, // Refetch every 5 seconds
+    staleTime: 0, // Consider data immediately stale to force refetch
+    retry: 3,
   });
+
+  // Update price state and notify parent when price changes
+  useEffect(() => {
+    if (priceData?.price) {
+      setCurrentPrice(priceData.price);
+      if (onPriceUpdate) {
+        onPriceUpdate(priceData.price);
+      }
+    }
+  }, [priceData?.price, onPriceUpdate]);
 
   const handlePriceUpdate = (price: number) => {
     setCurrentPrice(price);
