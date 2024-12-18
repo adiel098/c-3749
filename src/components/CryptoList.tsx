@@ -21,7 +21,7 @@ const fetchCryptoData = async () => {
     }));
   } catch (error) {
     console.error('Error fetching crypto data:', error);
-    return []; // Return empty array instead of undefined
+    return [];
   }
 };
 
@@ -29,7 +29,7 @@ const CryptoList = () => {
   const { data: cryptos = [], isLoading } = useQuery({
     queryKey: ['cryptos'],
     queryFn: fetchCryptoData,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   if (isLoading) {
@@ -54,11 +54,14 @@ const CryptoList = () => {
               <tr key={crypto.symbol} className="border-t border-secondary">
                 <td className="py-4">
                   <div className="flex items-center gap-2">
-                    <img src={crypto.image} alt={crypto.name} className="w-8 h-8 rounded-full" 
-                         onError={(e) => {
-                           const target = e.target as HTMLImageElement;
-                           target.src = '/placeholder.svg';
-                         }}
+                    <img 
+                      src={crypto.image} 
+                      alt={crypto.name} 
+                      className="w-8 h-8 rounded-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/placeholder.svg';
+                      }}
                     />
                     <div>
                       <p className="font-medium">{crypto.name}</p>
@@ -66,7 +69,7 @@ const CryptoList = () => {
                     </div>
                   </div>
                 </td>
-                <td className="py-4">${parseFloat(crypto.current_price).toLocaleString()}</td>
+                <td className="py-4">${crypto.current_price.toLocaleString()}</td>
                 <td className="py-4">
                   <span
                     className={`flex items-center gap-1 ${
