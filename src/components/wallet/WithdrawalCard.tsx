@@ -55,7 +55,7 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
 
     toast({
       title: "Withdrawal request submitted",
-      description: "Your withdrawal request has been sent to support for approval",
+      description: "Your withdrawal request has been sent for approval",
     });
     setAmount("");
     setAddress("");

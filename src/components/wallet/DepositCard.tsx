@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Bitcoin, Wallet } from "lucide-react";
+import { Bitcoin, Wallet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function DepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
@@ -18,19 +18,19 @@ export function DepositCard() {
     usdt: "TYDzsYUEpvnYmQk4zGP9sWWcTEd2MiAtW6"
   };
 
-  const handleCopy = (address: string) => {
-    navigator.clipboard.writeText(address);
-    toast({
-      title: "Address copied",
-      description: "The deposit address has been copied to your clipboard",
-    });
-  };
-
   const handleMethodSelect = (method: string) => {
     setSelectedMethod(method);
     toast({
       title: `${method.toUpperCase()} selected`,
       description: `You will deposit using ${method.toUpperCase()}`,
+    });
+  };
+
+  const handleCopy = (address: string) => {
+    navigator.clipboard.writeText(address);
+    toast({
+      title: "Address copied",
+      description: "The deposit address has been copied to your clipboard",
     });
   };
 
@@ -117,7 +117,10 @@ export function DepositCard() {
                 onClick={() => handleCopy(addresses[selectedMethod as keyof typeof addresses])}
                 className="hover:bg-secondary/80 transition-colors"
               >
-                <Copy className="h-4 w-4" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
               </Button>
             </div>
             <p className="text-sm text-muted-foreground">

@@ -20,16 +20,9 @@ const Wallet = () => {
 
   const calculateAccountValue = () => {
     if (!profile || !positions) return 0;
-
     const openPositions = positions.filter(p => p.status === 'open');
-    
-    // Calculate total margin used in open positions
     const totalMargin = openPositions.reduce((sum, pos) => sum + pos.amount, 0);
-    
-    // Calculate total P&L from open positions
     const totalPnL = openPositions.reduce((sum, pos) => sum + (pos.profit_loss || 0), 0);
-
-    // Total account value = Available Balance + Margin Used + Total P&L
     return profile.balance + totalMargin + totalPnL;
   };
 
@@ -86,10 +79,10 @@ const Wallet = () => {
                 balance={profile.balance}
                 positions={positions}
               />
+              <WithdrawalCard availableBalance={profile.balance} />
             </div>
             <div className="space-y-6">
               <DepositCard />
-              <WithdrawalCard availableBalance={profile.balance} />
               <TransactionHistory transactions={transactions || []} />
             </div>
           </div>
