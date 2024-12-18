@@ -30,70 +30,60 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
     const connectWebSocket = () => {
       if (!searchOpen) return;
 
-      setIsLoading(true);
-      setError(null);
-      setCryptoList([]);
+      ws = new WebSocket('wss://stream.binance.com:9443/ws/!miniTicker@arr');
 
-      try {
-        ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
+      ws.onopen = () => {
+        setIsLoading(true);
+        setError(null);
+      };
 
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (!Array.isArray(data)) {
-              console.error('Invalid data format received:', data);
-              setError('Invalid data format received');
-              setIsLoading(false);
-              return;
-            }
-
-            const usdtPairs = data
-              .filter((item: any) => 
-                item.s && 
-                item.s.endsWith('USDT') && 
-                item.c && 
-                item.P
-              )
-              .map((item: any) => ({
-                symbol: item.s.replace('USDT', ''),
-                price: parseFloat(item.c).toFixed(2),
-                priceChange: parseFloat(item.P).toFixed(2)
-              }))
-              .sort((a: CryptoData, b: CryptoData) => 
-                parseFloat(b.price) - parseFloat(a.price)
-              )
-              .slice(0, 100);
-
-            setCryptoList(usdtPairs);
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (!Array.isArray(data)) {
+            console.error('Invalid data format received:', data);
+            setError('Invalid data format received');
             setIsLoading(false);
-          } catch (err) {
-            console.error('Data processing error:', err);
-            setError('Failed to process data');
-            setIsLoading(false);
+            return;
           }
-        };
 
-        ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          setError('Failed to connect to price feed');
+          const usdtPairs = data
+            .filter((item: any) => item.s && item.s.endsWith('USDT'))
+            .map((item: any) => ({
+              symbol: item.s.replace('USDT', ''),
+              price: parseFloat(item.c || 0).toFixed(2),
+              priceChange: '0.00' // We'll get this from a separate request
+            }))
+            .sort((a: CryptoData, b: CryptoData) => 
+              parseFloat(b.price) - parseFloat(a.price)
+            )
+            .slice(0, 100);
+
+          setCryptoList(usdtPairs);
           setIsLoading(false);
-          toast({
-            title: "Connection Error",
-            description: "Failed to connect to price feed. Please try again.",
-            variant: "destructive",
-          });
-        };
+        } catch (err) {
+          console.error('Data processing error:', err);
+          setError('Failed to process data');
+          setIsLoading(false);
+        }
+      };
 
-        ws.onclose = () => {
-          if (searchOpen) {
-            setTimeout(connectWebSocket, 5000);
-          }
-        };
-      } catch (err) {
-        console.error('WebSocket connection error:', err);
-        setError('Failed to establish connection');
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setError('Failed to connect to price feed');
         setIsLoading(false);
-      }
+        toast({
+          title: "Connection Error",
+          description: "Failed to connect to price feed. Please try again.",
+          variant: "destructive",
+        });
+      };
+
+      ws.onclose = () => {
+        if (searchOpen) {
+          setTimeout(connectWebSocket, 5000);
+        }
+      };
     };
 
     connectWebSocket();
@@ -118,7 +108,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
         <DialogContent className="max-w-md">
-          <Command className="rounded-lg border-0">
+          <Command className="rounded-lg">
             <CommandInput placeholder="Search cryptocurrencies..." />
             <CommandEmpty>
               {isLoading ? (
