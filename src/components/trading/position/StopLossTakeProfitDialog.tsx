@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Position } from "@/types/position";
 
@@ -21,15 +21,20 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
 
   const handleUpdateLevels = async () => {
     try {
-      const { error } = await supabase
+      const updates = {
+        stop_loss: stopLoss ? parseFloat(stopLoss) : null,
+        take_profit: takeProfit ? parseFloat(takeProfit) : null
+      };
+
+      const { data, error } = await supabase
         .from('positions')
-        .update({
-          stop_loss: stopLoss ? Number(stopLoss) : null,
-          take_profit: takeProfit ? Number(takeProfit) : null
-        })
-        .eq('id', position.id);
+        .update(updates)
+        .eq('id', position.id)
+        .select();
 
       if (error) throw error;
+
+      console.log('Updated position:', data);
 
       toast({
         title: "Levels updated successfully",
@@ -41,6 +46,7 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
       console.error('Error updating levels:', error);
       toast({
         title: "Error updating levels",
+        description: "Failed to update stop loss and take profit levels",
         variant: "destructive",
       });
     }
@@ -48,26 +54,32 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
 
   const handleRemoveLevels = async () => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('positions')
         .update({
           stop_loss: null,
           take_profit: null
         })
-        .eq('id', position.id);
+        .eq('id', position.id)
+        .select();
 
       if (error) throw error;
+
+      console.log('Removed levels from position:', data);
 
       toast({
         title: "Levels removed successfully",
       });
 
+      setStopLoss("");
+      setTakeProfit("");
       setOpen(false);
       onUpdate();
     } catch (error) {
       console.error('Error removing levels:', error);
       toast({
         title: "Error removing levels",
+        description: "Failed to remove stop loss and take profit levels",
         variant: "destructive",
       });
     }
@@ -98,6 +110,8 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
               placeholder="Enter stop loss price"
               value={stopLoss}
               onChange={(e) => setStopLoss(e.target.value)}
+              type="number"
+              step="0.01"
             />
           </div>
           <div className="space-y-2">
@@ -106,6 +120,8 @@ export function StopLossTakeProfitDialog({ position, onUpdate, children }: StopL
               placeholder="Enter take profit price"
               value={takeProfit}
               onChange={(e) => setTakeProfit(e.target.value)}
+              type="number"
+              step="0.01"
             />
           </div>
           <div className="flex justify-end gap-2">
