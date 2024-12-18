@@ -1,5 +1,5 @@
 import type { Position } from "@/types/position";
-import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -75,16 +75,6 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
                     <span className="font-medium">${currentPrice?.toFixed(2) || '...'}</span>
                   </>
                 )}
-                {position.stop_loss && (
-                  <Badge variant="outline" className="gap-1">
-                    SL: ${position.stop_loss.toFixed(2)}
-                  </Badge>
-                )}
-                {position.take_profit && (
-                  <Badge variant="outline" className="gap-1">
-                    TP: ${position.take_profit.toFixed(2)}
-                  </Badge>
-                )}
               </div>
             </TooltipTrigger>
             <TooltipContent>
@@ -96,6 +86,33 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        {type === 'open' && (position.stop_loss || position.take_profit) && (
+          <div className="flex items-center gap-2">
+            {position.stop_loss && (
+              <Badge variant="outline" className="gap-1">
+                SL: ${position.stop_loss.toFixed(2)}
+              </Badge>
+            )}
+            {position.take_profit && (
+              <Badge variant="outline" className="gap-1">
+                TP: ${position.take_profit.toFixed(2)}
+              </Badge>
+            )}
+            <StopLossTakeProfitDialog 
+              position={position}
+              onUpdate={onUpdate || (() => {})}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+              >
+                <Edit2 className="h-4 w-4" />
+              </Button>
+            </StopLossTakeProfitDialog>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -115,10 +132,12 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
 
         {type === 'open' && (
           <div className="flex items-center gap-2">
-            <StopLossTakeProfitDialog 
-              position={position}
-              onUpdate={onUpdate || (() => {})}
-            />
+            {!position.stop_loss && !position.take_profit && (
+              <StopLossTakeProfitDialog 
+                position={position}
+                onUpdate={onUpdate || (() => {})}
+              />
+            )}
             <Button
               variant="destructive"
               size="sm"
