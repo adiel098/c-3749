@@ -42,44 +42,44 @@ export function MobileDepositCard() {
   return (
     <Card className="glass-effect">
       <CardContent className="space-y-4 p-4">
-        <div className="flex gap-2">
+        <div className="grid grid-cols-3 gap-3">
           <Button
             variant={selectedMethod === "bitcoin" ? "default" : "outline"}
-            size="sm"
-            className={`flex-1 gap-1 text-xs ${
+            size="lg"
+            className={`w-full h-16 flex flex-col items-center justify-center gap-1 text-sm ${
               selectedMethod === "bitcoin" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
             onClick={() => setSelectedMethod("bitcoin")}
           >
-            <Bitcoin className="h-3 w-3" />
-            BTC
+            <Bitcoin className="h-6 w-6 mb-1" />
+            Bitcoin
           </Button>
           <Button
             variant={selectedMethod === "ethereum" ? "default" : "outline"}
-            size="sm"
-            className={`flex-1 gap-1 text-xs ${
+            size="lg"
+            className={`w-full h-16 flex flex-col items-center justify-center gap-1 text-sm ${
               selectedMethod === "ethereum" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
             onClick={() => setSelectedMethod("ethereum")}
           >
-            <Wallet className="h-3 w-3" />
-            ETH
+            <Wallet className="h-6 w-6 mb-1" />
+            Ethereum
           </Button>
           <Button
             variant={selectedMethod === "usdt" ? "default" : "outline"}
-            size="sm"
-            className={`flex-1 gap-1 text-xs ${
+            size="lg"
+            className={`w-full h-16 flex flex-col items-center justify-center gap-1 text-sm ${
               selectedMethod === "usdt" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
                 : ""
             }`}
             onClick={() => setSelectedMethod("usdt")}
           >
-            ₮
+            <span className="text-2xl font-bold mb-1">₮</span>
             USDT
           </Button>
         </div>
@@ -87,7 +87,7 @@ export function MobileDepositCard() {
         <div className="flex justify-center bg-white p-2 rounded-lg">
           <QRCodeSVG 
             value={getAddress(selectedMethod)} 
-            size={150}
+            size={200}
           />
         </div>
         
