@@ -70,10 +70,8 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               )
               .slice(0, 100);
 
-            if (usdtPairs.length > 0) {
-              setCryptoList(usdtPairs);
-              setIsLoading(false);
-            }
+            setCryptoList(usdtPairs || []); // Ensure we always set an array
+            setIsLoading(false);
           } catch (err) {
             console.error('Data processing error:', err);
             setError('Failed to process data');
@@ -89,7 +87,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           if (retryCount < maxRetries) {
             retryCount++;
             console.log(`Retrying connection... Attempt ${retryCount}`);
-            setTimeout(connectWebSocket, 2000 * retryCount); // Exponential backoff
+            setTimeout(connectWebSocket, 2000 * retryCount);
           } else {
             toast({
               title: "Connection Error",
