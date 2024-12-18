@@ -59,6 +59,14 @@ export function TradingForm({
           leverage: leverageNum,
           entry_price: currentPrice,
           liquidation_price: liquidationPrice,
+          profit_loss: 0,
+          status: 'open',
+          stop_loss: null,
+          take_profit: null,
+          exit_price: null,
+          closed_at: null,
+          merged_position_id: null,
+          merged_entry_price: null
         });
 
       if (positionError) throw positionError;

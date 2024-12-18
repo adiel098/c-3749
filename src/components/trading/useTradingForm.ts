@@ -74,7 +74,7 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
           ? currentPrice * (1 - 1/leverageNum)
           : currentPrice * (1 + 1/leverageNum);
 
-        // Insert new position
+        // Insert new position with all required fields
         const { error: positionError } = await supabase
           .from('positions')
           .insert({
@@ -85,6 +85,14 @@ export function useTradingForm(selectedCrypto: string, currentPrice?: number) {
             leverage: leverageNum,
             entry_price: currentPrice,
             liquidation_price: liquidationPrice,
+            profit_loss: 0,
+            status: 'open',
+            stop_loss: null,
+            take_profit: null,
+            exit_price: null,
+            closed_at: null,
+            merged_position_id: null,
+            merged_entry_price: null
           });
 
         if (positionError) throw positionError;
