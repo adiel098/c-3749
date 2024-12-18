@@ -32,49 +32,49 @@ export function PnLAnalysis({ positions }: PnLAnalysisProps) {
     value >= 0 ? 'text-success' : 'text-warning';
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-2 md:gap-4">
       <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" />
-            24h PnL
+        <CardHeader className="pb-1 md:pb-2">
+          <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-1 md:gap-2">
+            <Clock className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+            24h
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${getPnLColor(dailyPnL)}`}>
+          <div className={`text-sm md:text-2xl font-bold ${getPnLColor(dailyPnL)}`}>
             {formatPnL(dailyPnL)}
           </div>
-          <p className="text-xs text-muted-foreground">Last 24 hours</p>
+          <p className="text-[10px] md:text-xs text-muted-foreground">Last 24h</p>
         </CardContent>
       </Card>
 
       <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-primary" />
-            Weekly PnL
+        <CardHeader className="pb-1 md:pb-2">
+          <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-1 md:gap-2">
+            <CalendarDays className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+            Week
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${getPnLColor(weeklyPnL)}`}>
+          <div className={`text-sm md:text-2xl font-bold ${getPnLColor(weeklyPnL)}`}>
             {formatPnL(weeklyPnL)}
           </div>
-          <p className="text-xs text-muted-foreground">Last 7 days</p>
+          <p className="text-[10px] md:text-xs text-muted-foreground">Last 7d</p>
         </CardContent>
       </Card>
 
       <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-primary" />
-            Monthly PnL
+        <CardHeader className="pb-1 md:pb-2">
+          <CardTitle className="text-xs md:text-sm font-medium flex items-center gap-1 md:gap-2">
+            <Calendar className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+            Month
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${getPnLColor(monthlyPnL)}`}>
+          <div className={`text-sm md:text-2xl font-bold ${getPnLColor(monthlyPnL)}`}>
             {formatPnL(monthlyPnL)}
           </div>
-          <p className="text-xs text-muted-foreground">Last 30 days</p>
+          <p className="text-[10px] md:text-xs text-muted-foreground">Last 30d</p>
         </CardContent>
       </Card>
     </div>
