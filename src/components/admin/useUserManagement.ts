@@ -16,7 +16,9 @@ export function useUserManagement() {
 
       if (error) throw error;
 
+      // Invalidate both admin-users and profile queries
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
 
       toast({
         title: "User Deleted",
@@ -25,6 +27,7 @@ export function useUserManagement() {
         duration: 3000,
       });
     } catch (error: any) {
+      console.error('Delete error:', error);
       toast({
         title: "Error Deleting User",
         description: error.message,
@@ -36,13 +39,18 @@ export function useUserManagement() {
 
   const handleBalanceUpdate = async (userId: string, currentBalance: number, newBalance: number) => {
     try {
+      console.log('Updating balance:', { userId, currentBalance, newBalance });
+      
       // Update the user's balance in the profiles table
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ balance: newBalance })
         .eq('id', userId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Update error:', updateError);
+        throw updateError;
+      }
 
       // Create a transaction record for the balance adjustment
       const balanceChange = newBalance - currentBalance;
@@ -55,10 +63,14 @@ export function useUserManagement() {
           status: 'completed'
         });
 
-      if (transactionError) throw transactionError;
+      if (transactionError) {
+        console.error('Transaction error:', transactionError);
+        throw transactionError;
+      }
 
-      // Refresh the data
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      // Refresh both admin-users and profile queries
+      await queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      await queryClient.invalidateQueries({ queryKey: ["profile"] });
 
       toast({
         title: "Balance Updated",
@@ -69,6 +81,7 @@ export function useUserManagement() {
 
       return true;
     } catch (error: any) {
+      console.error('Balance update error:', error);
       toast({
         title: "Error Updating Balance",
         description: error.message,
