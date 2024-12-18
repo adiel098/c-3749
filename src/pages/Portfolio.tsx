@@ -7,27 +7,27 @@ import { Wallet, TrendingUp, LineChart } from "lucide-react";
 import PortfolioCard from "@/components/PortfolioCard";
 import { TradingStats } from "@/components/portfolio/TradingStats";
 import { PnLAnalysis } from "@/components/portfolio/PnLAnalysis";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import PortfolioMobile from "./PortfolioMobile";
 
 const Portfolio = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const { data: profile, isLoading: isLoadingProfile } = useProfile();
   const { data: positions } = usePositions();
+
+  if (isMobile) {
+    return <PortfolioMobile />;
+  }
 
   const calculateAccountValue = () => {
     if (!profile || !positions) return 0;
 
     const openPositions = positions.filter(p => p.status === 'open');
-    
-    // Calculate total margin used in open positions
     const totalMargin = openPositions.reduce((sum, pos) => sum + pos.amount, 0);
-    
-    // Calculate total P&L from open positions
     const totalPnL = openPositions.reduce((sum, pos) => sum + (pos.profit_loss || 0), 0);
-
-    // Total account value = Available Balance + Margin Used + Total P&L
     return profile.balance + totalMargin + totalPnL;
   };
 
-  // Calculate total unrealized PnL from open positions
   const calculateTotalUnrealizedPnL = () => {
     if (!positions) return 0;
     return positions
@@ -36,8 +36,6 @@ const Portfolio = () => {
   };
 
   const totalAccountValue = calculateAccountValue();
-  const marginUsed = positions?.filter(p => p.status === 'open')
-    .reduce((sum, pos) => sum + pos.amount, 0) || 0;
   const totalUnrealizedPnl = calculateTotalUnrealizedPnL();
 
   return (

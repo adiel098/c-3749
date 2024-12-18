@@ -183,7 +183,11 @@ export function TradingForm({
           </div>
           
           <Button
-            className="w-full h-14 bg-success hover:bg-success/90 transition-all duration-200"
+            className={`w-full h-14 transition-all duration-200 ${
+              initialType === 'long' 
+                ? 'bg-[#22C55E] hover:bg-[#22C55E]/90' 
+                : 'bg-[#ea384c] hover:bg-[#ea384c]/90'
+            }`}
             onClick={() => handleTrade(initialType)}
             disabled={isSubmitting || !currentPrice}
           >
