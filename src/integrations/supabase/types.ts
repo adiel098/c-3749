@@ -9,7 +9,109 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      positions: {
+        Row: {
+          amount: number
+          created_at: string
+          entry_price: number
+          id: string
+          leverage: number
+          liquidation_price: number
+          profit_loss: number | null
+          status: string | null
+          symbol: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          entry_price: number
+          id?: string
+          leverage: number
+          liquidation_price: number
+          profit_loss?: number | null
+          status?: string | null
+          symbol: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          entry_price?: number
+          id?: string
+          leverage?: number
+          liquidation_price?: number
+          profit_loss?: number | null
+          status?: string | null
+          symbol?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "positions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          status: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          status: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          status?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
