@@ -117,8 +117,14 @@ export function MobilePositionRow({ position, currentPrice, onUpdate, type }: Mo
           <p className="font-mono">${formatPrice(position.entry_price)}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-muted-foreground">Current Price</p>
-          <p className="font-mono">${currentPrice ? formatPrice(currentPrice) : '...'}</p>
+          <p className="text-muted-foreground">
+            {type === 'open' ? 'Current Price' : 'Exit Price'}
+          </p>
+          <p className="font-mono">
+            ${type === 'open' 
+              ? (currentPrice ? formatPrice(currentPrice) : '...') 
+              : (position.exit_price ? formatPrice(position.exit_price) : '...')}
+          </p>
         </div>
         {position.stop_loss && (
           <div className="space-y-1">
@@ -137,10 +143,10 @@ export function MobilePositionRow({ position, currentPrice, onUpdate, type }: Mo
       <div className="flex items-center justify-between pt-2 border-t border-white/10">
         <span className="text-sm text-muted-foreground">Size: ${position.amount.toFixed(2)}</span>
         <span className={cn(
-          "font-medium",
+          "font-medium flex items-center gap-1",
           pnl >= 0 ? "text-success" : "text-warning"
         )}>
-          {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)} ({pnlPercentage.toFixed(2)}%)
+          {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)} ({pnlPercentage >= 0 ? '+' : ''}{pnlPercentage.toFixed(2)}%)
         </span>
       </div>
     </div>
