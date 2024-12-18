@@ -16,16 +16,16 @@ export function PositionsList({ positions, currentPrice, onUpdate }: PositionsLi
   return (
     <div className="w-full">
       <Tabs defaultValue="open" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-secondary/40 mb-4">
+        <TabsList className="grid w-full grid-cols-2 bg-secondary/40 mb-4 p-1 border border-white/10 rounded-lg">
           <TabsTrigger 
             value="open"
-            className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary transition-all duration-200 hover:text-primary/80"
+            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/20 data-[state=active]:shadow-sm transition-all duration-200 hover:text-primary/80 border border-transparent"
           >
             Open Positions ({openPositions.length})
           </TabsTrigger>
           <TabsTrigger 
             value="closed"
-            className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary transition-all duration-200 hover:text-primary/80"
+            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/20 data-[state=active]:shadow-sm transition-all duration-200 hover:text-primary/80 border border-transparent"
           >
             Closed Positions ({closedPositions.length})
           </TabsTrigger>
