@@ -5,6 +5,8 @@ import { useProfile } from "@/hooks/useProfile";
 import { usePositions } from "@/hooks/usePositions";
 import { Wallet, TrendingUp, LineChart } from "lucide-react";
 import PortfolioCard from "@/components/PortfolioCard";
+import { TradingStats } from "@/components/portfolio/TradingStats";
+import { PnLAnalysis } from "@/components/portfolio/PnLAnalysis";
 
 const Portfolio = () => {
   const { data: profile, isLoading: isLoadingProfile } = useProfile();
@@ -22,7 +24,7 @@ const Portfolio = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 md:p-8 bg-background">
+        <div className="flex-1 p-4 md:p-8 bg-background overflow-y-auto">
           <div className="max-w-7xl mx-auto space-y-8">
             <header className="mb-8">
               <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -60,7 +62,7 @@ const Portfolio = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">
-                    <p className={`text-2xl font-bold ${totalUnrealizedPnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    <p className={`text-2xl font-bold ${totalUnrealizedPnl >= 0 ? 'text-success' : 'text-warning'}`}>
                       ${totalUnrealizedPnl.toFixed(2)}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -89,6 +91,13 @@ const Portfolio = () => {
                 </CardContent>
               </Card>
             </div>
+
+            {positions && (
+              <>
+                <TradingStats positions={positions} />
+                <PnLAnalysis positions={positions} />
+              </>
+            )}
 
             <PortfolioCard />
           </div>
