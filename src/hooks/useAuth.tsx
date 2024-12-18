@@ -24,37 +24,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("AuthProvider - Initializing");
-    let mounted = true;
-
     const initSession = async () => {
-      try {
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        console.log("AuthProvider - Initial session fetch:", initialSession ? "Exists" : "None");
-        
-        if (mounted) {
-          if (initialSession) {
-            setSession(initialSession);
-            setUser(initialSession.user);
-          }
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error("Error getting session:", error);
-        if (mounted) {
-          setIsLoading(false);
-        }
+      const { data: { session: initialSession } } = await supabase.auth.getSession();
+      if (initialSession) {
+        setSession(initialSession);
+        setUser(initialSession.user);
       }
+      setIsLoading(false);
     };
 
     initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      console.log("AuthProvider - Auth state changed:", _event);
-      console.log("AuthProvider - New session:", newSession ? "Exists" : "None");
-      
-      if (!mounted) return;
-      
       if (newSession) {
         setSession(newSession);
         setUser(newSession.user);
@@ -66,7 +47,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -82,7 +62,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateSession = (newSession: Session | null) => {
-    console.log("AuthProvider - Manual session update:", newSession ? "Exists" : "None");
     setSession(newSession);
     setUser(newSession?.user ?? null);
   };
