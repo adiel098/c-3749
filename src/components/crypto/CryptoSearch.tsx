@@ -40,7 +40,6 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           setIsLoading(true);
           setError(null);
           setCryptoList([]); // Reset list when opening new connection
-          retryCount = 0; // Reset retry count on successful connection
         };
 
         ws.onmessage = (event) => {
@@ -70,7 +69,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               )
               .slice(0, 100);
 
-            setCryptoList(usdtPairs || []); // Ensure we always set an array
+            setCryptoList(usdtPairs);
             setIsLoading(false);
           } catch (err) {
             console.error('Data processing error:', err);
