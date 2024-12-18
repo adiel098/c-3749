@@ -13,6 +13,7 @@ interface WithdrawalCardProps {
 export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
   const [amount, setAmount] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
   const { toast } = useToast();
 
   const handleWithdraw = () => {
@@ -21,6 +22,15 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
       toast({
         title: "Invalid amount",
         description: "Please enter a valid withdrawal amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!address.trim()) {
+      toast({
+        title: "Missing address",
+        description: "Please enter a withdrawal address",
         variant: "destructive",
       });
       return;
@@ -40,6 +50,7 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
       description: "Your withdrawal request has been sent to support for approval",
     });
     setAmount("");
+    setAddress("");
   };
 
   return (
@@ -54,11 +65,11 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
       <CardContent className="space-y-6">
         <div className="flex gap-2">
           <Button
-            variant={selectedMethod === "bitcoin" ? "default" : "secondary"}
+            variant={selectedMethod === "bitcoin" ? "default" : "outline"}
             className={`flex-1 gap-2 transition-all duration-300 ${
               selectedMethod === "bitcoin" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : "hover:bg-secondary/80"
+                : ""
             }`}
             onClick={() => setSelectedMethod("bitcoin")}
           >
@@ -66,11 +77,11 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
             Bitcoin
           </Button>
           <Button
-            variant={selectedMethod === "ethereum" ? "default" : "secondary"}
+            variant={selectedMethod === "ethereum" ? "default" : "outline"}
             className={`flex-1 gap-2 transition-all duration-300 ${
               selectedMethod === "ethereum" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : "hover:bg-secondary/80"
+                : ""
             }`}
             onClick={() => setSelectedMethod("ethereum")}
           >
@@ -78,11 +89,11 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
             Ethereum
           </Button>
           <Button
-            variant={selectedMethod === "usdt" ? "default" : "secondary"}
+            variant={selectedMethod === "usdt" ? "default" : "outline"}
             className={`flex-1 gap-2 transition-all duration-300 ${
               selectedMethod === "usdt" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : "hover:bg-secondary/80"
+                : ""
             }`}
             onClick={() => setSelectedMethod("usdt")}
           >
@@ -106,6 +117,17 @@ export function WithdrawalCard({ availableBalance }: WithdrawalCardProps) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount to withdraw"
+              className="bg-secondary/20 border-secondary"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>{selectedMethod.toUpperCase()} Withdrawal Address</Label>
+            <Input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder={`Enter your ${selectedMethod} address`}
               className="bg-secondary/20 border-secondary"
             />
           </div>

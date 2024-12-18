@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function DepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
+  const [amount, setAmount] = useState<string>("");
   const { toast } = useToast();
   
   const addresses = {
@@ -37,11 +38,11 @@ export function DepositCard() {
       <CardContent className="space-y-6">
         <div className="flex gap-2">
           <Button
-            variant={selectedMethod === "bitcoin" ? "default" : "secondary"}
+            variant={selectedMethod === "bitcoin" ? "default" : "outline"}
             className={`flex-1 gap-2 transition-all duration-300 ${
               selectedMethod === "bitcoin" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : "hover:bg-secondary/80"
+                : ""
             }`}
             onClick={() => setSelectedMethod("bitcoin")}
           >
@@ -49,11 +50,11 @@ export function DepositCard() {
             Bitcoin
           </Button>
           <Button
-            variant={selectedMethod === "ethereum" ? "default" : "secondary"}
+            variant={selectedMethod === "ethereum" ? "default" : "outline"}
             className={`flex-1 gap-2 transition-all duration-300 ${
               selectedMethod === "ethereum" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : "hover:bg-secondary/80"
+                : ""
             }`}
             onClick={() => setSelectedMethod("ethereum")}
           >
@@ -61,11 +62,11 @@ export function DepositCard() {
             Ethereum
           </Button>
           <Button
-            variant={selectedMethod === "usdt" ? "default" : "secondary"}
+            variant={selectedMethod === "usdt" ? "default" : "outline"}
             className={`flex-1 gap-2 transition-all duration-300 ${
               selectedMethod === "usdt" 
                 ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : "hover:bg-secondary/80"
+                : ""
             }`}
             onClick={() => setSelectedMethod("usdt")}
           >
@@ -75,6 +76,17 @@ export function DepositCard() {
         </div>
 
         <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Amount to Deposit</Label>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              className="bg-secondary/20 border-secondary"
+            />
+          </div>
+
           <div className="flex justify-center">
             <QRCodeSVG 
               value={addresses[selectedMethod as keyof typeof addresses]} 
