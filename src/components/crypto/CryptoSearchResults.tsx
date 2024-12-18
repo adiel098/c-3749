@@ -11,7 +11,7 @@ interface CryptoSearchResultsProps {
 }
 
 export function CryptoSearchResults({ 
-  cryptoList, 
+  cryptoList = [], // Provide default empty array
   isLoading, 
   error, 
   onSelect, 
@@ -31,8 +31,10 @@ export function CryptoSearchResults({
 
   return (
     <>
-      <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
-      {cryptoList.length > 0 && (
+      {(!cryptoList || cryptoList.length === 0) && (
+        <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+      )}
+      {cryptoList && cryptoList.length > 0 && (
         <CommandGroup heading="מטבעות פופולריים">
           {cryptoList.map((crypto) => (
             <CommandItem

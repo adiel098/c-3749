@@ -40,12 +40,13 @@ export function useWebSocketData(isOpen: boolean) {
           }))
           .slice(0, 100);
 
-        setCryptoList(usdtPairs);
+        setCryptoList(usdtPairs || []); // Ensure we always set an array
         setIsLoading(false);
       } catch (err) {
         console.error('Data processing error:', err);
         setError('Failed to process data');
         setIsLoading(false);
+        setCryptoList([]); // Reset to empty array on error
       }
     };
 
@@ -53,6 +54,7 @@ export function useWebSocketData(isOpen: boolean) {
       console.error('WebSocket error occurred');
       setError('Failed to connect to price feed');
       setIsLoading(false);
+      setCryptoList([]); // Reset to empty array on error
       toast({
         title: "Connection Error",
         description: "Failed to connect to price feed",
@@ -70,5 +72,5 @@ export function useWebSocketData(isOpen: boolean) {
     };
   }, [isOpen, toast]);
 
-  return { cryptoList, isLoading, error };
+  return { cryptoList: cryptoList || [], isLoading, error }; // Ensure we always return an array
 }
