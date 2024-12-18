@@ -76,22 +76,12 @@ const Settings = () => {
         <AppSidebar />
         <div className="flex-1 p-4 md:p-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <header className="flex justify-between items-center">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Settings2 className="h-8 w-8 text-primary" />
-                  <h1 className="text-2xl md:text-3xl font-bold gradient-text">Settings</h1>
-                </div>
-                <p className="text-muted-foreground">Manage your account preferences and security settings</p>
+            <header className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Settings2 className="h-8 w-8 text-primary" />
+                <h1 className="text-2xl md:text-3xl font-bold gradient-text">Settings</h1>
               </div>
-              <Button
-                onClick={handleLogout}
-                className="bg-gradient-to-r from-[#ea384c] via-[#D946EF] to-[#F97316] hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2 px-6 py-2"
-                size="lg"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="hidden md:inline">Logout</span>
-              </Button>
+              <p className="text-muted-foreground">Manage your account preferences and security settings</p>
             </header>
 
             <Tabs defaultValue="profile" className="space-y-6">
@@ -122,6 +112,17 @@ const Settings = () => {
                 <PreferencesForm />
               </TabsContent>
             </Tabs>
+
+            <div className="pt-8 border-t border-white/10">
+              <Button
+                onClick={handleLogout}
+                variant="destructive"
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-6 flex items-center justify-center gap-2 text-lg transition-all duration-300"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>
