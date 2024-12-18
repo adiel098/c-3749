@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Command, CommandInput } from '@/components/ui/command';
 import { CryptoSearchButton } from './CryptoSearchButton';
 import { CryptoSearchResults } from './CryptoSearchResults';
@@ -20,11 +20,14 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
         <DialogContent>
           <DialogHeader>
             <DialogTitle>חיפוש מטבעות</DialogTitle>
+            <DialogDescription>
+              חפש וסחר במטבעות קריפטו פופולריים
+            </DialogDescription>
           </DialogHeader>
           <Command className="rounded-lg border-0">
             <CommandInput placeholder="חפש מטבעות..." className="border-0" />
             <CryptoSearchResults 
-              cryptoList={cryptoList} 
+              cryptoList={cryptoList || []} 
               isLoading={isLoading}
               error={error}
               onSelect={onSelect}

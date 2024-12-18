@@ -9,68 +9,98 @@ export function useWebSocketData(isOpen: boolean) {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setCryptoList([]);
+      setIsLoading(false);
+      return;
+    }
 
-    const ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
-    console.log('Connecting to WebSocket...');
+    let ws: WebSocket | null = null;
+    let isConnected = false;
 
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      setIsLoading(true);
-      setError(null);
-    };
-
-    ws.onmessage = (event) => {
+    const connect = () => {
       try {
-        const data = JSON.parse(event.data);
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid data format received');
-        }
+        ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
+        
+        ws.onopen = () => {
+          console.log('WebSocket connected');
+          isConnected = true;
+          setIsLoading(true);
+          setError(null);
+        };
 
-        const usdtPairs = data
-          .filter((item: any) => 
-            item?.s?.endsWith('USDT') && 
-            item?.c && 
-            item?.P
-          )
-          .map((item: any) => ({
-            symbol: item.s.replace('USDT', ''),
-            price: parseFloat(item.c).toFixed(2),
-            priceChange: parseFloat(item.P).toFixed(2)
-          }))
-          .slice(0, 100);
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (!Array.isArray(data)) {
+              throw new Error('Invalid data format received');
+            }
 
-        setCryptoList(usdtPairs || []); // Ensure we always set an array
+            const usdtPairs = data
+              .filter((item: any) => 
+                item?.s?.endsWith('USDT') && 
+                item?.c && 
+                item?.P
+              )
+              .map((item: any) => ({
+                symbol: item.s.replace('USDT', ''),
+                price: parseFloat(item.c).toFixed(2),
+                priceChange: parseFloat(item.P).toFixed(2)
+              }))
+              .slice(0, 100);
+
+            setCryptoList(usdtPairs);
+            setIsLoading(false);
+          } catch (err) {
+            console.error('Data processing error:', err);
+            setCryptoList([]);
+            setError('Failed to process data');
+            setIsLoading(false);
+          }
+        };
+
+        ws.onerror = () => {
+          console.error('WebSocket error occurred');
+          setCryptoList([]);
+          setError('Failed to connect to price feed');
+          setIsLoading(false);
+          if (isConnected) {
+            toast({
+              title: "Connection Error",
+              description: "Failed to connect to price feed",
+              variant: "destructive",
+            });
+          }
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket connection closed');
+          if (isConnected) {
+            setCryptoList([]);
+            setIsLoading(false);
+          }
+        };
+      } catch (error) {
+        console.error('WebSocket connection error:', error);
+        setCryptoList([]);
+        setError('Failed to establish connection');
         setIsLoading(false);
-      } catch (err) {
-        console.error('Data processing error:', err);
-        setError('Failed to process data');
-        setIsLoading(false);
-        setCryptoList([]); // Reset to empty array on error
       }
     };
 
-    ws.onerror = () => {
-      console.error('WebSocket error occurred');
-      setError('Failed to connect to price feed');
-      setIsLoading(false);
-      setCryptoList([]); // Reset to empty array on error
-      toast({
-        title: "Connection Error",
-        description: "Failed to connect to price feed",
-        variant: "destructive",
-      });
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+    connect();
 
     return () => {
-      console.log('Cleaning up WebSocket connection');
-      ws.close();
+      if (ws) {
+        isConnected = false;
+        ws.close();
+      }
     };
   }, [isOpen, toast]);
 
-  return { cryptoList: cryptoList || [], isLoading, error }; // Ensure we always return an array
+  return { 
+    cryptoList: cryptoList || [], 
+    isLoading, 
+    error 
+  };
 }
