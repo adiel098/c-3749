@@ -34,11 +34,7 @@ const AuthPage = () => {
                     ? "Great to see you again! Log in to continue your trading journey" 
                     : "Join hundreds of traders and start your crypto trading adventure"}
                 </p>
-                <p className="text-foreground/80">
-                  {activeTab === "login" 
-                    ? "Great to see you again! Log in to continue your trading journey" 
-                    : "Unlock powerful trading tools and opportunities"}
-                </p>
+                {/* Removed the second paragraph as requested */}
               </CardDescription>
             </CardHeader>
             <CardContent className={`relative ${isMobile ? 'flex-1 overflow-hidden flex flex-col' : ''}`}>
