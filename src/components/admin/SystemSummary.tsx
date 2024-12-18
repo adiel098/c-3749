@@ -14,13 +14,15 @@ export function SystemSummary() {
       
       if (usersError) throw usersError;
 
-      // Get all open positions
+      // Get all open positions with their details
       const { data: positions, error: positionsError } = await supabase
         .from('positions')
         .select('*')
         .eq('status', 'open');
 
       if (positionsError) throw positionsError;
+      
+      console.log('Open positions:', positions); // Debug log
 
       // Get total transactions in last 24h
       const oneDayAgo = new Date();
@@ -35,9 +37,18 @@ export function SystemSummary() {
 
       const totalUsers = usersData.length;
       const totalBalance = usersData.reduce((sum, user) => sum + (user.balance || 0), 0);
-      const totalPositionsValue = positions?.reduce((sum, pos) => sum + pos.amount, 0) || 0;
-      const totalPositionsPnL = positions?.reduce((sum, pos) => sum + (pos.profit_loss || 0), 0) || 0;
+      
+      // Calculate positions value and PnL
+      const totalPositionsValue = positions?.reduce((sum, pos) => sum + Number(pos.amount), 0) || 0;
+      const totalPositionsPnL = positions?.reduce((sum, pos) => sum + Number(pos.profit_loss || 0), 0) || 0;
+      
+      console.log('Total Balance:', totalBalance); // Debug log
+      console.log('Total Positions Value:', totalPositionsValue); // Debug log
+      console.log('Total PnL:', totalPositionsPnL); // Debug log
+      
       const totalAccountValue = totalBalance + totalPositionsValue + totalPositionsPnL;
+      
+      console.log('Total Account Value:', totalAccountValue); // Debug log
       
       return {
         totalUsers,
