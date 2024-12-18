@@ -11,49 +11,55 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
   const { toast } = useToast();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
-  const maxReconnectAttempts = 5;
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const maxReconnectAttempts = 3;
   const isConnectingRef = useRef(false);
+  const isComponentMounted = useRef(true);
 
   const handlePriceUpdate = useCallback(
     debounce((price: number) => {
-      onPriceUpdate(price);
+      if (isComponentMounted.current) {
+        onPriceUpdate(price);
+      }
     }, 100),
     [onPriceUpdate]
   );
 
   const cleanup = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = undefined;
-    }
-    if (wsRef.current) {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.close();
-      wsRef.current = null;
     }
+    wsRef.current = null;
+    isConnectingRef.current = false;
     handlePriceUpdate.cancel();
   }, [handlePriceUpdate]);
 
   const connect = useCallback(() => {
-    if (isConnectingRef.current) {
-      console.log('Connection attempt already in progress');
+    if (!isComponentMounted.current) return;
+    
+    if (isConnectingRef.current || (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)) {
       return;
     }
 
     try {
-      cleanup();
       isConnectingRef.current = true;
+      cleanup();
 
       const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log('WebSocket Connected Successfully');
+        if (!isComponentMounted.current) {
+          ws.close();
+          return;
+        }
+        console.log('WebSocket Connected');
         reconnectAttempts.current = 0;
         isConnectingRef.current = false;
       };
 
       ws.onmessage = (event) => {
+        if (!isComponentMounted.current) return;
+        
         try {
           const data = JSON.parse(event.data);
           if (data.p) {
@@ -64,29 +70,36 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
         }
       };
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        isConnectingRef.current = false;
-        ws.close();
-      };
-
-      ws.onclose = (event) => {
-        console.log('WebSocket connection closed:', event.code, event.reason);
+      ws.onerror = () => {
+        if (!isComponentMounted.current) return;
         isConnectingRef.current = false;
         
+        if (reconnectAttempts.current === 0) {
+          toast({
+            title: "Connection Warning",
+            description: "Having trouble connecting to price feed. Retrying...",
+            variant: "default",
+          });
+        }
+      };
+
+      ws.onclose = () => {
+        if (!isComponentMounted.current) return;
+        isConnectingRef.current = false;
+
         if (reconnectAttempts.current < maxReconnectAttempts) {
-          const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 10000);
+          const timeout = Math.min(2000 * Math.pow(2, reconnectAttempts.current), 10000);
           reconnectAttempts.current++;
           
-          console.log(`Attempting to reconnect (${reconnectAttempts.current}/${maxReconnectAttempts}) in ${timeout}ms...`);
-          
-          reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
+          setTimeout(() => {
+            if (isComponentMounted.current) {
+              connect();
+            }
           }, timeout);
-        } else {
+        } else if (reconnectAttempts.current === maxReconnectAttempts) {
           toast({
             title: "Connection Error",
-            description: "Unable to connect to price feed. Please refresh the page.",
+            description: "Unable to maintain price feed connection. Using fallback update method.",
             variant: "destructive",
           });
         }
@@ -94,17 +107,17 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
     } catch (error) {
       console.error('Error creating WebSocket:', error);
       isConnectingRef.current = false;
-      toast({
-        title: "Connection Error",
-        description: "Failed to establish price feed connection",
-        variant: "destructive",
-      });
     }
   }, [symbol, handlePriceUpdate, cleanup, toast]);
 
   useEffect(() => {
+    isComponentMounted.current = true;
     connect();
-    return cleanup;
+
+    return () => {
+      isComponentMounted.current = false;
+      cleanup();
+    };
   }, [symbol, connect, cleanup]);
 
   return null;
