@@ -6,12 +6,14 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   signOut: () => Promise<void>;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   signOut: async () => {},
+  isLoading: true,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -20,9 +22,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("AuthProvider - Initializing");
+    
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("AuthProvider - Initial session fetch:", session ? "Exists" : "None");
+      console.log("AuthProvider - Initial session:", session ? "Exists" : "None");
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
@@ -31,32 +35,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log("AuthProvider - Auth state changed:", _event);
-      console.log("AuthProvider - New session state:", session ? "Exists" : "None");
-      
-      // Add a small delay to ensure state is properly updated
-      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log("AuthProvider - New session:", session ? "Exists" : "None");
       
       setSession(session);
       setUser(session?.user ?? null);
+      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signOut = async () => {
+    setIsLoading(true);
     await supabase.auth.signOut();
+    setIsLoading(false);
   };
 
-  // Don't render children until initial session is loaded
   if (isLoading) {
-    console.log("AuthProvider - Still loading initial session");
+    console.log("AuthProvider - Loading state");
     return null;
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, signOut }}>
+    <AuthContext.Provider value={{ session, user, signOut, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

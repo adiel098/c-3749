@@ -35,7 +35,7 @@ export function LoginForm() {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data: authData } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
@@ -52,13 +52,16 @@ export function LoginForm() {
         return;
       }
 
-      console.log("Login successful");
+      console.log("Login successful, session:", authData.session ? "Exists" : "None");
+      
+      // Wait for session to be properly set
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       toast({
         title: "Success",
         description: "You have been logged in successfully",
       });
 
-      // Navigate to the intended page or home based on device type
       const from = location.state?.from?.pathname || "/";
       console.log("Navigating to:", from);
       console.log("Is Mobile:", isMobile);
