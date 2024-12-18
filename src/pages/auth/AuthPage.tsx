@@ -3,19 +3,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { LogIn, UserPlus } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const AuthPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <div className="h-[100dvh] flex items-center justify-center p-4 auth-page overflow-hidden">
-      <Card className="w-full max-w-md glass-effect">
+    <div className="min-h-[100dvh] flex items-start justify-center p-4 auth-page overflow-y-auto">
+      <Card className="w-full max-w-md glass-effect my-4">
         <CardContent className="p-0">
           <Tabs defaultValue="login" className="w-full">
             <TabsContent value="login">
-              <div className={`p-4 pb-2 ${isMobile ? "pt-25" : "pt-6"}`}>
+              <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"}`}>
                 <h1 className="text-4xl font-bold gradient-text mb-4">Welcome Back</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Great to see you again! Log in to continue your trading journey
@@ -48,7 +47,7 @@ const AuthPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="signup">
-              <div className={`p-4 pb-2 ${isMobile ? "pt-35" : "pt-6"}`}>
+              <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"}`}>
                 <h1 className="text-4xl font-bold gradient-text mb-4">Join Us Now</h1>
                 <p className="text-xl text-foreground/90 mb-6">
                   Join hundreds of traders and start your crypto trading adventure
@@ -76,7 +75,7 @@ const AuthPage = () => {
                   </TabsTrigger>
                 </TabsList>
               </div>
-              <div className="px-6 pb-10">
+              <div className="px-6 pb-6">
                 <SignUpForm />
               </div>
             </TabsContent>
