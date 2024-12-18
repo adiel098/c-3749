@@ -9,10 +9,10 @@ import { useCryptoPrice } from "@/hooks/useCryptoPrice";
 interface CryptoChartProps {
   symbol: string;
   onPriceUpdate?: (price: number) => void;
-  onSearchOpen?: () => void;
+  onSymbolChange?: (symbol: string) => void;
 }
 
-const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
+const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps) => {
   const currentPrice = useCryptoPrice(symbol);
   
   const { data: priceData, isLoading } = useQuery({
@@ -45,7 +45,14 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
           <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
             {symbol}/USDT
           </h2>
-          <CryptoSearch onSelect={(newSymbol) => console.log("Selected:", newSymbol)} />
+          <CryptoSearch 
+            onSelect={(newSymbol) => {
+              console.log("Selected new symbol:", newSymbol);
+              if (onSymbolChange) {
+                onSymbolChange(newSymbol);
+              }
+            }} 
+          />
         </div>
 
         {isLoading ? (

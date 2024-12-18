@@ -55,7 +55,7 @@ const Trade = () => {
         }));
       }
     },
-    refetchInterval: 30000 // Refetch every 30 seconds
+    refetchInterval: 30000
   });
 
   const handlePriceUpdate = (price: number) => {
@@ -63,6 +63,7 @@ const Trade = () => {
   };
 
   const handleCryptoSelect = (symbol: string) => {
+    console.log("Trade page: Selected crypto:", symbol);
     setSelectedCrypto(symbol);
     setSearchOpen(false);
   };
@@ -120,7 +121,7 @@ const Trade = () => {
                 <CryptoChart 
                   symbol={selectedCrypto} 
                   onPriceUpdate={handlePriceUpdate}
-                  onSearchOpen={() => setSearchOpen(true)}
+                  onSymbolChange={handleCryptoSelect}
                 />
               </div>
               <div className="glass-card rounded-lg">

@@ -40,7 +40,11 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
       console.log("Formatted crypto list:", formattedData);
       return formattedData;
     },
+    staleTime: 30000, // Data is considered fresh for 30 seconds
+    cacheTime: 5 * 60 * 1000, // Keep data in cache for 5 minutes
     refetchInterval: 30000, // Refetch every 30 seconds
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   const filteredCryptos = cryptoList.filter((crypto: any) =>
