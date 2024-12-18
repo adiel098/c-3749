@@ -26,6 +26,7 @@ const AuthPage = () => {
     };
   }, [navigate, location]);
 
+  // If user is already authenticated, redirect to home or the page they came from
   if (session) {
     const from = location.state?.from?.pathname || "/";
     return <Navigate to={from} replace />;
