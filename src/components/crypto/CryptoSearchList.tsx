@@ -44,20 +44,17 @@ export function CryptoSearchList({ cryptoList, onSelect, onClose }: CryptoSearch
               <div className="flex items-center gap-3">
                 <img
                   src={`https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${crypto.symbol.toLowerCase()}.png`}
-                  alt={crypto.symbol}
+                  alt={`${crypto.symbol} icon`}
                   className="w-8 h-8 rounded-full"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/placeholder.svg';
                   }}
                 />
-                <div className="flex flex-col">
-                  <span className="font-medium text-base">{crypto.symbol}</span>
-                  <span className="text-sm text-muted-foreground">Click to select</span>
-                </div>
+                <span className="font-medium text-base">{crypto.symbol}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="font-mono text-sm" title="Current price">
+                <span className="font-mono text-sm" title="Current market price">
                   ${formatPrice(crypto.price)}
                 </span>
                 <div
@@ -67,7 +64,7 @@ export function CryptoSearchList({ cryptoList, onSelect, onClose }: CryptoSearch
                       ? "text-success bg-success/10" 
                       : "text-warning bg-warning/10"
                   )}
-                  title="24h price change"
+                  title="Price change in the last 24 hours"
                 >
                   {parseFloat(crypto.priceChange) >= 0 ? (
                     <TrendingUp className="h-3 w-3" />
