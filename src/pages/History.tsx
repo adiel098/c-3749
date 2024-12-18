@@ -39,16 +39,16 @@ const History = () => {
           <header className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight gradient-text flex items-center gap-2">
               <HistoryIcon className="h-8 w-8 text-primary" />
-              היסטוריית מסחר
+              Trading History
             </h1>
-            <p className="text-muted-foreground">צפה בעסקאות הסגורות שלך וביצועים היסטוריים</p>
+            <p className="text-muted-foreground">View your closed positions and historical performance</p>
           </header>
 
           <Card className="glass-effect overflow-hidden">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                עסקאות סגורות
+                Closed Positions
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -63,7 +63,7 @@ const History = () => {
                 ) : !closedPositions.length ? (
                   <div className="text-center text-muted-foreground py-8 glass-effect rounded-lg p-6">
                     <Clock className="h-12 w-12 mx-auto mb-3 text-primary/50" />
-                    לא נמצאו עסקאות סגורות
+                    No closed positions found
                   </div>
                 ) : (
                   closedPositions.map((position) => (
@@ -82,7 +82,7 @@ const History = () => {
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            נסגר ב-{new Date(position.closed_at || '').toLocaleDateString('he-IL', {
+                            Closed on {new Date(position.closed_at || '').toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
                               day: 'numeric',
@@ -105,25 +105,25 @@ const History = () => {
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground mt-1">
-                            {position.leverage}x מינוף
+                            {position.leverage}x Leverage
                           </p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t border-white/10">
                         <div>
-                          <p className="text-sm text-muted-foreground">מחיר כניסה</p>
+                          <p className="text-sm text-muted-foreground">Entry Price</p>
                           <p className="font-medium">${position.entry_price}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">מחיר יציאה</p>
+                          <p className="text-sm text-muted-foreground">Exit Price</p>
                           <p className="font-medium">${position.exit_price}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">גודל פוזיציה</p>
+                          <p className="text-sm text-muted-foreground">Position Size</p>
                           <p className="font-medium">${position.amount}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">מחיר חיסול</p>
+                          <p className="text-sm text-muted-foreground">Liquidation Price</p>
                           <p className="font-medium">${position.liquidation_price}</p>
                         </div>
                       </div>

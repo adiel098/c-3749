@@ -68,13 +68,13 @@ const Wallet = () => {
       if (transactionError) throw transactionError;
 
       toast({
-        title: "הפקדה בוצעה בהצלחה",
-        description: "נוספו $10,000 לחשבונך",
+        title: "Deposit Successful",
+        description: "$10,000 has been added to your account",
       });
     } catch (error: any) {
       console.error('Deposit error:', error);
       toast({
-        title: "שגיאה",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
@@ -87,8 +87,8 @@ const Wallet = () => {
         <AppSidebar />
         <div className="flex-1 p-4 md:p-8 space-y-8">
           <header className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight gradient-text">ארנק</h1>
-            <p className="text-muted-foreground">נהל את הכספים הוירטואליים שלך</p>
+            <h1 className="text-3xl font-bold tracking-tight gradient-text">Wallet</h1>
+            <p className="text-muted-foreground">Manage your virtual funds</p>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -97,7 +97,7 @@ const Wallet = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <WalletCards className="h-5 w-5 text-primary" />
-                  יתרה זמינה
+                  Available Balance
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -105,13 +105,13 @@ const Wallet = () => {
                   <p className="text-4xl font-bold tracking-tight">
                     ${profile?.balance?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '0.00'}
                   </p>
-                  <p className="text-sm text-muted-foreground">USDT זמין</p>
+                  <p className="text-sm text-muted-foreground">Available USDT</p>
                 </div>
                 <Button 
                   onClick={handleDeposit} 
                   className="w-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-[1.02]"
                 >
-                  הוסף כספי דמו
+                  Add Demo Funds
                 </Button>
               </CardContent>
             </Card>
@@ -120,14 +120,14 @@ const Wallet = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <History className="h-5 w-5 text-primary" />
-                  היסטוריית עסקאות
+                  Transaction History
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
                   {!transactions?.length ? (
                     <div className="text-center text-muted-foreground py-8">
-                      לא נמצאו עסקאות
+                      No transactions found
                     </div>
                   ) : (
                     transactions.map((tx) => (
@@ -143,10 +143,10 @@ const Wallet = () => {
                           )}
                           <div>
                             <p className="font-medium capitalize">
-                              {tx.type === 'deposit' ? 'הפקדה' : 'משיכה'}
+                              {tx.type === 'deposit' ? 'Deposit' : 'Withdrawal'}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {new Date(tx.created_at).toLocaleDateString('he-IL', {
+                              {new Date(tx.created_at).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -161,7 +161,7 @@ const Wallet = () => {
                             {tx.type === 'deposit' ? '+' : '-'}${tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                           </p>
                           <p className="text-sm text-muted-foreground capitalize">
-                            {tx.status === 'completed' ? 'הושלם' : 'בתהליך'}
+                            {tx.status === 'completed' ? 'Completed' : 'Processing'}
                           </p>
                         </div>
                       </div>
