@@ -56,20 +56,24 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
       "style": "1",
       "locale": "he_IL",
       "enable_publishing": false,
-      "hide_top_toolbar": true,
-      "hide_legend": true,
-      "save_image": false,
-      "calendar": false,
-      "hide_volume": true,
-      "support_host": "https://www.tradingview.com"
+      "hide_top_toolbar": false,
+      "hide_legend": false,
+      "save_image": true,
+      "calendar": true,
+      "hide_volume": false,
+      "support_host": "https://www.tradingview.com",
+      "container_id": "tradingview_chart",
+      "width": "100%",
+      "height": "100%"
     });
 
     // Create container for TradingView widget
     const widgetContainer = document.createElement('div');
-    widgetContainer.className = 'tradingview-widget-container';
+    widgetContainer.className = 'tradingview-widget-container h-full w-full';
     
     const widget = document.createElement('div');
-    widget.className = 'tradingview-widget-container__widget h-[420px]';
+    widget.id = "tradingview_chart";
+    widget.className = 'h-full w-full';
     widgetContainer.appendChild(widget);
     
     // Clear and append new widget
@@ -87,14 +91,14 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate }: CryptoChartProps) => {
   }, [symbol]);
 
   return (
-    <div className="w-full h-[500px] rounded-lg overflow-hidden border bg-card p-4">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden border bg-card">
+      <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-xl font-semibold">{symbol}/USDT Live Price</h2>
         <span className="text-lg font-mono">
           ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       </div>
-      <div ref={containerRef} className="h-[420px]" />
+      <div ref={containerRef} className="h-[calc(100%-4rem)]" />
     </div>
   );
 };
