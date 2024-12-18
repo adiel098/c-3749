@@ -93,11 +93,8 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChar
   return (
     <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden border border-white/10 bg-secondary/20 backdrop-blur-lg">
       <div className="flex justify-between items-center p-4 border-b border-white/10">
-        <h2 className="text-xl font-semibold">{symbol}/USDT Live Price</h2>
-        <div className="flex items-center gap-4">
-          <span className="text-lg font-mono bg-secondary/40 px-3 py-1 rounded-lg">
-            ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">{symbol}/USDT Live Price</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -106,6 +103,11 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChar
           >
             <Search className="h-5 w-5" />
           </Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-lg font-mono bg-secondary/40 px-3 py-1 rounded-lg">
+            ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
         </div>
       </div>
       <div ref={containerRef} className="h-[calc(100%-4rem)]" />
