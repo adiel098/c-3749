@@ -1,5 +1,11 @@
 import { useEffect, useRef } from 'react';
 
+declare global {
+  interface Window {
+    TradingView: any;
+  }
+}
+
 interface CryptoChartProps {
   symbol?: string;
 }
@@ -10,12 +16,10 @@ const CryptoChart = ({ symbol = 'BTC' }: CryptoChartProps) => {
 
   useEffect(() => {
     if (container.current) {
-      // Remove existing widget if any
       if (scriptRef.current) {
         scriptRef.current.remove();
       }
 
-      // Create new script element
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/tv.js';
       script.async = true;

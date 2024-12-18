@@ -8,6 +8,8 @@ import { useToast } from "@/components/ui/use-toast";
 import CryptoChart from "@/components/CryptoChart";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Search } from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const Index = () => {
   const { toast } = useToast();
@@ -58,47 +60,50 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8" dir="rtl">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <header className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">מסחר דמו בקריפטו</h1>
-            <p className="text-muted-foreground">התאמן במסחר עם כספים וירטואליים</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">יתרה זמינה</p>
-            <p className="text-xl font-bold">$100,000.00</p>
-          </div>
-        </header>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full" dir="rtl">
+        <AppSidebar />
+        <div className="flex-1 p-4 md:p-8">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold">מסחר דמו בקריפטו</h1>
+                <p className="text-muted-foreground">התאמן במסחר עם כספים וירטואליים</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">יתרה זמינה</p>
+                <p className="text-xl font-bold">$100,000.00</p>
+              </div>
+            </header>
 
-        <div className="w-full max-w-sm">
-          <Command className="rounded-lg border shadow-md">
-            <CommandInput placeholder="חפש מטבע..." />
-            <CommandList>
-              <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
-              <CommandGroup heading="מטבעות פופולריים">
-                {cryptoList?.map((crypto: any) => (
-                  <CommandItem
-                    key={crypto.symbol}
-                    onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
-                    <span>{crypto.name}</span>
-                    <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </div>
+            <div className="w-full flex items-center gap-2 bg-secondary/20 p-2 rounded-lg border border-secondary/30">
+              <Search className="h-5 w-5 text-muted-foreground" />
+              <Command className="rounded-lg border-0 shadow-none bg-transparent">
+                <CommandInput placeholder="חפש מטבע..." className="border-0 bg-transparent focus:ring-0" />
+                <CommandList className="absolute top-full mt-2 w-full bg-background border rounded-lg shadow-lg">
+                  <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+                  <CommandGroup heading="מטבעות פופולריים">
+                    {cryptoList?.map((crypto: any) => (
+                      <CommandItem
+                        key={crypto.symbol}
+                        onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
+                        <span>{crypto.name}</span>
+                        <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <CryptoChart symbol={selectedCrypto} />
-          </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <CryptoChart symbol={selectedCrypto} />
+              </div>
 
-          <div>
             <Card>
               <CardHeader>
                 <CardTitle>מסחר</CardTitle>
@@ -178,8 +183,7 @@ const Index = () => {
                 </Tabs>
               </CardContent>
             </Card>
-          </div>
-        </div>
+            </div>
 
         <Card>
           <CardHeader>
@@ -191,8 +195,10 @@ const Index = () => {
             </div>
           </CardContent>
         </Card>
+          </div>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
