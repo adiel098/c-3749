@@ -92,7 +92,7 @@
   }
   
   .main-content {
-    @apply h-[calc(100dvh-4rem)] overflow-y-auto pb-16 pt-4;
+    @apply h-[calc(100dvh-4rem)] pt-4;
   }
 
   /* Remove top padding for auth pages */
@@ -104,11 +104,4 @@
 /* Mobile Navigation Bar */
 .mobile-nav {
   @apply fixed bottom-0 left-0 right-0 z-50;
-}
-
-/* Add padding to main content area on mobile */
-@media (max-width: 768px) {
-  .main-content {
-    @apply pb-20;
-  }
 }
