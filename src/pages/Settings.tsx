@@ -44,6 +44,8 @@ const Settings = () => {
     );
   }
 
+  console.log("Profile data:", profile); // Add this to debug
+
   // Parse phone number to separate country code and number
   const parsePhoneNumber = (phone: string | null) => {
     if (!phone) return { countryCode: "+972", phoneNumber: "" };
@@ -63,9 +65,11 @@ const Settings = () => {
   const profileData = {
     firstName: profile?.first_name || "",
     lastName: profile?.last_name || "",
-    phoneNumber: phoneNumber,
-    countryCode: countryCode
+    phoneNumber,
+    countryCode
   };
+
+  console.log("Profile form data:", profileData); // Add this to debug
 
   return (
     <SidebarProvider>

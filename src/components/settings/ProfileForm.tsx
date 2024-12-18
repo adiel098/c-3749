@@ -37,6 +37,9 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     phoneNumber: initialData.phoneNumber
   });
 
+  console.log("ProfileForm initialData:", initialData); // Add this to debug
+  console.log("ProfileForm state:", profile); // Add this to debug
+
   const handleProfileUpdate = async () => {
     if (!user) return;
 
