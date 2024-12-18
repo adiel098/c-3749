@@ -2,7 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowUpCircle, ArrowDownCircle, StopCircle, Target, XCircle } from "lucide-react";
+import { 
+  ArrowUpCircle, 
+  ArrowDownCircle, 
+  DollarSign, 
+  TrendingUp, 
+  TrendingDown, 
+  Percent,
+  StopCircle, 
+  Target, 
+  XCircle 
+} from "lucide-react";
 import { useState } from "react";
 import type { Position } from "@/types/position";
 
@@ -87,67 +97,124 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
     }
   };
 
+  const profitLossPercentage = ((currentPrice || position.exit_price || 0) - position.entry_price) / position.entry_price * 100;
+  const marginAmount = position.amount * position.leverage;
+
   return (
-    <div className="flex items-center justify-between p-2 rounded-lg bg-secondary/30 hover:bg-secondary/40 transition-colors">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          {position.type === 'long' ? (
-            <ArrowUpCircle className="text-success h-4 w-4" />
-          ) : (
-            <ArrowDownCircle className="text-warning h-4 w-4" />
-          )}
-          <span className="font-medium">{position.symbol}</span>
+    <div className="flex flex-col gap-4 p-4 rounded-lg bg-gray-800 border border-gray-700 hover:bg-gray-800/80 transition-all duration-200">
+      {/* Header Section */}
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {position.type === 'long' ? (
+              <ArrowUpCircle className="text-green-500 h-5 w-5" />
+            ) : (
+              <ArrowDownCircle className="text-red-500 h-5 w-5" />
+            )}
+            <span className="font-semibold text-white">{position.symbol}</span>
+            <span className="text-sm text-gray-400">{position.type.toUpperCase()}</span>
+          </div>
+          <div className="text-sm text-gray-400">
+            {new Date(position.created_at).toLocaleDateString()}
+          </div>
         </div>
-        <div className="text-sm text-muted-foreground">
-          {type === 'open' ? (
-            <>Entry: ${position.entry_price}</>
-          ) : (
-            <>Entry: ${position.entry_price} | Exit: ${position.exit_price}</>
-          )}
+        
+        <div className="flex flex-col items-end gap-1">
+          <div className={`flex items-center gap-1 ${position.profit_loss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+            {position.profit_loss >= 0 ? (
+              <TrendingUp className="h-4 w-4" />
+            ) : (
+              <TrendingDown className="h-4 w-4" />
+            )}
+            <span className="font-medium">
+              {position.profit_loss >= 0 ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
+            </span>
+            <span className="text-sm">
+              ({profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%)
+            </span>
+          </div>
         </div>
       </div>
-      
-      <div className="flex items-center gap-4">
-        {type === 'open' && (
-          <>
-            {isEditing ? (
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Stop Loss"
-                  value={stopLoss}
-                  onChange={(e) => setStopLoss(e.target.value)}
-                  className="w-24"
-                />
-                <Input
-                  placeholder="Take Profit"
-                  value={takeProfit}
-                  onChange={(e) => setTakeProfit(e.target.value)}
-                  className="w-24"
-                />
-                <Button size="sm" variant="outline" onClick={() => {
+
+      {/* Details Section */}
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-gray-400">
+            <DollarSign className="h-4 w-4" />
+            <span>Entry Price:</span>
+            <span className="text-white">${position.entry_price}</span>
+          </div>
+          {type === 'open' && (
+            <div className="flex items-center gap-2 text-gray-400">
+              <DollarSign className="h-4 w-4" />
+              <span>Current Price:</span>
+              <span className="text-white">${currentPrice?.toFixed(2) || '...'}</span>
+            </div>
+          )}
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-gray-400">
+            <DollarSign className="h-4 w-4" />
+            <span>Position Size:</span>
+            <span className="text-white">${position.amount}</span>
+          </div>
+          <div className="flex items-center gap-2 text-gray-400">
+            <Percent className="h-4 w-4" />
+            <span>Leverage:</span>
+            <span className="text-white">{position.leverage}x</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Actions Section */}
+      {type === 'open' && (
+        <div className="flex gap-2 mt-2">
+          {isEditing ? (
+            <div className="flex items-center gap-2 w-full">
+              <Input
+                placeholder="Stop Loss"
+                value={stopLoss}
+                onChange={(e) => setStopLoss(e.target.value)}
+                className="flex-1 bg-gray-700 border-gray-600"
+              />
+              <Input
+                placeholder="Take Profit"
+                value={takeProfit}
+                onChange={(e) => setTakeProfit(e.target.value)}
+                className="flex-1 bg-gray-700 border-gray-600"
+              />
+              <Button 
+                variant="secondary"
+                size="sm" 
+                onClick={() => {
                   handleSetStopLoss();
                   handleSetTakeProfit();
-                }}>
-                  Save
-                </Button>
-              </div>
-            ) : (
-              <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
-                Edit SL/TP
+                }}
+                className="bg-gray-700 hover:bg-gray-600"
+              >
+                Save
               </Button>
-            )}
-            <Button size="sm" variant="destructive" onClick={handleClosePosition}>
-              Close
+            </div>
+          ) : (
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              onClick={() => setIsEditing(true)}
+              className="bg-gray-700 hover:bg-gray-600"
+            >
+              Edit SL/TP
             </Button>
-          </>
-        )}
-        <div className="text-right min-w-[100px]">
-          <p className="font-medium">${position.amount}</p>
-          <p className={`text-sm ${position.profit_loss >= 0 ? 'text-success' : 'text-warning'}`}>
-            {position.profit_loss >= 0 ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
-          </p>
+          )}
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={handleClosePosition}
+            className="bg-red-500 hover:bg-red-600"
+          >
+            Close
+          </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
