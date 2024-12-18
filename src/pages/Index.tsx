@@ -27,7 +27,6 @@ const Index = () => {
   // Simulate real-time price updates
   useEffect(() => {
     const updatePrice = () => {
-      // For demo purposes, we'll generate a random price around $40,000
       const basePrice = 40000;
       const randomChange = (Math.random() - 0.5) * 100;
       setCurrentPrice(basePrice + randomChange);
@@ -58,27 +57,30 @@ const Index = () => {
               </div>
             </header>
 
-            <div className="w-full flex items-center gap-2 bg-secondary/20 p-2 rounded-lg border border-secondary/30">
-              <Search className="h-5 w-5 text-muted-foreground" />
-              <Command className="rounded-lg border-0 shadow-none bg-transparent">
-                <CommandInput placeholder="Search cryptocurrency..." className="border-0 bg-transparent focus:ring-0" />
-                <CommandList className="absolute top-full mt-2 w-full bg-background border rounded-lg shadow-lg">
-                  <CommandEmpty>No results found</CommandEmpty>
-                  <CommandGroup heading="Popular Cryptocurrencies">
-                    {cryptoList?.map((crypto: any) => (
-                      <CommandItem
-                        key={crypto.symbol}
-                        onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
-                        <span>{crypto.name}</span>
-                        <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
+            <div className="relative w-full">
+              <div className="flex items-center gap-2 bg-secondary/20 p-2 rounded-lg border border-secondary/30">
+                <Search className="h-5 w-5 text-muted-foreground" />
+                <Command className="rounded-lg border-0 shadow-none bg-transparent w-full">
+                  <CommandInput placeholder="חפש מטבע..." className="border-0 bg-transparent focus:ring-0" />
+                  <CommandList className="absolute top-12 left-0 right-0 z-50 bg-popover border rounded-lg shadow-lg max-h-[300px] overflow-y-auto">
+                    <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+                    <CommandGroup heading="מטבעות פופולריים">
+                      {cryptoList?.map((crypto: any) => (
+                        <CommandItem
+                          key={crypto.id}
+                          value={crypto.symbol}
+                          onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
+                          className="flex items-center gap-2 cursor-pointer p-2 hover:bg-accent"
+                        >
+                          <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
+                          <span>{crypto.name}</span>
+                          <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -90,12 +92,12 @@ const Index = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Open Positions</CardTitle>
+                <CardTitle>פוזיציות פתוחות</CardTitle>
               </CardHeader>
               <CardContent>
                 {!openPositions.length ? (
                   <div className="text-center text-muted-foreground py-8">
-                    No open positions
+                    אין פוזיציות פתוחות
                   </div>
                 ) : (
                   <div className="space-y-4">
