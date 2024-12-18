@@ -9,12 +9,24 @@ const AuthPage = () => {
       <Card className="w-full max-w-md glass-effect">
         <CardContent className="p-0">
           <Tabs defaultValue="login" className="w-full">
-            <div className="p-6 pb-2">
-              <h1 className="text-4xl font-bold gradient-text mb-4">Welcome Back</h1>
-              <p className="text-xl text-foreground/90 mb-6">
-                Great to see you again! Log in to continue your trading journey
-              </p>
-            </div>
+            <TabsContent value="login">
+              <div className="p-6 pb-2">
+                <h1 className="text-4xl font-bold gradient-text mb-4">Welcome Back</h1>
+                <p className="text-xl text-foreground/90 mb-6">
+                  Great to see you again! Log in to continue your trading journey
+                </p>
+              </div>
+              <LoginForm />
+            </TabsContent>
+            <TabsContent value="signup">
+              <div className="p-6 pb-2">
+                <h1 className="text-4xl font-bold gradient-text mb-4">Join Us Now</h1>
+                <p className="text-xl text-foreground/90 mb-6">
+                  Join hundreds of traders and start your crypto trading adventure
+                </p>
+              </div>
+              <SignUpForm />
+            </TabsContent>
             <TabsList className="grid w-full grid-cols-2 p-6">
               <TabsTrigger 
                 value="login" 
@@ -29,12 +41,6 @@ const AuthPage = () => {
                 Sign Up
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="login" className="p-6 pt-2">
-              <LoginForm />
-            </TabsContent>
-            <TabsContent value="signup" className="p-6 pt-2">
-              <SignUpForm />
-            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
