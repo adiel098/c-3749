@@ -87,7 +87,7 @@ const Trade = () => {
               </div>
             </div>
 
-            <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-6">
+            <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-6 border border-white/10 shadow-lg">
               <PositionsList
                 positions={positions || []}
                 currentPrice={currentPrice}
