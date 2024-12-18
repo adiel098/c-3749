@@ -2,11 +2,19 @@ import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchCryptoData = async () => {
-  const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=1&sparkline=false');
+  const response = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT","BNBUSDT","XRPUSDT","SOLUSDT"]');
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
-  return response.json();
+  const data = await response.json();
+  return data.map((crypto: any) => ({
+    symbol: crypto.symbol.replace('USDT', ''),
+    name: crypto.symbol.replace('USDT', ''),
+    current_price: parseFloat(crypto.lastPrice),
+    price_change_percentage_24h: parseFloat(crypto.priceChangePercent),
+    total_volume: parseFloat(crypto.volume),
+    image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${crypto.symbol.replace('USDT', '').toLowerCase()}.png`,
+  }));
 };
 
 const CryptoList = () => {
@@ -38,14 +46,19 @@ const CryptoList = () => {
               <tr key={crypto.symbol} className="border-t border-secondary">
                 <td className="py-4">
                   <div className="flex items-center gap-2">
-                    <img src={crypto.image} alt={crypto.name} className="w-8 h-8 rounded-full" />
+                    <img src={crypto.image} alt={crypto.name} className="w-8 h-8 rounded-full" 
+                         onError={(e) => {
+                           const target = e.target as HTMLImageElement;
+                           target.src = '/placeholder.svg';
+                         }}
+                    />
                     <div>
                       <p className="font-medium">{crypto.name}</p>
-                      <p className="text-sm text-muted-foreground">{crypto.symbol.toUpperCase()}</p>
+                      <p className="text-sm text-muted-foreground">{crypto.symbol}</p>
                     </div>
                   </div>
                 </td>
-                <td className="py-4">${crypto.current_price.toLocaleString()}</td>
+                <td className="py-4">${parseFloat(crypto.current_price).toLocaleString()}</td>
                 <td className="py-4">
                   <span
                     className={`flex items-center gap-1 ${
@@ -60,7 +73,7 @@ const CryptoList = () => {
                     {Math.abs(crypto.price_change_percentage_24h).toFixed(2)}%
                   </span>
                 </td>
-                <td className="py-4">${(crypto.total_volume / 1e9).toFixed(1)}B</td>
+                <td className="py-4">${(crypto.total_volume / 1e6).toFixed(1)}M</td>
               </tr>
             ))}
           </tbody>
