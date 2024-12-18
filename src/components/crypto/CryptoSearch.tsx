@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -39,7 +39,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           console.log('WebSocket connected successfully');
           setIsLoading(true);
           setError(null);
-          setCryptoList([]); // Reset list when opening new connection
+          setCryptoList([]);
         };
 
         ws.onmessage = (event) => {
@@ -69,7 +69,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               )
               .slice(0, 100);
 
-            setCryptoList(usdtPairs);
+            setCryptoList(usdtPairs || []);
             setIsLoading(false);
           } catch (err) {
             console.error('Data processing error:', err);
@@ -131,7 +131,14 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
       </Button>
 
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Search Cryptocurrencies</DialogTitle>
+            <DialogDescription>
+              Search and select from available cryptocurrencies
+            </DialogDescription>
+          </DialogHeader>
+          
           <Command className="rounded-lg border-0">
             <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
             <CommandEmpty>
