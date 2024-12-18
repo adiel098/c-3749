@@ -44,41 +44,43 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
     <div className="glass-card rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          <div>
-            <h2 className="text-xl font-semibold gradient-text">{symbol}/USDT</h2>
-            {isLoading ? (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading price data...
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 mt-1">
-                <span className="text-lg font-mono">
-                  ${(currentPrice || priceData?.price || 0).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </span>
-                {priceData?.priceChange24h !== undefined && (
-                  <span className={cn(
-                    "flex items-center gap-1 px-2 py-1 rounded text-sm font-medium",
-                    priceData.priceChange24h >= 0 
-                      ? "text-success bg-success/10" 
-                      : "text-warning bg-warning/10"
-                  )}>
-                    {priceData.priceChange24h >= 0 ? (
-                      <TrendingUp className="h-3 w-3" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3" />
-                    )}
-                    {Math.abs(priceData.priceChange24h).toFixed(2)}%
-                  </span>
-                )}
-              </div>
-            )}
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold gradient-text flex items-center gap-2">
+              {symbol}/USDT
+              <CryptoSearch onSelect={(newSymbol) => console.log("Selected:", newSymbol)} />
+            </h2>
           </div>
+          {isLoading ? (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading price data...
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <span className="text-lg font-mono">
+                ${(currentPrice || priceData?.price || 0).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+              </span>
+              {priceData?.priceChange24h !== undefined && (
+                <span className={cn(
+                  "flex items-center gap-1 px-2 py-1 rounded text-sm font-medium",
+                  priceData.priceChange24h >= 0 
+                    ? "text-success bg-success/10" 
+                    : "text-warning bg-warning/10"
+                )}>
+                  {priceData.priceChange24h >= 0 ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3" />
+                  )}
+                  {Math.abs(priceData.priceChange24h).toFixed(2)}%
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        <CryptoSearch onSelect={(newSymbol) => console.log("Selected:", newSymbol)} />
       </div>
       
       <div className="relative w-full">
