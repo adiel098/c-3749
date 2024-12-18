@@ -2,9 +2,9 @@ import type { Position } from "@/types/position";
 import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { StopLossTakeProfitDialog } from "./position/StopLossTakeProfitDialog";
 import { PositionDetails } from "./position/PositionDetails";
 
