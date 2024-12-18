@@ -1,14 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CryptoSearch } from "./crypto/CryptoSearch";
+import { debounce } from "lodash";
 
 interface CryptoChartProps {
   symbol: string;
   onPriceUpdate?: (price: number) => void;
-  onSearchOpen?: () => void;  // Add this line to include the new prop
+  onSearchOpen?: () => void;
 }
 
 const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [widgetInstance, setWidgetInstance] = useState<any>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -18,7 +20,12 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
     script.async = true;
     script.onload = () => {
       if (typeof TradingView !== "undefined" && containerRef.current) {
-        new TradingView.widget({
+        // Clear previous widget if exists
+        if (widgetInstance) {
+          widgetInstance.remove();
+        }
+
+        const widget = new TradingView.widget({
           autosize: true,
           symbol: `BINANCE:${symbol}USDT`,
           interval: "D",
@@ -31,24 +38,46 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) 
           hide_side_toolbar: false,
           allow_symbol_change: true,
           container_id: containerRef.current.id,
+          hide_top_toolbar: false,
+          save_image: false,
+          studies: [],
+          show_popup_button: false,
+          popup_width: "1000",
+          popup_height: "650",
         });
+
+        setWidgetInstance(widget);
       }
     };
-    document.head.appendChild(script);
+
+    // Only append script if it doesn't exist
+    if (!document.querySelector('script[src="https://s3.tradingview.com/tv.js"]')) {
+      document.head.appendChild(script);
+    }
 
     // WebSocket for price updates only
     const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const price = parseFloat(data.p);
+    
+    // Debounce the price update to prevent too frequent updates
+    const debouncedPriceUpdate = debounce((price: number) => {
       if (onPriceUpdate) {
         onPriceUpdate(price);
       }
+    }, 1000); // Update price maximum once per second
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const price = parseFloat(data.p);
+      debouncedPriceUpdate(price);
     };
 
     return () => {
       ws.close();
+      debouncedPriceUpdate.cancel();
       // Clean up TradingView widget
+      if (widgetInstance) {
+        widgetInstance.remove();
+      }
       if (containerRef.current) {
         containerRef.current.innerHTML = "";
       }
