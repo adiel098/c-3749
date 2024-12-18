@@ -12,40 +12,52 @@ export type Database = {
       positions: {
         Row: {
           amount: number
+          closed_at: string | null
           created_at: string
           entry_price: number
+          exit_price: number | null
           id: string
           leverage: number
           liquidation_price: number
           profit_loss: number | null
           status: string | null
+          stop_loss: number | null
           symbol: string
+          take_profit: number | null
           type: string
           user_id: string
         }
         Insert: {
           amount: number
+          closed_at?: string | null
           created_at?: string
           entry_price: number
+          exit_price?: number | null
           id?: string
           leverage: number
           liquidation_price: number
           profit_loss?: number | null
           status?: string | null
+          stop_loss?: number | null
           symbol: string
+          take_profit?: number | null
           type: string
           user_id: string
         }
         Update: {
           amount?: number
+          closed_at?: string | null
           created_at?: string
           entry_price?: number
+          exit_price?: number | null
           id?: string
           leverage?: number
           liquidation_price?: number
           profit_loss?: number | null
           status?: string | null
+          stop_loss?: number | null
           symbol?: string
+          take_profit?: number | null
           type?: string
           user_id?: string
         }

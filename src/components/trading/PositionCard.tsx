@@ -4,22 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowUpCircle, ArrowDownCircle, StopCircle, Target, XCircle } from "lucide-react";
 import { useState } from "react";
-
-interface Position {
-  id: string;
-  symbol: string;
-  type: string;
-  amount: number;
-  entry_price: number;
-  leverage: number;
-  liquidation_price: number;
-  profit_loss: number;
-  status: string;
-  stop_loss?: number;
-  take_profit?: number;
-  exit_price?: number;
-  closed_at?: string;
-}
+import type { Position } from "@/types/position";
 
 interface PositionCardProps {
   position: Position;
@@ -64,7 +49,7 @@ export function PositionCard({ position, currentPrice, onUpdate }: PositionCardP
     try {
       const { error } = await supabase
         .from('positions')
-        .update({ stop_loss: stopLoss })
+        .update({ stop_loss: Number(stopLoss) })
         .eq('id', position.id);
 
       if (error) throw error;
@@ -86,7 +71,7 @@ export function PositionCard({ position, currentPrice, onUpdate }: PositionCardP
     try {
       const { error } = await supabase
         .from('positions')
-        .update({ take_profit: takeProfit })
+        .update({ take_profit: Number(takeProfit) })
         .eq('id', position.id);
 
       if (error) throw error;
