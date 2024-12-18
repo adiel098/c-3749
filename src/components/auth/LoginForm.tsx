@@ -23,6 +23,7 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      console.log("Login attempt started");
       setIsLoading(true);
       
       if (!data.email || !data.password) {
@@ -51,6 +52,7 @@ export function LoginForm() {
         return;
       }
 
+      console.log("Login successful");
       toast({
         title: "Success",
         description: "You have been logged in successfully",
@@ -58,6 +60,8 @@ export function LoginForm() {
 
       // Navigate to the intended page or home based on device type
       const from = location.state?.from?.pathname || "/";
+      console.log("Navigating to:", from);
+      console.log("Is Mobile:", isMobile);
       navigate(from, { replace: true });
 
     } catch (error: any) {
