@@ -13,8 +13,6 @@ interface CryptoChartProps {
 }
 
 const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps) => {
-  const currentPrice = useCryptoPrice(symbol);
-  
   const { data: priceData, isLoading } = useQuery({
     queryKey: ['crypto-price', symbol],
     queryFn: async () => {
@@ -33,10 +31,14 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
   });
 
   useEffect(() => {
-    if (currentPrice && onPriceUpdate) {
-      onPriceUpdate(currentPrice);
+    if (priceData?.price && onPriceUpdate) {
+      onPriceUpdate(priceData.price);
     }
-  }, [currentPrice, onPriceUpdate]);
+  }, [priceData?.price, onPriceUpdate]);
+
+  const formatPrice = (price: number) => {
+    return price < 1 ? price.toFixed(6) : price.toFixed(2);
+  };
 
   return (
     <div className="glass-card rounded-lg p-6">
@@ -63,10 +65,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
         ) : (
           <div className="flex items-center gap-4">
             <span className="text-lg font-mono bg-secondary/20 px-3 py-1 rounded-lg">
-              ${(currentPrice || priceData?.price || 0).toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })}
+              ${priceData?.price ? formatPrice(priceData.price) : '0.00'}
             </span>
             {priceData?.priceChange24h !== undefined && (
               <span className={cn(
