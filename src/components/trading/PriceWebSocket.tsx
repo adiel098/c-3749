@@ -13,6 +13,7 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const isConnectingRef = useRef(false);
 
   const handlePriceUpdate = useCallback(
     debounce((price: number) => {
@@ -21,25 +22,35 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
     [onPriceUpdate]
   );
 
-  const connect = useCallback(() => {
-    try {
-      // Clear any existing connection
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
-      }
+  const cleanup = useCallback(() => {
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = undefined;
+    }
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    handlePriceUpdate.cancel();
+  }, [handlePriceUpdate]);
 
-      // Clear any pending reconnection timeout
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
+  const connect = useCallback(() => {
+    if (isConnectingRef.current) {
+      console.log('Connection attempt already in progress');
+      return;
+    }
+
+    try {
+      cleanup();
+      isConnectingRef.current = true;
 
       const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
       wsRef.current = ws;
 
       ws.onopen = () => {
         console.log('WebSocket Connected Successfully');
-        reconnectAttempts.current = 0; // Reset attempts on successful connection
+        reconnectAttempts.current = 0;
+        isConnectingRef.current = false;
       };
 
       ws.onmessage = (event) => {
@@ -55,15 +66,16 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        ws.close(); // Close the connection on error to trigger reconnect
+        isConnectingRef.current = false;
+        ws.close();
       };
 
       ws.onclose = (event) => {
         console.log('WebSocket connection closed:', event.code, event.reason);
+        isConnectingRef.current = false;
         
-        // Only attempt to reconnect if we haven't reached max attempts
         if (reconnectAttempts.current < maxReconnectAttempts) {
-          const timeout = Math.min(500 * Math.pow(2, reconnectAttempts.current), 5000);
+          const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 10000);
           reconnectAttempts.current++;
           
           console.log(`Attempting to reconnect (${reconnectAttempts.current}/${maxReconnectAttempts}) in ${timeout}ms...`);
@@ -81,29 +93,19 @@ export const PriceWebSocket = ({ symbol, onPriceUpdate }: PriceWebSocketProps) =
       };
     } catch (error) {
       console.error('Error creating WebSocket:', error);
+      isConnectingRef.current = false;
       toast({
         title: "Connection Error",
         description: "Failed to establish price feed connection",
         variant: "destructive",
       });
     }
-  }, [symbol, handlePriceUpdate, toast]);
+  }, [symbol, handlePriceUpdate, cleanup, toast]);
 
   useEffect(() => {
     connect();
-
-    return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
-      if (wsRef.current) {
-        console.log('Cleaning up WebSocket connection');
-        wsRef.current.close();
-        wsRef.current = null;
-      }
-      handlePriceUpdate.cancel();
-    };
-  }, [symbol, connect, handlePriceUpdate]);
+    return cleanup;
+  }, [symbol, connect, cleanup]);
 
   return null;
 };
