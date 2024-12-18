@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -39,7 +38,6 @@ export function UserList() {
 
       if (error) throw error;
 
-      // Invalidate and refetch the users query
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
 
       toast({
@@ -60,49 +58,59 @@ export function UserList() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex justify-center p-8">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <Card className="overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Registered</TableHead>
-            <TableHead className="text-right">Balance</TableHead>
-            <TableHead className="text-center">Admin</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users?.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>
-                {user.first_name} {user.last_name}
-              </TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.phone}</TableCell>
-              <TableCell>
-                {format(new Date(user.created_at), 'dd/MM/yyyy HH:mm')}
-              </TableCell>
-              <TableCell className="text-right">
-                ${user.balance?.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-center">
-                <Switch
-                  checked={user.is_admin}
-                  onCheckedChange={() => handleAdminToggle(user.id, user.is_admin)}
-                />
-              </TableCell>
+    <Card className="overflow-hidden bg-[#1A1F2C]/50 backdrop-blur-sm border-[#7E69AB]/20">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-[#7E69AB]/5 border-[#7E69AB]/20">
+              <TableHead className="text-[#E5DEFF]">Name</TableHead>
+              <TableHead className="text-[#E5DEFF]">Email</TableHead>
+              <TableHead className="text-[#E5DEFF]">Phone</TableHead>
+              <TableHead className="text-[#E5DEFF]">Registered</TableHead>
+              <TableHead className="text-right text-[#E5DEFF]">Balance</TableHead>
+              <TableHead className="text-center text-[#E5DEFF]">Admin</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {users?.map((user) => (
+              <TableRow 
+                key={user.id}
+                className="hover:bg-[#7E69AB]/5 border-[#7E69AB]/20"
+              >
+                <TableCell className="font-medium text-[#E5DEFF]">
+                  {user.first_name} {user.last_name}
+                </TableCell>
+                <TableCell className="text-[#E5DEFF]/80">{user.email}</TableCell>
+                <TableCell className="text-[#E5DEFF]/80">{user.phone}</TableCell>
+                <TableCell className="text-[#E5DEFF]/80">
+                  {format(new Date(user.created_at), 'dd/MM/yyyy HH:mm')}
+                </TableCell>
+                <TableCell className="text-right font-medium">
+                  <span className="text-[#9b87f5]">
+                    ${user.balance?.toLocaleString()}
+                  </span>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex justify-center">
+                    <Switch
+                      checked={user.is_admin}
+                      onCheckedChange={() => handleAdminToggle(user.id, user.is_admin)}
+                      className="data-[state=checked]:bg-[#9b87f5]"
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </Card>
   );
 }
