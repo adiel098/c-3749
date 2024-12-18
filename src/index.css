@@ -4,27 +4,81 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-gradient-to-b from-background to-background/95 text-foreground antialiased min-h-screen;
   }
 }
 
 .glass-card {
-  @apply bg-secondary/20 backdrop-blur-lg border border-gray-700 shadow-lg;
+  @apply bg-card/30 backdrop-blur-xl border border-white/10 shadow-lg;
 }
 
 .crypto-chart {
   @apply h-[300px] w-full;
 }
 
+.nav-link {
+  @apply flex items-center gap-3 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200;
+}
+
+.nav-link.active {
+  @apply bg-primary/10 text-primary;
+}
+
+.nav-link-icon {
+  @apply w-5 h-5;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+}
+
+/* Glass Effect */
+.glass-effect {
+  @apply bg-card/30 backdrop-blur-xl border border-white/10;
+}
+
+/* Glow Effect */
+.glow-effect {
+  @apply relative;
+}
+
+.glow-effect::after {
+  @apply content-[''] absolute inset-0 -z-10 bg-primary/20 blur-xl opacity-50;
+}
+
+/* Animated Background */
+.animated-bg {
+  @apply relative overflow-hidden;
+}
+
+.animated-bg::before {
+  @apply content-[''] absolute inset-0 bg-gradient-radial from-primary/20 to-transparent animate-pulse-subtle;
+}
+
 @keyframes pulse-subtle {
   0%, 100% {
-    opacity: 1;
+    opacity: 0.8;
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.4;
   }
 }
 
 .animate-pulse-subtle {
-  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-subtle 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

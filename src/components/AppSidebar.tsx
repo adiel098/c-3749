@@ -43,10 +43,12 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar className="border-r border-gray-700 bg-gray-800">
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xl text-gray-400 px-4 py-2">Menu</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <span className="text-xl text-gray-400 px-4 py-2">Menu</span>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -54,18 +56,14 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Link 
                       to={item.url} 
-                      className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${
-                        location.pathname === item.url 
-                          ? 'bg-gray-700 text-white' 
-                          : 'text-gray-400 hover:bg-gray-700/50 hover:text-white'
-                      }`}
+                      className={`nav-link ${location.pathname === item.url ? 'active' : ''}`}
                     >
-                      <item.icon className={`h-5 w-5 ${
+                      <item.icon className={`nav-link-icon ${
                         location.pathname === item.url 
-                          ? 'text-white' 
+                          ? 'text-primary' 
                           : 'text-gray-400'
                       }`} />
-                      <span className="text-sm">{item.title}</span>
+                      <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
