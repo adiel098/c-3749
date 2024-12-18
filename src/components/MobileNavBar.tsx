@@ -20,7 +20,7 @@ export const MobileNavBar = () => {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/30 backdrop-blur-xl border-t border-white/10 z-50">
+    <nav className="mobile-nav bg-card/30 backdrop-blur-xl border-t border-white/10">
       <div className="flex justify-around items-center h-16">
         {menuItems.map(({ path, icon: Icon, label }) => (
           <Link

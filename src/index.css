@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-b from-background to-background/95 text-foreground antialiased min-h-screen pb-16 lg:pb-0;
+    @apply bg-gradient-to-b from-background to-background/95 text-foreground antialiased min-h-screen;
   }
 }
 
@@ -76,4 +76,9 @@
   .main-content {
     @apply pb-16;
   }
+}
+
+/* Ensure mobile navigation is always visible */
+.mobile-nav {
+  @apply fixed bottom-0 left-0 right-0 z-50;
 }
