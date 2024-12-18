@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
@@ -8,11 +8,11 @@ const AuthPage = () => {
     <div className="min-h-screen flex items-center justify-center p-4 auth-page">
       <Card className="w-full max-w-md glass-effect">
         <CardContent className="p-0">
-          <Tabs defaultValue="signup" className="w-full">
+          <Tabs defaultValue="login" className="w-full">
             <div className="p-6 pb-2">
-              <h1 className="text-4xl font-bold text-primary mb-4">Join Us Today</h1>
+              <h1 className="text-4xl font-bold gradient-text mb-4">Welcome Back</h1>
               <p className="text-xl text-foreground/90 mb-6">
-                Join hundreds of traders and start your crypto trading adventure
+                Great to see you again! Log in to continue your trading journey
               </p>
             </div>
             <TabsList className="grid w-full grid-cols-2 p-6">
