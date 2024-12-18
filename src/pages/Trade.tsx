@@ -1,68 +1,98 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { TradingForm } from "@/components/TradingForm";
+import { useQuery } from "@tanstack/react-query";
 import CryptoChart from "@/components/CryptoChart";
-import { useState } from "react";
-import { useProfile } from "@/hooks/useProfile";
+import { TradingForm } from "@/components/TradingForm";
 import { usePositions } from "@/hooks/usePositions";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { PositionsList } from "@/components/trading/PositionsList";
 
 const Trade = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
-  const { data: profile } = useProfile();
-  const { data: positions } = usePositions();
+  const [currentPrice, setCurrentPrice] = useState<number>();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { data: positions, refetch: refetchPositions } = usePositions();
 
-  const openPositions = positions?.filter((p) => p.status === 'open' && p.symbol === selectedCrypto) || [];
+  const { data: cryptoList } = useQuery({
+    queryKey: ['cryptoList'],
+    queryFn: async () => {
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false"
+      );
+      return response.json();
+    }
+  });
+
+  const handlePriceUpdate = (price: number) => {
+    setCurrentPrice(price);
+  };
+
+  const handleCryptoSelect = (symbol: string) => {
+    setSelectedCrypto(symbol);
+    setSearchOpen(false);
+  };
 
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 md:p-8">
+        <div className="flex-1 p-4 md:p-8 bg-background">
           <div className="max-w-7xl mx-auto space-y-8">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">Trade</h1>
-                <p className="text-muted-foreground">Execute trades with virtual funds</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Available Balance</p>
-                <p className="text-xl font-bold">${profile?.balance?.toFixed(2) || '0.00'}</p>
+                <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Crypto Trading Platform
+                </h1>
+                <p className="text-muted-foreground">Practice trading with virtual funds</p>
               </div>
             </header>
 
+            <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+              <DialogContent className="max-w-md">
+                <Command className="rounded-lg">
+                  <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
+                  <CommandList className="max-h-[300px] overflow-y-auto">
+                    <CommandEmpty>No results found</CommandEmpty>
+                    <CommandGroup heading="Popular Cryptocurrencies">
+                      {cryptoList?.map((crypto: any) => (
+                        <CommandItem
+                          key={crypto.id}
+                          value={crypto.symbol}
+                          onSelect={() => handleCryptoSelect(crypto.symbol.toUpperCase())}
+                          className="flex items-center gap-2 cursor-pointer p-2 hover:bg-accent/10"
+                        >
+                          <img src={crypto.image} alt={crypto.name} className="w-6 h-6" />
+                          <span>{crypto.name}</span>
+                          <span className="text-muted-foreground">({crypto.symbol.toUpperCase()})</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </DialogContent>
+            </Dialog>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <CryptoChart symbol={selectedCrypto} />
-                {openPositions.length > 0 && (
-                  <Card className="mt-4">
-                    <CardHeader>
-                      <CardTitle>Open Positions for {selectedCrypto}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {openPositions.map((position: any) => (
-                          <div key={position.id} className="flex justify-between items-center p-4 border rounded-lg">
-                            <div>
-                              <p className="font-semibold">{position.type.toUpperCase()}</p>
-                              <p className="text-sm text-muted-foreground">
-                                Entry: ${position.entry_price}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-semibold">${position.amount}</p>
-                              <p className={`text-sm ${position.profit_loss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                                {position.profit_loss >= 0 ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                <CryptoChart 
+                  symbol={selectedCrypto} 
+                  onPriceUpdate={handlePriceUpdate}
+                  onSearchOpen={() => setSearchOpen(true)}
+                />
               </div>
-              <TradingForm selectedCrypto={selectedCrypto} />
+              <div className="glass-card rounded-lg">
+                <TradingForm selectedCrypto={selectedCrypto} currentPrice={currentPrice} />
+              </div>
+            </div>
+
+            <div className="glass-card rounded-lg p-6">
+              <PositionsList
+                positions={positions || []}
+                currentPrice={currentPrice}
+                onUpdate={refetchPositions}
+              />
             </div>
           </div>
         </div>

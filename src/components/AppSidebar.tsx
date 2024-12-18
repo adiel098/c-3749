@@ -1,4 +1,4 @@
-import { LineChart, Settings, Wallet, History, Home, ChartBar } from "lucide-react";
+import { LineChart, Settings, Wallet, History, ChartBar } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -13,13 +13,8 @@ import {
 
 const items = [
   {
-    title: "Dashboard",
-    url: "/",
-    icon: Home,
-  },
-  {
     title: "Trade",
-    url: "/trade",
+    url: "/",
     icon: LineChart,
   },
   {
