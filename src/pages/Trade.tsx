@@ -82,8 +82,8 @@ const Trade = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 md:p-8 bg-background overflow-y-auto h-[100dvh]">
-          <div className="max-w-7xl mx-auto space-y-8">
+        <div className="flex-1 overflow-y-auto h-[calc(100dvh-4rem)] md:h-[100dvh]">
+          <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

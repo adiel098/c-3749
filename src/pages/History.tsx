@@ -41,14 +41,15 @@ const History = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gradient-to-b from-background to-background/95">
         <AppSidebar />
-        <div className="flex-1 p-2 space-y-2 md:p-8 md:space-y-8 overflow-y-auto h-[100dvh]">
-          <header className="space-y-0.5 md:space-y-1">
-            <h1 className="text-lg md:text-3xl font-bold tracking-tight gradient-text flex items-center gap-1.5 md:gap-2">
-              <HistoryIcon className="h-4 w-4 md:h-8 md:w-8 text-primary" />
-              Trading History
-            </h1>
-            <p className="text-[10px] md:text-base text-muted-foreground">View your closed positions and trading performance</p>
-          </header>
+        <div className="flex-1 overflow-y-auto h-[calc(100dvh-4rem)] md:h-[100dvh]">
+          <div className="p-4 md:p-8 space-y-4 md:space-y-8">
+            <header className="space-y-0.5 md:space-y-1">
+              <h1 className="text-lg md:text-3xl font-bold tracking-tight gradient-text flex items-center gap-1.5 md:gap-2">
+                <HistoryIcon className="h-4 w-4 md:h-8 md:w-8 text-primary" />
+                Trading History
+              </h1>
+              <p className="text-[10px] md:text-base text-muted-foreground">View your closed positions and trading performance</p>
+            </header>
 
           <Card className="glass-effect overflow-hidden">
             <CardHeader className="p-2 md:p-6">
@@ -161,6 +162,7 @@ const History = () => {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     </SidebarProvider>

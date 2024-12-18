@@ -30,8 +30,8 @@ const TradeMobile = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 p-4 bg-background pb-32">
-          <div className="space-y-4">
+        <div className="flex-1 overflow-y-auto h-[calc(100dvh-4rem)]">
+          <div className="p-4 space-y-4">
             <div className="h-[300px]">
               <MobileCryptoChart 
                 symbol={selectedCrypto} 

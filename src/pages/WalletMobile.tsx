@@ -23,11 +23,12 @@ const WalletMobile = () => {
   const totalAccountValue = calculateAccountValue();
 
   return (
-    <div className="p-4 space-y-4 pb-20">
-      <header className="mb-4">
-        <h1 className="text-xl font-bold gradient-text">Wallet</h1>
-        <p className="text-sm text-muted-foreground">Manage your funds</p>
-      </header>
+    <div className="h-[calc(100dvh-4rem)] overflow-y-auto">
+      <div className="p-4 space-y-4">
+        <header className="mb-4">
+          <h1 className="text-xl font-bold gradient-text">Wallet</h1>
+          <p className="text-sm text-muted-foreground">Manage your funds</p>
+        </header>
 
       <div className="grid grid-cols-2 gap-3">
         <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
@@ -89,6 +90,7 @@ const WalletMobile = () => {
           <MobileWithdrawalCard availableBalance={profile?.balance || 0} />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };
