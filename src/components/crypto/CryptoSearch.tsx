@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 interface CryptoSearchProps {
   onSelect: (symbol: string) => void;
@@ -16,19 +17,30 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
   const { data: cryptoList = [], isLoading } = useQuery({
     queryKey: ["cryptoList"],
     queryFn: async () => {
+      console.log("Fetching crypto list...");
       const response = await fetch("https://api.binance.com/api/v3/ticker/24hr");
       const data = await response.json();
-      return data
+      
+      // Filter for USDT pairs and format the data
+      const formattedData = data
         .filter((item: any) => item.symbol.endsWith("USDT"))
-        .map((item: any) => ({
-          symbol: item.symbol.replace("USDT", ""),
-          price: parseFloat(item.lastPrice).toFixed(2),
-          priceChange: parseFloat(item.priceChangePercent).toFixed(2),
-        }))
-        .sort((a: any, b: any) => parseFloat(b.price) - parseFloat(a.price))
-        .slice(0, 100);
+        .map((item: any) => {
+          const baseSymbol = item.symbol.replace("USDT", "").toLowerCase();
+          return {
+            symbol: item.symbol.replace("USDT", ""),
+            price: parseFloat(item.lastPrice).toFixed(2),
+            priceChange: parseFloat(item.priceChangePercent).toFixed(2),
+            volume: parseFloat(item.volume),
+            image: `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${baseSymbol}.png`
+          };
+        })
+        .sort((a: any, b: any) => b.volume - a.volume) // Sort by volume
+        .slice(0, 100); // Take top 100 by volume
+      
+      console.log("Formatted crypto list:", formattedData);
+      return formattedData;
     },
-    refetchInterval: 10000,
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   const filteredCryptos = cryptoList.filter((crypto: any) =>
@@ -75,15 +87,27 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
                     }}
                     className="w-full flex items-center justify-between p-2 hover:bg-secondary/20 rounded-lg transition-colors"
                   >
-                    <span className="font-medium">{crypto.symbol}</span>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={crypto.image}
+                        alt={crypto.symbol}
+                        className="w-8 h-8 rounded-full"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder.svg';
+                        }}
+                      />
+                      <span className="font-medium">{crypto.symbol}</span>
+                    </div>
                     <div className="flex items-center gap-4">
                       <span className="text-sm font-mono">${crypto.price}</span>
                       <span
-                        className={`text-xs px-2 py-1 rounded ${
+                        className={cn(
+                          "text-xs px-2 py-1 rounded",
                           parseFloat(crypto.priceChange) >= 0
                             ? "text-success bg-success/10"
                             : "text-warning bg-warning/10"
-                        }`}
+                        )}
                       >
                         {crypto.priceChange}%
                       </span>
