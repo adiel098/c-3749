@@ -22,7 +22,6 @@ export function LoginForm() {
     try {
       setIsLoading(true);
       
-      // Validate email and password are not empty
       if (!data.email || !data.password) {
         toast({
           title: "Error",
@@ -37,7 +36,6 @@ export function LoginForm() {
         password: data.password,
       });
 
-      // Detailed error handling
       if (error) {
         console.error("Login error details:", error);
         
@@ -50,16 +48,15 @@ export function LoginForm() {
         return;
       }
 
-      console.log("Login successful, session:", authData?.session);
+      console.log("Login successful, redirecting...");
       
       toast({
         title: "Success",
         description: "You have been logged in successfully",
       });
 
-      // Ensure we have a session before redirecting
       if (authData?.session) {
-        navigate("/");
+        navigate("/", { replace: true });
       }
 
     } catch (error: any) {

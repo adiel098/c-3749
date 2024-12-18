@@ -13,11 +13,10 @@ const AuthPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", event, session);
       if (session) {
-        navigate("/");
+        navigate("/", { replace: true });
       }
     });
 
