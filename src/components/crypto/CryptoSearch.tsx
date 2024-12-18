@@ -82,7 +82,6 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
         };
 
         ws.onclose = () => {
-          // Attempt to reconnect after a delay if the dialog is still open
           if (searchOpen) {
             setTimeout(connectWebSocket, 5000);
           }
@@ -116,8 +115,8 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
         <DialogContent className="max-w-md">
-          <Command className="rounded-lg">
-            <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
+          <Command className="rounded-lg border-0">
+            <CommandInput placeholder="Search cryptocurrencies..." />
             <CommandEmpty>
               {isLoading ? (
                 <div className="flex items-center justify-center py-6">
