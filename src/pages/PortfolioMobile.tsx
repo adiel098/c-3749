@@ -37,6 +37,56 @@ const PortfolioMobile = () => {
         <p className="text-sm text-muted-foreground">Track your performance</p>
       </header>
 
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <Wallet className="h-3 w-3 text-primary" />
+              Total Value
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <p className="text-sm font-bold">
+                ${totalAccountValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <TrendingUp className="h-3 w-3 text-primary" />
+              PNL
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <p className={`text-sm font-bold ${totalUnrealizedPnl >= 0 ? 'text-success' : 'text-warning'}`}>
+                ${totalUnrealizedPnl.toFixed(2)}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary/20 backdrop-blur-lg border-white/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium flex items-center gap-1">
+              <LineChart className="h-3 w-3 text-primary" />
+              Balance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <p className="text-sm font-bold">
+                ${isLoadingProfile ? "..." : (profile?.balance || 0).toFixed(2)}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Performance Graph */}
       <div className="mt-4">
         <PortfolioCard />
