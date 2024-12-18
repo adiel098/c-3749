@@ -23,15 +23,14 @@ export const TradingViewWidget = memo(({ symbol }: TradingViewWidgetProps) => {
           theme: "dark",
           style: "1",
           locale: "en",
-          toolbar_bg: "#1B1B1D",
+          toolbar_bg: "#0B1120",
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: container.current.id,
           hide_side_toolbar: isMobile,
-          hide_volume: isMobile,
-          toolbar_bg: "#0B1120",
           studies: isMobile ? [] : ["RSI@tv-basicstudies"],
           show_popup_button: !isMobile,
+          hide_top_toolbar: isMobile,
         });
 
         return () => {
