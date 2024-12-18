@@ -1,18 +1,13 @@
-export interface CountryCode {
-  country: string;
-  code: string;
-  flag: string;
-}
-
-export const countryCodes: CountryCode[] = [
-  { country: "Israel", code: "+972", flag: "🇮🇱" },
-  { country: "United States", code: "+1", flag: "🇺🇸" },
-  { country: "United Kingdom", code: "+44", flag: "🇬🇧" },
-  { country: "France", code: "+33", flag: "🇫🇷" },
-  { country: "Germany", code: "+49", flag: "🇩🇪" },
-  { country: "Italy", code: "+39", flag: "🇮🇹" },
-  { country: "Spain", code: "+34", flag: "🇪🇸" },
-  { country: "Russia", code: "+7", flag: "🇷🇺" },
-  { country: "China", code: "+86", flag: "🇨🇳" },
-  { country: "Japan", code: "+81", flag: "🇯🇵" },
+export const countryCodes = [
+  { code: "+972", flag: "🇮🇱" },
+  { code: "+1", flag: "🇺🇸" },
+  { code: "+44", flag: "🇬🇧" },
+  { code: "+33", flag: "🇫🇷" },
+  { code: "+49", flag: "🇩🇪" },
+  { code: "+39", flag: "🇮🇹" },
+  { code: "+34", flag: "🇪🇸" },
+  { code: "+81", flag: "🇯🇵" },
+  { code: "+86", flag: "🇨🇳" },
+  { code: "+91", flag: "🇮🇳" },
+  // Add more country codes as needed
 ];

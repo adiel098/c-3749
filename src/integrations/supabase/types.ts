@@ -88,17 +88,26 @@ export type Database = {
         Row: {
           balance: number
           created_at: string
+          first_name: string | null
           id: string
+          last_name: string | null
+          phone: string | null
         }
         Insert: {
           balance?: number
           created_at?: string
+          first_name?: string | null
           id: string
+          last_name?: string | null
+          phone?: string | null
         }
         Update: {
           balance?: number
           created_at?: string
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone?: string | null
         }
         Relationships: []
       }
