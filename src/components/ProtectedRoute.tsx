@@ -6,11 +6,10 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const location = useLocation();
 
   console.log("ProtectedRoute - Loading:", isLoading);
-  console.log("ProtectedRoute - Current session:", session ? "Exists" : "None", session?.user?.id);
-  console.log("ProtectedRoute - Current location:", location.pathname);
+  console.log("ProtectedRoute - Session:", session ? "Exists" : "None");
+  console.log("ProtectedRoute - Location:", location.pathname);
 
   if (isLoading) {
-    console.log("ProtectedRoute - Showing loading spinner");
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -19,10 +18,10 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   }
 
   if (!session) {
-    console.log("ProtectedRoute - Redirecting to auth page");
+    console.log("ProtectedRoute - No session, redirecting to auth");
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  console.log("ProtectedRoute - Rendering protected content");
+  console.log("ProtectedRoute - Session exists, rendering content");
   return children;
 }

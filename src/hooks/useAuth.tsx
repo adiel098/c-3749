@@ -22,18 +22,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("AuthProvider - Starting initialization");
+    let mounted = true;
     
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      console.log("AuthProvider - Initial session received:", initialSession ? "Exists" : "None");
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
-      setIsLoading(false);
-    });
+    const initSession = async () => {
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        console.log("AuthProvider - Initial session:", initialSession ? "Exists" : "None");
+        
+        if (mounted) {
+          setSession(initialSession);
+          setUser(initialSession?.user ?? null);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error getting session:", error);
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initSession();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (!mounted) return;
+      
       console.log("AuthProvider - Auth state changed:", _event);
       console.log("AuthProvider - New session:", newSession ? "Exists" : "None");
       
@@ -43,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      console.log("AuthProvider - Cleaning up subscription");
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -55,12 +70,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Error signing out:", error);
     }
   };
-
-  console.log("AuthProvider - Render state:", {
-    isLoading,
-    hasSession: !!session,
-    hasUser: !!user
-  });
 
   return (
     <AuthContext.Provider value={{ session, user, signOut, isLoading }}>
