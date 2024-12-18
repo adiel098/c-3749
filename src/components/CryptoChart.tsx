@@ -86,7 +86,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
         )}
       </div>
       
-      <div className="relative w-full h-[300px] lg:h-[500px]">
+      <div className="relative w-full h-[500px]">
         <TradingViewWidget symbol={symbol} />
       </div>
     </div>

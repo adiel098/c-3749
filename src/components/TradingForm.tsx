@@ -4,16 +4,14 @@ import { TradingFormHeader } from "./trading/TradingFormHeader";
 import { TradingFormInputs } from "./trading/TradingFormInputs";
 import { useTradingForm } from "./trading/useTradingForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, TrendingUp, TrendingDown, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 interface TradingFormProps {
   selectedCrypto: string;
   currentPrice?: number;
-  initialType?: 'long' | 'short';
-  onClose?: () => void;
 }
 
-export function TradingForm({ selectedCrypto, currentPrice, initialType = 'long', onClose }: TradingFormProps) {
+export function TradingForm({ selectedCrypto, currentPrice }: TradingFormProps) {
   const {
     amount,
     setAmount,
@@ -40,14 +38,7 @@ export function TradingForm({ selectedCrypto, currentPrice, initialType = 'long'
 
   return (
     <Card className="bg-secondary/20 backdrop-blur-lg border border-gray-700">
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        <TradingFormHeader selectedCrypto={selectedCrypto} />
-        {onClose && (
-          <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+      <TradingFormHeader selectedCrypto={selectedCrypto} />
       <CardContent className="p-4">
         <div className="space-y-6">
           <TradingFormInputs
@@ -61,25 +52,18 @@ export function TradingForm({ selectedCrypto, currentPrice, initialType = 'long'
           
           <div className="grid grid-cols-2 gap-4">
             <Button
-              className={`h-14 transition-all duration-200 hover:scale-[1.02] ${
-                initialType === 'long' 
-                  ? 'bg-success hover:bg-success/90' 
-                  : 'bg-warning hover:bg-warning/90'
-              }`}
-              onClick={() => {
-                handleTrade(initialType);
-                onClose?.();
-              }}
+              className="h-14 bg-success hover:bg-success/90 transition-all duration-200 hover:scale-[1.02]"
+              onClick={() => handleTrade('long')}
               disabled={isSubmitting || !currentPrice}
             >
-              <div className="flex flex-col items-center">
-                {initialType === 'long' ? (
-                  <TrendingUp className="h-6 w-6 mb-1" />
-                ) : (
-                  <TrendingDown className="h-6 w-6 mb-1" />
-                )}
-                <span>{initialType === 'long' ? 'Long' : 'Short'}</span>
-              </div>
+              Long
+            </Button>
+            <Button
+              className="h-14 bg-warning hover:bg-warning/90 transition-all duration-200 hover:scale-[1.02]"
+              onClick={() => handleTrade('short')}
+              disabled={isSubmitting || !currentPrice}
+            >
+              Short
             </Button>
           </div>
         </div>
