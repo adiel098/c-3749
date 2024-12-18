@@ -4,9 +4,15 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { TradingForm } from "@/components/TradingForm";
 import CryptoChart from "@/components/CryptoChart";
 import { useState } from "react";
+import { useProfile } from "@/hooks/useProfile";
+import { usePositions } from "@/hooks/usePositions";
 
 const Trade = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
+  const { data: profile } = useProfile();
+  const { data: positions } = usePositions();
+
+  const openPositions = positions?.filter((p: any) => p.status === 'open' && p.symbol === selectedCrypto) || [];
 
   return (
     <SidebarProvider>
@@ -21,13 +27,40 @@ const Trade = () => {
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Available Balance</p>
-                <p className="text-xl font-bold">$100,000.00</p>
+                <p className="text-xl font-bold">${profile?.balance?.toFixed(2) || '0.00'}</p>
               </div>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <CryptoChart symbol={selectedCrypto} />
+                {openPositions.length > 0 && (
+                  <Card className="mt-4">
+                    <CardHeader>
+                      <CardTitle>Open Positions for {selectedCrypto}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {openPositions.map((position: any) => (
+                          <div key={position.id} className="flex justify-between items-center p-4 border rounded-lg">
+                            <div>
+                              <p className="font-semibold">{position.type.toUpperCase()}</p>
+                              <p className="text-sm text-muted-foreground">
+                                Entry: ${position.entry_price}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold">${position.amount}</p>
+                              <p className={`text-sm ${position.profit_loss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                {position.profit_loss >= 0 ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
               <TradingForm selectedCrypto={selectedCrypto} />
             </div>

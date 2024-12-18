@@ -3,15 +3,38 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useProfile } from "@/hooks/useProfile";
+import { useTransactions } from "@/hooks/useTransactions";
+import { supabase } from "@/integrations/supabase/client";
 
 const Wallet = () => {
   const { toast } = useToast();
+  const { data: profile } = useProfile();
+  const { data: transactions } = useTransactions();
 
-  const handleDeposit = () => {
-    toast({
-      title: "Demo Mode",
-      description: "This is a demo platform. Real deposits are not accepted.",
-    });
+  const handleDeposit = async () => {
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .insert({
+          type: 'deposit',
+          amount: 10000,
+          status: 'completed'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Demo Mode",
+        description: "This is a demo platform. A virtual deposit of $10,000 has been added to your account.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -32,11 +55,11 @@ const Wallet = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-3xl font-bold">$100,000.00</p>
+                    <p className="text-3xl font-bold">${profile?.balance?.toFixed(2) || '0.00'}</p>
                     <p className="text-sm text-muted-foreground">Available USDT</p>
                   </div>
                   <Button onClick={handleDeposit} className="w-full">
-                    Deposit
+                    Add Demo Funds
                   </Button>
                 </CardContent>
               </Card>
@@ -46,9 +69,32 @@ const Wallet = () => {
                   <CardTitle>Transaction History</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center text-muted-foreground py-8">
-                    No transactions found
-                  </div>
+                  {!transactions?.length ? (
+                    <div className="text-center text-muted-foreground py-8">
+                      No transactions found
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {transactions.map((tx: any) => (
+                        <div key={tx.id} className="flex justify-between items-center p-4 border rounded-lg">
+                          <div>
+                            <p className="font-semibold capitalize">{tx.type}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(tx.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className={`font-semibold ${tx.type === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>
+                              {tx.type === 'deposit' ? '+' : '-'}${tx.amount.toFixed(2)}
+                            </p>
+                            <p className="text-sm text-muted-foreground capitalize">
+                              {tx.status}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
