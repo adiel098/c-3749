@@ -1,9 +1,10 @@
 import { Bitcoin, DollarSign } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 export interface StaticCryptoData {
   symbol: string;
   name: string;
-  icon: any;
+  icon: LucideIcon;
 }
 
 export const topCryptos: StaticCryptoData[] = [
@@ -15,11 +16,6 @@ export const topCryptos: StaticCryptoData[] = [
   {
     symbol: "ETH",
     name: "Ethereum",
-    icon: DollarSign // Using DollarSign as a temporary icon for ETH
-  },
-  {
-    symbol: "USDT",
-    name: "Tether",
     icon: DollarSign
   },
   {
@@ -30,6 +26,26 @@ export const topCryptos: StaticCryptoData[] = [
   {
     symbol: "SOL",
     name: "Solana",
+    icon: DollarSign
+  },
+  {
+    symbol: "XRP",
+    name: "Ripple",
+    icon: DollarSign
+  },
+  {
+    symbol: "ADA",
+    name: "Cardano",
+    icon: DollarSign
+  },
+  {
+    symbol: "DOGE",
+    name: "Dogecoin",
+    icon: DollarSign
+  },
+  {
+    symbol: "USDT",
+    name: "Tether",
     icon: DollarSign
   }
 ];

@@ -1,5 +1,4 @@
 import { Command, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
-import { cn } from '@/lib/utils';
 import { topCryptos } from '@/data/cryptoList';
 
 interface CryptoSearchResultsProps {
@@ -19,12 +18,12 @@ export function CryptoSearchResults({
   );
 
   return (
-    <Command>
+    <>
       {filteredCryptos.length === 0 && (
-        <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+        <CommandEmpty>No results found</CommandEmpty>
       )}
       {filteredCryptos.length > 0 && (
-        <CommandGroup heading="מטבעות פופולריים">
+        <CommandGroup heading="Popular Cryptocurrencies">
           {filteredCryptos.map((crypto) => (
             <CommandItem
               key={crypto.symbol}
@@ -46,6 +45,6 @@ export function CryptoSearchResults({
           ))}
         </CommandGroup>
       )}
-    </Command>
+    </>
   );
 }

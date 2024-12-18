@@ -27,18 +27,17 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>חיפוש מטבעות</DialogTitle>
+            <DialogTitle>Search Cryptocurrencies</DialogTitle>
           </DialogHeader>
 
           <Command className="rounded-lg border shadow-sm">
             <CommandInput
-              placeholder="חפש לפי שם או סימול..."
+              placeholder="Search by name or symbol..."
               value={search}
               onValueChange={setSearch}
               className="border-none focus:ring-0"
             />
-
-            <div className="max-h-[400px] overflow-y-auto space-y-2 custom-scrollbar">
+            <div className="max-h-[300px] overflow-y-auto space-y-2 custom-scrollbar">
               <CryptoSearchResults
                 searchTerm={search}
                 onSelect={onSelect}
