@@ -4,25 +4,61 @@ import { UserList } from "@/components/admin/UserList";
 import { DepositAddresses } from "@/components/admin/DepositAddresses";
 import { SystemSummary } from "@/components/admin/SystemSummary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Wallet, BarChart3 } from "lucide-react";
+import { Users, Wallet, BarChart3, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminPanel() {
   const { data: profile } = useProfile();
+  const { signOut } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   if (!profile?.is_admin) {
     return <Navigate to="/trade" replace />;
   }
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "התנתקת בהצלחה",
+        description: "להתראות! מקווים לראותך שוב בקרוב",
+      });
+      navigate("/auth");
+    } catch (error) {
+      toast({
+        title: "שגיאה",
+        description: "אירעה שגיאה בהתנתקות. אנא נסה שוב.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-background">
       <div className="container mx-auto p-8 space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9b87f5] to-[#D946EF] bg-clip-text text-transparent">
-            Admin Panel
-          </h1>
-          <p className="text-[#E5DEFF]/80">
-            Manage users and monitor system performance
-          </p>
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9b87f5] to-[#D946EF] bg-clip-text text-transparent">
+              Admin Panel
+            </h1>
+            <p className="text-[#E5DEFF]/80">
+              Manage users and monitor system performance
+            </p>
+          </div>
+          
+          <Button
+            onClick={handleLogout}
+            variant="destructive"
+            className="group relative bg-gradient-to-r from-red-600 via-red-500 to-red-600 hover:from-red-700 hover:via-red-600 hover:to-red-700 text-white font-medium py-6 flex items-center justify-center gap-3 transition-all duration-300 overflow-hidden glass-effect hover:shadow-red-500/20 hover:shadow-lg"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-transparent to-red-600/20 animate-shimmer" />
+            <LogOut className="w-5 h-5 transition-transform group-hover:-translate-y-0.5 group-hover:scale-110" />
+            <span className="relative transition-transform group-hover:-translate-y-0.5">התנתק</span>
+          </Button>
         </div>
         
         <Tabs defaultValue="summary" className="w-full">
