@@ -39,7 +39,6 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           console.log('WebSocket connected successfully');
           setIsLoading(true);
           setError(null);
-          setCryptoList([]);
         };
 
         ws.onmessage = (event) => {
@@ -49,6 +48,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               console.error('Invalid data format received:', data);
               setError('Invalid data format received');
               setIsLoading(false);
+              setCryptoList([]);
               return;
             }
 
@@ -69,11 +69,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
               )
               .slice(0, 100);
 
-            if (Array.isArray(usdtPairs)) {
-              setCryptoList(usdtPairs);
-            } else {
-              setCryptoList([]);
-            }
+            setCryptoList(usdtPairs);
             setIsLoading(false);
           } catch (err) {
             console.error('Data processing error:', err);
