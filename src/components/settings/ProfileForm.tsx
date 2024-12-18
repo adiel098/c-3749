@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { countryCodes } from "@/utils/countryPhoneCodes";
 import { User, Mail, Phone, Save } from "lucide-react";
+import { toastStyles } from "@/utils/toastStyles";  // Add this import
 
 type ProfileFormProps = {
   initialData: {
@@ -59,7 +60,6 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive",
         className: toastStyles.error.className,
       });
     } finally {
