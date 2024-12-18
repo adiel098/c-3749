@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bitcoin, Wallet, Check, Copy, Loader2 } from "lucide-react";
+import { Bitcoin, DollarSign, Wallet, Check, Copy, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { QRCodeSVG } from "qrcode.react";
 import { useDepositAddresses } from "@/hooks/useDepositAddresses";
 
 export function MobileDepositCard() {
@@ -41,54 +40,61 @@ export function MobileDepositCard() {
 
   return (
     <Card className="glass-effect">
-      <CardContent className="space-y-4 p-4">
+      <CardContent className="p-4 space-y-6">
         <div className="grid grid-cols-3 gap-3">
           <Button
             variant={selectedMethod === "bitcoin" ? "default" : "outline"}
             size="lg"
-            className={`w-full h-16 flex flex-col items-center justify-center gap-1 text-sm ${
+            className={`w-full h-24 flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
               selectedMethod === "bitcoin" 
-                ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : ""
+                ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20" 
+                : "hover:bg-primary/5"
             }`}
             onClick={() => setSelectedMethod("bitcoin")}
           >
-            <Bitcoin className="h-6 w-6 mb-1" />
-            Bitcoin
+            <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <Bitcoin className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-sm font-medium">Bitcoin</span>
+            {selectedMethod === "bitcoin" && (
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+            )}
           </Button>
+
           <Button
             variant={selectedMethod === "ethereum" ? "default" : "outline"}
             size="lg"
-            className={`w-full h-16 flex flex-col items-center justify-center gap-1 text-sm ${
+            className={`w-full h-24 flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
               selectedMethod === "ethereum" 
-                ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : ""
+                ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20" 
+                : "hover:bg-primary/5"
             }`}
             onClick={() => setSelectedMethod("ethereum")}
           >
-            <Wallet className="h-6 w-6 mb-1" />
-            Ethereum
+            <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <Wallet className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-sm font-medium">Ethereum</span>
+            {selectedMethod === "ethereum" && (
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+            )}
           </Button>
+
           <Button
             variant={selectedMethod === "usdt" ? "default" : "outline"}
             size="lg"
-            className={`w-full h-16 flex flex-col items-center justify-center gap-1 text-sm ${
+            className={`w-full h-24 flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
               selectedMethod === "usdt" 
-                ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : ""
+                ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20" 
+                : "hover:bg-primary/5"
             }`}
             onClick={() => setSelectedMethod("usdt")}
           >
-            <span className="text-2xl font-bold mb-1">₮</span>
-            USDT
+            <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <DollarSign className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-sm font-medium">USDT</span>
+            {selectedMethod === "usdt" && (
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+            )}
           </Button>
-        </div>
-
-        <div className="flex justify-center bg-white p-2 rounded-lg">
-          <QRCodeSVG 
-            value={getAddress(selectedMethod)} 
-            size={200}
-          />
         </div>
         
         <div className="space-y-2">
