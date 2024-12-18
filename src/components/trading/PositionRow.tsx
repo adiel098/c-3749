@@ -1,10 +1,13 @@
 import type { Position } from "@/types/position";
-import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, XCircle, Edit2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface PositionRowProps {
   position: Position;
@@ -15,6 +18,9 @@ interface PositionRowProps {
 
 export function PositionRow({ position, currentPrice, onUpdate, type }: PositionRowProps) {
   const { toast } = useToast();
+  const [isEditing, setIsEditing] = useState(false);
+  const [stopLoss, setStopLoss] = useState(position.stop_loss?.toString() || "");
+  const [takeProfit, setTakeProfit] = useState(position.take_profit?.toString() || "");
   const profitLossPercentage = ((currentPrice || position.exit_price || 0) - position.entry_price) / position.entry_price * 100;
   const isProfitable = position.profit_loss >= 0;
 
@@ -46,17 +52,68 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
     }
   };
 
+  const handleUpdateLevels = async () => {
+    try {
+      const { error } = await supabase
+        .from('positions')
+        .update({
+          stop_loss: stopLoss ? Number(stopLoss) : null,
+          take_profit: takeProfit ? Number(takeProfit) : null
+        })
+        .eq('id', position.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Levels updated successfully",
+      });
+
+      setIsEditing(false);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast({
+        title: "Error updating levels",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveLevels = async () => {
+    try {
+      const { error } = await supabase
+        .from('positions')
+        .update({
+          stop_loss: null,
+          take_profit: null
+        })
+        .eq('id', position.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Levels removed successfully",
+      });
+
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast({
+        title: "Error removing levels",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-3 rounded-lg bg-card/30 backdrop-blur-sm border border-white/10 hover:bg-card/40 transition-all duration-200">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           {position.type === 'long' ? (
-            <ArrowUpCircle className="text-success h-5 w-5" />
+            <ArrowUpCircle className="text-green-500 h-5 w-5" />
           ) : (
-            <ArrowDownCircle className="text-warning h-5 w-5" />
+            <ArrowDownCircle className="text-red-500 h-5 w-5" />
           )}
           <span className="font-semibold">{position.symbol}</span>
-          <Badge variant={position.type === 'long' ? 'success' : 'destructive'} className="uppercase">
+          <Badge variant={position.type === 'long' ? 'default' : 'destructive'} className="uppercase">
             {position.type}
           </Badge>
         </div>
@@ -73,14 +130,22 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
                     <span className="font-medium">${currentPrice?.toFixed(2) || '...'}</span>
                   </>
                 )}
+                {position.stop_loss && (
+                  <Badge variant="outline" className="gap-1">
+                    SL: ${position.stop_loss.toFixed(2)}
+                  </Badge>
+                )}
+                {position.take_profit && (
+                  <Badge variant="outline" className="gap-1">
+                    TP: ${position.take_profit.toFixed(2)}
+                  </Badge>
+                )}
               </div>
             </TooltipTrigger>
             <TooltipContent>
               <div className="space-y-1">
                 <p>Leverage: {position.leverage}x</p>
                 <p>Amount: ${position.amount}</p>
-                {position.stop_loss && <p>Stop Loss: ${position.stop_loss}</p>}
-                {position.take_profit && <p>Take Profit: ${position.take_profit}</p>}
               </div>
             </TooltipContent>
           </Tooltip>
@@ -88,7 +153,7 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
       </div>
 
       <div className="flex items-center gap-4">
-        <div className={`flex items-center gap-1 ${isProfitable ? 'text-success' : 'text-warning'}`}>
+        <div className={`flex items-center gap-1 ${isProfitable ? 'text-green-500' : 'text-red-500'}`}>
           {isProfitable ? (
             <TrendingUp className="h-4 w-4" />
           ) : (
@@ -103,14 +168,77 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
         </div>
 
         {type === 'open' && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleClosePosition}
-            className="text-warning hover:text-warning hover:bg-warning/20"
-          >
-            <XCircle className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                {!position.stop_loss && !position.take_profit ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-primary hover:text-primary hover:bg-primary/20"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    SL/TP
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-primary hover:text-primary hover:bg-primary/20"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Set Stop Loss & Take Profit</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Stop Loss</label>
+                    <Input
+                      placeholder="Enter stop loss price"
+                      value={stopLoss}
+                      onChange={(e) => setStopLoss(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Take Profit</label>
+                    <Input
+                      placeholder="Enter take profit price"
+                      value={takeProfit}
+                      onChange={(e) => setTakeProfit(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    {(position.stop_loss || position.take_profit) && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleRemoveLevels}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                    <Button
+                      onClick={handleUpdateLevels}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleClosePosition}
+            >
+              <XCircle className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </div>
     </div>
