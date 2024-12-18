@@ -46,11 +46,15 @@ export function useUserManagement() {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (userError) {
         console.error('Error fetching user data:', userError);
         throw userError;
+      }
+
+      if (!userData) {
+        throw new Error('User not found');
       }
 
       console.log('Current user data:', userData);
@@ -60,13 +64,18 @@ export function useUserManagement() {
         .from('profiles')
         .update({ balance: newBalance })
         .eq('id', userId)
-        .select();
+        .select()
+        .maybeSingle();
 
       console.log('Update response:', { updateData, updateError });
 
       if (updateError) {
         console.error('Update error:', updateError);
         throw updateError;
+      }
+
+      if (!updateData) {
+        throw new Error('Failed to update user balance');
       }
 
       // Create a transaction record for the balance adjustment
@@ -79,7 +88,8 @@ export function useUserManagement() {
           amount: Math.abs(balanceChange),
           status: 'completed'
         })
-        .select();
+        .select()
+        .single();
 
       console.log('Transaction created:', { transactionData, transactionError });
 
