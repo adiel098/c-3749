@@ -4,9 +4,10 @@ import { CryptoSearch } from "./crypto/CryptoSearch";
 interface CryptoChartProps {
   symbol: string;
   onPriceUpdate?: (price: number) => void;
+  onSearchOpen?: () => void;  // Add this line to include the new prop
 }
 
-const CryptoChart = ({ symbol, onPriceUpdate }: CryptoChartProps) => {
+const CryptoChart = ({ symbol, onPriceUpdate, onSearchOpen }: CryptoChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
