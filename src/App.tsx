@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MobileNavBar } from "@/components/MobileNavBar";
 import Trade from "@/pages/Trade";
@@ -20,7 +20,9 @@ function App() {
     <Router>
       <div className="relative min-h-screen">
         <Routes>
-          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth" element={
+            session ? <Navigate to="/" replace /> : <AuthPage />
+          } />
           <Route
             path="/"
             element={
