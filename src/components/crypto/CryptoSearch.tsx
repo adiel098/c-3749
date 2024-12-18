@@ -41,9 +41,9 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
         variant="ghost"
         size="icon"
         onClick={() => setOpen(true)}
-        className="bg-secondary/20 hover:bg-secondary/40"
+        className="bg-secondary/20 hover:bg-secondary/40 transition-colors duration-200"
       >
-        <Search className="h-5 w-5 text-primary" />
+        <Search className="h-5 w-5 text-muted-foreground" />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -55,7 +55,7 @@ export function CryptoSearch({ onSelect }: CryptoSearchProps) {
             </DialogDescription>
           </DialogHeader>
 
-          <Command className="rounded-lg border shadow-sm">
+          <Command className="rounded-lg border border-secondary">
             <CommandInput
               placeholder="Search by symbol..."
               value={search}
