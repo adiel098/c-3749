@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
+import { LogIn, UserPlus } from "lucide-react";
 
 const AuthPage = () => {
   return (
@@ -16,7 +17,31 @@ const AuthPage = () => {
                   Great to see you again! Log in to continue your trading journey
                 </p>
               </div>
-              <LoginForm />
+              <div className="px-6">
+                <TabsList className="grid w-full grid-cols-2 mb-6 h-14 bg-card/40 p-1">
+                  <TabsTrigger 
+                    value="login"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 h-12"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LogIn className="w-5 h-5" />
+                      <span className="font-medium">Login</span>
+                    </div>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="signup"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 h-12"
+                  >
+                    <div className="flex items-center gap-2">
+                      <UserPlus className="w-5 h-5" />
+                      <span className="font-medium">Sign Up</span>
+                    </div>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+              <div className="px-6 pb-6">
+                <LoginForm />
+              </div>
             </TabsContent>
             <TabsContent value="signup">
               <div className="p-6 pb-2">
@@ -25,22 +50,32 @@ const AuthPage = () => {
                   Join hundreds of traders and start your crypto trading adventure
                 </p>
               </div>
-              <SignUpForm />
+              <div className="px-6">
+                <TabsList className="grid w-full grid-cols-2 mb-6 h-14 bg-card/40 p-1">
+                  <TabsTrigger 
+                    value="login"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 h-12"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LogIn className="w-5 h-5" />
+                      <span className="font-medium">Login</span>
+                    </div>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="signup"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 h-12"
+                  >
+                    <div className="flex items-center gap-2">
+                      <UserPlus className="w-5 h-5" />
+                      <span className="font-medium">Sign Up</span>
+                    </div>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+              <div className="px-6 pb-6">
+                <SignUpForm />
+              </div>
             </TabsContent>
-            <TabsList className="grid w-full grid-cols-2 p-6">
-              <TabsTrigger 
-                value="login" 
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              >
-                Login
-              </TabsTrigger>
-              <TabsTrigger 
-                value="signup"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              >
-                Sign Up
-              </TabsTrigger>
-            </TabsList>
           </Tabs>
         </CardContent>
       </Card>
