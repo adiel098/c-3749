@@ -30,11 +30,12 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
     const connectWebSocket = () => {
       if (!searchOpen) return;
 
-      ws = new WebSocket('wss://stream.binance.com:9443/ws/!miniTicker@arr');
+      ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
 
       ws.onopen = () => {
         setIsLoading(true);
         setError(null);
+        setCryptoList([]); // Reset list when opening new connection
       };
 
       ws.onmessage = (event) => {
@@ -48,19 +49,26 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           }
 
           const usdtPairs = data
-            .filter((item: any) => item.s && item.s.endsWith('USDT'))
+            .filter((item: any) => 
+              item.s && 
+              item.s.endsWith('USDT') && 
+              item.c && 
+              item.P
+            )
             .map((item: any) => ({
               symbol: item.s.replace('USDT', ''),
-              price: parseFloat(item.c || 0).toFixed(2),
-              priceChange: '0.00' // We'll get this from a separate request
+              price: parseFloat(item.c).toFixed(2),
+              priceChange: parseFloat(item.P).toFixed(2)
             }))
             .sort((a: CryptoData, b: CryptoData) => 
               parseFloat(b.price) - parseFloat(a.price)
             )
             .slice(0, 100);
 
-          setCryptoList(usdtPairs);
-          setIsLoading(false);
+          if (usdtPairs.length > 0) {
+            setCryptoList(usdtPairs);
+            setIsLoading(false);
+          }
         } catch (err) {
           console.error('Data processing error:', err);
           setError('Failed to process data');
@@ -108,8 +116,8 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
         <DialogContent className="max-w-md">
-          <Command className="rounded-lg">
-            <CommandInput placeholder="Search cryptocurrencies..." />
+          <Command className="rounded-lg border-0">
+            <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
             <CommandEmpty>
               {isLoading ? (
                 <div className="flex items-center justify-center py-6">
