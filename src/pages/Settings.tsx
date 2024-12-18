@@ -44,11 +44,27 @@ const Settings = () => {
     );
   }
 
+  // Parse phone number to separate country code and number
+  const parsePhoneNumber = (phone: string | null) => {
+    if (!phone) return { countryCode: "+972", phoneNumber: "" };
+    
+    // Find the country code by matching the plus sign and subsequent digits
+    const countryCodeMatch = phone.match(/^\+\d+/);
+    const countryCode = countryCodeMatch ? countryCodeMatch[0] : "+972";
+    
+    // The rest is the phone number
+    const phoneNumber = phone.replace(countryCode, "");
+    
+    return { countryCode, phoneNumber };
+  };
+
+  const { countryCode, phoneNumber } = parsePhoneNumber(profile?.phone);
+
   const profileData = {
     firstName: profile?.first_name || "",
     lastName: profile?.last_name || "",
-    phoneNumber: profile?.phone?.replace(/^\+\d+/, "") || "",
-    countryCode: profile?.phone?.match(/^\+\d+/)?.[0] || "+972"
+    phoneNumber: phoneNumber,
+    countryCode: countryCode
   };
 
   return (

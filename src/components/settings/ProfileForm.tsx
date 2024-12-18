@@ -31,9 +31,10 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState({
-    ...initialData,
-    countryCode: initialData.countryCode || "+972",
-    phoneNumber: initialData.phoneNumber || ""
+    firstName: initialData.firstName,
+    lastName: initialData.lastName,
+    countryCode: initialData.countryCode,
+    phoneNumber: initialData.phoneNumber
   });
 
   const handleProfileUpdate = async () => {
