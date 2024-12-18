@@ -89,6 +89,17 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
                 {position.take_profit && (
                   <span className="text-success ml-1">TP:${position.take_profit.toFixed(2)}</span>
                 )}
+                {type === 'open' && (
+                  <StopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 ml-0.5"
+                    >
+                      <Edit2 className="h-3 w-3" />
+                    </Button>
+                  </StopLossTakeProfitDialog>
+                )}
               </>
             )}
           </div>
@@ -101,15 +112,17 @@ export function PositionRow({ position, currentPrice, onUpdate, type }: Position
           />
           {type === 'open' && (
             <>
-              <StopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                >
-                  <Edit2 className="h-3 w-3" />
-                </Button>
-              </StopLossTakeProfitDialog>
+              {!position.stop_loss && !position.take_profit && (
+                <StopLossTakeProfitDialog position={position} onUpdate={onUpdate!}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0"
+                  >
+                    <Edit2 className="h-3 w-3" />
+                  </Button>
+                </StopLossTakeProfitDialog>
+              )}
               <Button
                 variant="destructive"
                 size="sm"
