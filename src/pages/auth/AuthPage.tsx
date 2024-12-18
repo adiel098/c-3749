@@ -34,12 +34,11 @@ const AuthPage = () => {
                     ? "Great to see you again! Log in to continue your trading journey" 
                     : "Join hundreds of traders and start your crypto trading adventure"}
                 </p>
-                {/* Removed the second paragraph as requested */}
               </CardDescription>
             </CardHeader>
             <CardContent className={`relative ${isMobile ? 'flex-1 overflow-hidden flex flex-col' : ''}`}>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className={`${isMobile ? 'h-full flex flex-col' : 'space-y-6'}`}>
-                <TabsList className="grid w-full grid-cols-2 h-14 rounded-lg p-1 bg-muted/30">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className={`${isMobile ? 'h-full flex flex-col' : 'space-y-8'}`}>
+                <TabsList className="grid w-3/4 mx-auto grid-cols-2 h-11 rounded-lg p-1 bg-muted/30">
                   <TabsTrigger 
                     value="login"
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all duration-300"
@@ -57,7 +56,7 @@ const AuthPage = () => {
                   <ScrollArea className={`${isMobile ? 'h-[calc(100dvh-13rem)] pr-4' : ''}`}>
                     <TabsContent 
                       value="login" 
-                      className={`space-y-4 [&>*]:relative ${isMobile ? 'pb-8' : ''}`}
+                      className={`space-y-4 [&>*]:relative mt-4 ${isMobile ? 'pb-8' : ''}`}
                     >
                       <LoginForm />
                     </TabsContent>
