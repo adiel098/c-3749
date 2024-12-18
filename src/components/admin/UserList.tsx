@@ -13,17 +13,9 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { toastStyles } from "@/utils/toastStyles";
 import { format } from "date-fns";
-import { Trash2, DollarSign } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { BalanceUpdateDialog } from "./BalanceUpdateDialog";
+import { UserActions } from "./UserActions";
 
 export function UserList() {
   const { toast } = useToast();
@@ -95,12 +87,14 @@ export function UserList() {
     }
   };
 
-  const handleBalanceUpdate = async (userId: string, newBalance: number) => {
+  const handleBalanceUpdate = async (newBalance: number) => {
+    if (!selectedUser) return;
+    
     try {
       const { error } = await supabase
         .from('profiles')
         .update({ balance: newBalance })
-        .eq('id', userId);
+        .eq('id', selectedUser.id);
 
       if (error) throw error;
 
@@ -175,57 +169,11 @@ export function UserList() {
                       />
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-[#7E69AB]/20"
-                            onClick={() => setSelectedUser({ id: user.id, balance: user.balance })}
-                          >
-                            <DollarSign className="h-4 w-4 text-[#9b87f5]" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-[#1A1F2C] border-[#7E69AB]/20">
-                          <DialogHeader>
-                            <DialogTitle className="text-[#E5DEFF]">Update Balance</DialogTitle>
-                          </DialogHeader>
-                          <div className="py-4">
-                            <Input
-                              type="number"
-                              value={selectedUser?.balance || 0}
-                              onChange={(e) => setSelectedUser(prev => prev ? { ...prev, balance: parseFloat(e.target.value) } : null)}
-                              className="bg-[#2A2F3C] border-[#7E69AB]/20 text-[#E5DEFF]"
-                            />
-                          </div>
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              onClick={() => setSelectedUser(null)}
-                              className="hover:bg-[#7E69AB]/20 text-[#E5DEFF]"
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              onClick={() => selectedUser && handleBalanceUpdate(selectedUser.id, selectedUser.balance)}
-                              className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white"
-                            >
-                              Update
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-red-500/20"
-                        onClick={() => handleDeleteUser(user.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
+                  <TableCell>
+                    <UserActions
+                      onDelete={() => handleDeleteUser(user.id)}
+                      onBalanceUpdate={() => setSelectedUser({ id: user.id, balance: user.balance })}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
@@ -233,6 +181,13 @@ export function UserList() {
           </Table>
         </div>
       </Card>
+
+      <BalanceUpdateDialog
+        isOpen={!!selectedUser}
+        onClose={() => setSelectedUser(null)}
+        onUpdate={handleBalanceUpdate}
+        initialBalance={selectedUser?.balance || 0}
+      />
     </>
   );
 }
