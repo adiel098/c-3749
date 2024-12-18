@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,40 +15,46 @@ interface LoginFormData {
 }
 
 export function LoginForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useMediaQuery("(max-width: 768px)");
   const { setSession } = useAuth();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const onSubmit = async (data: LoginFormData) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
-      
+      const formData = new FormData(e.currentTarget);
+      const data = {
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      };
+
       if (!data.email || !data.password) {
         toast({
-          title: "שדות חסרים 🤔",
-          description: "אנא מלא את כל השדות הנדרשים",
+          title: "Missing Fields 🤔",
+          description: "Please fill in all required fields",
           variant: "destructive",
           duration: 3000,
         });
         return;
       }
 
-      const { error, data: authData } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
       if (error) {
         toast({
-          title: "ההתחברות נכשלה ❌",
+          title: "Login Failed ❌",
           description: (
             <div className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-destructive" />
-              <span>הפרטים שהזנת אינם נכונים, אנא נסה שוב</span>
+              <span>Invalid credentials. Please try again</span>
             </div>
           ),
           variant: "destructive",
@@ -57,27 +62,26 @@ export function LoginForm() {
         });
         return;
       }
-      
+
       setSession(authData.session);
       
       toast({
-        title: "ברוך הבא! 🎉",
+        title: "Welcome Back! 🎉",
         description: (
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-primary" />
-            <span>התחברת בהצלחה למערכת</span>
+            <span>You have successfully logged in</span>
           </div>
         ),
         duration: 3000,
       });
 
       const from = location.state?.from?.pathname || "/";
-      navigate(from, { replace: true });
-
+      navigate(from);
     } catch (error: any) {
       toast({
-        title: "שגיאה לא צפויה 😕",
-        description: "אירעה שגיאה, אנא נסה שוב מאוחר יותר",
+        title: "Unexpected Error 😕",
+        description: "An error occurred. Please try again later",
         variant: "destructive",
         duration: 3000,
       });
@@ -87,50 +91,33 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="email" className="flex items-center gap-2">
           <Mail className="w-4 h-4 text-primary" />
           Email
         </Label>
         <Input
-          {...register("email", { 
-            required: "Email is required",
-            pattern: {
-              value: /\S+@\S+\.\S+/,
-              message: "Entered value does not match email format"
-            }
-          })}
+          type="email"
+          name="email"
+          required
           className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
           placeholder="Enter your email"
         />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
       </div>
-
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2">
+      <div>
+        <Label htmlFor="password" className="flex items-center gap-2">
           <Lock className="w-4 h-4 text-primary" />
           Password
         </Label>
         <Input
           type="password"
-          {...register("password", { 
-            required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters"
-            }
-          })}
+          name="password"
+          required
           className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
           placeholder="Enter your password"
         />
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
       </div>
-
       <Button 
         type="submit" 
         className="w-full bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity h-11"
@@ -144,7 +131,7 @@ export function LoginForm() {
         ) : (
           <div className="flex items-center gap-2">
             <LogIn className="h-5 w-5" />
-            <span>Login</span>
+            <span>Log In</span>
           </div>
         )}
       </Button>

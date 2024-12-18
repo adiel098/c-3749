@@ -33,8 +33,8 @@ export function SignUpForm() {
   const onSubmit = async (data: SignUpFormData) => {
     if (data.password !== data.confirmPassword) {
       toast({
-        title: "שגיאת סיסמה ⚠️",
-        description: "הסיסמאות שהזנת אינן תואמות",
+        title: "Password Error ⚠️",
+        description: "The passwords you entered do not match",
         variant: "destructive",
         duration: 3000,
       });
@@ -58,18 +58,18 @@ export function SignUpForm() {
       if (error) throw error;
 
       toast({
-        title: "ברוך הבא למשפחה! 🎊",
+        title: "Welcome to the Family! 🎊",
         description: (
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-primary" />
-            <span>החשבון נוצר בהצלחה! אתה יכול להתחבר עכשיו</span>
+            <span>Account created successfully! You can now log in</span>
           </div>
         ),
         duration: 3000,
       });
     } catch (error: any) {
       toast({
-        title: "ההרשמה נכשלה ❌",
+        title: "Registration Failed ❌",
         description: (
           <div className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-destructive" />
