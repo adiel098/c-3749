@@ -27,7 +27,7 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <div className={isMobile ? "h-[100dvh] overflow-hidden" : ""}>
+                <div className={isMobile ? "main-content" : ""}>
                   {isMobile ? <TradeMobile /> : <Trade />}
                 </div>
               </ProtectedRoute>
@@ -37,7 +37,7 @@ function App() {
             path="/portfolio"
             element={
               <ProtectedRoute>
-                <div className={`${isMobile ? "h-[100dvh] overflow-hidden" : ""} pb-16 md:pb-0`}>
+                <div className="main-content">
                   <Portfolio />
                 </div>
               </ProtectedRoute>
@@ -47,7 +47,7 @@ function App() {
             path="/wallet"
             element={
               <ProtectedRoute>
-                <div className={`${isMobile ? "h-[100dvh] overflow-hidden" : ""} pb-16 md:pb-0`}>
+                <div className="main-content">
                   <Wallet />
                 </div>
               </ProtectedRoute>
@@ -57,7 +57,7 @@ function App() {
             path="/history"
             element={
               <ProtectedRoute>
-                <div className={`${isMobile ? "h-[100dvh] overflow-hidden" : ""} pb-16 md:pb-0`}>
+                <div className="main-content">
                   <History />
                 </div>
               </ProtectedRoute>
@@ -67,7 +67,7 @@ function App() {
             path="/settings"
             element={
               <ProtectedRoute>
-                <div className={`${isMobile ? "h-[100dvh] overflow-hidden" : ""} pb-16 md:pb-0`}>
+                <div className="main-content">
                   <Settings />
                 </div>
               </ProtectedRoute>

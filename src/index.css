@@ -71,25 +71,25 @@
   animation: pulse-subtle 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Mobile Navigation Adjustments */
+/* Mobile Navigation and Content Adjustments */
 @media (max-width: 768px) {
   body {
     @apply overflow-hidden;
   }
   
   .main-content {
-    @apply h-[100dvh] overflow-y-auto pb-16;
+    @apply h-[calc(100dvh-4rem)] overflow-y-auto pb-16;
   }
 }
 
-/* Ensure mobile navigation is always visible and content is properly spaced */
+/* Mobile Navigation Bar */
 .mobile-nav {
   @apply fixed bottom-0 left-0 right-0 z-50;
 }
 
-/* Add padding to main content area on mobile to prevent content from being hidden behind the navigation bar */
+/* Add padding to main content area on mobile */
 @media (max-width: 768px) {
   .main-content {
-    padding-bottom: 4rem;
+    @apply pb-20;
   }
 }
