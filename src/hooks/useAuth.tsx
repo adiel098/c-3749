@@ -22,41 +22,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     console.log("AuthProvider - Initializing");
-    
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("AuthProvider - Initial session:", session ? "Exists" : "None");
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+
+    async function initializeAuth() {
+      try {
+        // Get initial session
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        console.log("AuthProvider - Initial session:", initialSession ? "Exists" : "None");
+        
+        if (mounted) {
+          setSession(initialSession);
+          setUser(initialSession?.user ?? null);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("AuthProvider - Error initializing:", error);
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    initializeAuth();
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log("AuthProvider - Auth state changed:", _event);
       console.log("AuthProvider - New session:", session ? "Exists" : "None");
       
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+      if (mounted) {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
-    setIsLoading(true);
-    await supabase.auth.signOut();
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      await supabase.auth.signOut();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  if (isLoading) {
-    console.log("AuthProvider - Loading state");
-    return null;
-  }
+  console.log("AuthProvider - Current state:", {
+    isLoading,
+    hasSession: !!session,
+    hasUser: !!user
+  });
 
   return (
     <AuthContext.Provider value={{ session, user, signOut, isLoading }}>
