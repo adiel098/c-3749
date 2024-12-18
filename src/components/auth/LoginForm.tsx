@@ -103,42 +103,45 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label 
-          htmlFor="email" 
-          className="flex items-center gap-2 mb-2" // Added mb-2 for bottom margin
-        >
-          <Mail className="w-4 h-4 text-primary" />
-          Email
-        </Label>
-        <Input
-          type="email"
-          name="email"
-          required
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-          placeholder="Enter your email"
-        />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <div>
+          <Label 
+            htmlFor="email" 
+            className="flex items-center gap-2 mb-2 text-foreground/90"
+          >
+            <Mail className="w-4 h-4 text-primary" />
+            Email
+          </Label>
+          <Input
+            type="email"
+            name="email"
+            required
+            className="h-12 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div>
+          <Label 
+            htmlFor="password" 
+            className="flex items-center gap-2 mb-2 text-foreground/90"
+          >
+            <Lock className="w-4 h-4 text-primary" />
+            Password
+          </Label>
+          <Input
+            type="password"
+            name="password"
+            required
+            className="h-12 bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
+            placeholder="Enter your password"
+          />
+        </div>
       </div>
-      <div>
-        <Label 
-          htmlFor="password" 
-          className="flex items-center gap-2 mb-2" // Added mb-2 for bottom margin
-        >
-          <Lock className="w-4 h-4 text-primary" />
-          Password
-        </Label>
-        <Input
-          type="password"
-          name="password"
-          required
-          className="bg-card/50 border-primary/10 focus:border-primary/20 transition-colors"
-          placeholder="Enter your password"
-        />
-      </div>
+      
       <Button 
         type="submit" 
-        className="w-full bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity h-11"
+        className="w-full h-12 bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity text-base font-medium"
         disabled={isLoading}
       >
         {isLoading ? (

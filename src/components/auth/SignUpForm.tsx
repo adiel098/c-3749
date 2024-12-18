@@ -89,17 +89,19 @@ export function SignUpForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <SignUpFormFields
-        register={register}
-        errors={errors}
-        countryCode={countryCode}
-        setCountryCode={setCountryCode}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-4">
+        <SignUpFormFields
+          register={register}
+          errors={errors}
+          countryCode={countryCode}
+          setCountryCode={setCountryCode}
+        />
+      </div>
 
       <Button 
         type="submit" 
-        className="w-full bg-primary hover:opacity-90 transition-opacity h-12 text-base"
+        className="w-full h-12 bg-gradient-to-r from-primary via-accent to-primary hover:opacity-90 transition-opacity text-base font-medium"
         disabled={isLoading}
       >
         {isLoading ? (
