@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
@@ -9,8 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { toastStyles } from "@/utils/toastStyles";
 
 export function UserList() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
@@ -21,6 +28,34 @@ export function UserList() {
       return data;
     },
   });
+
+  const handleAdminToggle = async (userId: string, currentAdminStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_admin: !currentAdminStatus })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Invalidate and refetch the users query
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+
+      toast({
+        title: "Admin Status Updated",
+        description: `User ${currentAdminStatus ? 'demoted' : 'promoted'} successfully`,
+        className: toastStyles.success.className,
+        duration: 3000,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error Updating Admin Status",
+        description: error.message,
+        className: toastStyles.error.className,
+        duration: 3000,
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -39,6 +74,7 @@ export function UserList() {
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead className="text-right">Balance</TableHead>
+            <TableHead className="text-center">Admin</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -51,6 +87,12 @@ export function UserList() {
               <TableCell>{user.phone}</TableCell>
               <TableCell className="text-right">
                 ${user.balance?.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-center">
+                <Switch
+                  checked={user.is_admin}
+                  onCheckedChange={() => handleAdminToggle(user.id, user.is_admin)}
+                />
               </TableCell>
             </TableRow>
           ))}
