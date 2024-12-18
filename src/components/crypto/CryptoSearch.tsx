@@ -32,8 +32,8 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
       setIsLoading(true);
       setError(null);
-      setCryptoList([]); // Reset list when opening dialog
-      
+      setCryptoList([]);
+
       try {
         ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
 
@@ -41,6 +41,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           try {
             const data = JSON.parse(event.data);
             if (!Array.isArray(data)) {
+              console.error('Invalid data format received:', data);
               setError('Invalid data format received');
               setIsLoading(false);
               return;
@@ -48,8 +49,10 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
 
             const usdtPairs = data
               .filter((item: any) => 
-                item.s && item.s.endsWith('USDT') && 
-                item.c && item.P // Ensure required fields exist
+                item.s && 
+                item.s.endsWith('USDT') && 
+                item.c && 
+                item.P
               )
               .map((item: any) => ({
                 symbol: item.s.replace('USDT', ''),
@@ -60,7 +63,7 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
                 parseFloat(b.price) - parseFloat(a.price)
               )
               .slice(0, 100);
-            
+
             setCryptoList(usdtPairs);
             setIsLoading(false);
           } catch (err) {
