@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Search } from "lucide-react";
@@ -7,9 +7,12 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { useQuery } from "@tanstack/react-query";
 import CryptoChart from "@/components/CryptoChart";
 import { TradingForm } from "@/components/TradingForm";
+import { usePositions } from "@/hooks/usePositions";
 
 const Index = () => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
+  const [currentPrice, setCurrentPrice] = useState<number>();
+  const { data: positions } = usePositions();
 
   const { data: cryptoList } = useQuery({
     queryKey: ['cryptoList'],
@@ -21,9 +24,26 @@ const Index = () => {
     }
   });
 
+  // Simulate real-time price updates
+  useEffect(() => {
+    const updatePrice = () => {
+      // For demo purposes, we'll generate a random price around $40,000
+      const basePrice = 40000;
+      const randomChange = (Math.random() - 0.5) * 100;
+      setCurrentPrice(basePrice + randomChange);
+    };
+
+    updatePrice();
+    const interval = setInterval(updatePrice, 5000);
+
+    return () => clearInterval(interval);
+  }, [selectedCrypto]);
+
   const handleCryptoSelect = (symbol: string) => {
     setSelectedCrypto(symbol);
   };
+
+  const openPositions = positions?.filter(p => p.status === 'open') || [];
 
   return (
     <SidebarProvider>
@@ -35,10 +55,6 @@ const Index = () => {
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold">Crypto Trading Demo</h1>
                 <p className="text-muted-foreground">Practice trading with virtual funds</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Available Balance</p>
-                <p className="text-xl font-bold">$100,000.00</p>
               </div>
             </header>
 
@@ -69,7 +85,7 @@ const Index = () => {
               <div className="lg:col-span-2">
                 <CryptoChart symbol={selectedCrypto} />
               </div>
-              <TradingForm selectedCrypto={selectedCrypto} />
+              <TradingForm selectedCrypto={selectedCrypto} currentPrice={currentPrice} />
             </div>
 
             <Card>
@@ -77,9 +93,30 @@ const Index = () => {
                 <CardTitle>Open Positions</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center text-muted-foreground py-8">
-                  No open positions
-                </div>
+                {!openPositions.length ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    No open positions
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {openPositions.map((position) => (
+                      <div key={position.id} className="flex justify-between items-center p-4 border rounded-lg">
+                        <div>
+                          <p className="font-semibold">{position.symbol}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {position.type.toUpperCase()} @ ${position.entry_price}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold">${position.amount}</p>
+                          <p className={`text-sm ${position.profit_loss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            {position.profit_loss >= 0 ? '+' : ''}{position.profit_loss?.toFixed(2)} USDT
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
