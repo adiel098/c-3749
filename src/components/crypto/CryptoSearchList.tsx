@@ -16,9 +16,9 @@ interface CryptoSearchListProps {
 export function CryptoSearchList({ cryptoList, onSelect, onClose }: CryptoSearchListProps) {
   return (
     <>
-      <CommandEmpty>לא נמצאו תוצאות</CommandEmpty>
+      <CommandEmpty>No results found</CommandEmpty>
       {cryptoList.length > 0 && (
-        <CommandGroup heading="מטבעות פופולריים">
+        <CommandGroup heading="Popular Cryptocurrencies">
           {cryptoList.map((crypto) => (
             <CommandItem
               key={crypto.symbol}
