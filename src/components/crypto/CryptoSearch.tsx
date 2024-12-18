@@ -4,6 +4,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 interface CryptoSearchProps {
   searchOpen: boolean;
@@ -21,60 +22,85 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
   const [cryptoList, setCryptoList] = useState<CryptoData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     let ws: WebSocket | null = null;
 
     const connectWebSocket = () => {
+      if (!searchOpen) return;
+
       setIsLoading(true);
       setError(null);
       
-      ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
+      try {
+        ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          const usdtPairs = data
-            .filter((item: any) => item.s.endsWith('USDT'))
-            .map((item: any) => ({
-              symbol: item.s.replace('USDT', ''),
-              price: parseFloat(item.c).toFixed(2),
-              priceChange: parseFloat(item.P).toFixed(2)
-            }))
-            .sort((a: CryptoData, b: CryptoData) => 
-              parseFloat(b.price) - parseFloat(a.price)
-            )
-            .slice(0, 100);
-          
-          setCryptoList(usdtPairs);
-          setIsLoading(false);
-        } catch (err) {
-          setError('Failed to process data');
-          setIsLoading(false);
-        }
-      };
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (!Array.isArray(data)) {
+              setError('Invalid data format received');
+              setIsLoading(false);
+              return;
+            }
 
-      ws.onerror = () => {
-        setError('Failed to connect to price feed');
+            const usdtPairs = data
+              .filter((item: any) => 
+                item.s && item.s.endsWith('USDT') && 
+                item.c && item.P // Ensure required fields exist
+              )
+              .map((item: any) => ({
+                symbol: item.s.replace('USDT', ''),
+                price: parseFloat(item.c).toFixed(2),
+                priceChange: parseFloat(item.P).toFixed(2)
+              }))
+              .sort((a: CryptoData, b: CryptoData) => 
+                parseFloat(b.price) - parseFloat(a.price)
+              )
+              .slice(0, 100);
+            
+            setCryptoList(usdtPairs);
+            setIsLoading(false);
+          } catch (err) {
+            console.error('Data processing error:', err);
+            setError('Failed to process data');
+            setIsLoading(false);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          setError('Failed to connect to price feed');
+          setIsLoading(false);
+          toast({
+            title: "Connection Error",
+            description: "Failed to connect to price feed. Please try again.",
+            variant: "destructive",
+          });
+        };
+
+        ws.onclose = () => {
+          // Attempt to reconnect after a delay if the dialog is still open
+          if (searchOpen) {
+            setTimeout(connectWebSocket, 5000);
+          }
+        };
+      } catch (err) {
+        console.error('WebSocket connection error:', err);
+        setError('Failed to establish connection');
         setIsLoading(false);
-      };
-
-      ws.onclose = () => {
-        // Attempt to reconnect after a delay
-        setTimeout(connectWebSocket, 5000);
-      };
+      }
     };
 
-    if (searchOpen) {
-      connectWebSocket();
-    }
+    connectWebSocket();
 
     return () => {
       if (ws) {
         ws.close();
       }
     };
-  }, [searchOpen]);
+  }, [searchOpen, toast]);
 
   return (
     <>
@@ -92,9 +118,17 @@ export function CryptoSearch({ searchOpen, setSearchOpen, onSelect }: CryptoSear
           <Command className="rounded-lg">
             <CommandInput placeholder="Search cryptocurrencies..." className="border-0" />
             <CommandEmpty>
-              {isLoading ? 'Loading...' : error || 'No results found'}
+              {isLoading ? (
+                <div className="flex items-center justify-center py-6">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                </div>
+              ) : error ? (
+                <div className="text-destructive">{error}</div>
+              ) : (
+                'No results found'
+              )}
             </CommandEmpty>
-            {!error && (
+            {!isLoading && !error && cryptoList.length > 0 && (
               <CommandGroup heading="Popular Cryptocurrencies">
                 {cryptoList.map((crypto) => (
                   <CommandItem
