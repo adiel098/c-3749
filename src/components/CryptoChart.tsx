@@ -20,44 +20,82 @@ const CryptoChart = ({ symbol = 'BTC', onPriceUpdate, onSearchOpen }: CryptoChar
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const ws = useRef<WebSocket | null>(null);
+  const reconnectAttempts = useRef(0);
+  const maxReconnectAttempts = 5;
+  const reconnectTimeout = useRef<NodeJS.Timeout>();
   const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Fetch 24h price change
   const { data: priceData } = useCryptoPrice(symbol);
 
-  useEffect(() => {
-    if (ws.current) {
+  const connectWebSocket = () => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
       ws.current.close();
     }
 
-    ws.current = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
+    try {
+      ws.current = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}usdt@trade`);
 
-    ws.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const price = parseFloat(data.p);
-      setCurrentPrice(price);
-      
-      if (onPriceUpdate) {
-        onPriceUpdate(price);
-      }
-    };
+      ws.current.onopen = () => {
+        console.log('WebSocket connected');
+        reconnectAttempts.current = 0; // Reset reconnect attempts on successful connection
+      };
 
-    ws.current.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      ws.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const price = parseFloat(data.p);
+        setCurrentPrice(price);
+        
+        if (onPriceUpdate) {
+          onPriceUpdate(price);
+        }
+      };
+
+      ws.current.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      ws.current.onclose = () => {
+        console.log('WebSocket closed');
+        // Attempt to reconnect if we haven't exceeded max attempts
+        if (reconnectAttempts.current < maxReconnectAttempts) {
+          const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 10000);
+          reconnectTimeout.current = setTimeout(() => {
+            reconnectAttempts.current += 1;
+            connectWebSocket();
+          }, timeout);
+        } else {
+          toast({
+            title: "Connection Error",
+            description: "Failed to maintain price feed connection. Please refresh the page.",
+            variant: "destructive",
+          });
+        }
+      };
+    } catch (error) {
+      console.error('Error creating WebSocket:', error);
       toast({
         title: "Connection Error",
         description: "Failed to connect to price feed",
         variant: "destructive",
       });
-    };
+    }
+  };
+
+  useEffect(() => {
+    connectWebSocket();
 
     return () => {
+      if (reconnectTimeout.current) {
+        clearTimeout(reconnectTimeout.current);
+      }
       if (ws.current) {
         ws.current.close();
+        ws.current = null;
       }
     };
-  }, [symbol, onPriceUpdate]);
+  }, [symbol]);
 
   useEffect(() => {
     const script = document.createElement('script');
