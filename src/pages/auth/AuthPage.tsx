@@ -23,8 +23,9 @@ const AuthPage = () => {
                     <span className="absolute -inset-1 bg-primary/10 blur-xl -z-10 animate-pulse-subtle rounded-full"></span>
                   )}
                 </h1>
-                <p className="text-muted-foreground mb-6">
-                  The Leading Zero-Fee Professional Trading 🚀📈
+                <p className="text-muted-foreground mb-6 flex flex-col gap-1">
+                  <span>The Leading Zero-Fee Professional</span>
+                  <span>Trading Platform 🚀📈</span>
                 </p>
               </div>
               <div className="px-6">
