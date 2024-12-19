@@ -15,9 +15,9 @@ const AuthPage = () => {
           <Tabs defaultValue="login" className="w-full">
             <TabsContent value="login">
               <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"}`}>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">TradeX</h1>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">TradeX</h1>
                 <p className="text-muted-foreground mb-6">
-                  The Leading Zero-Fee Professional Trading Platform
+                  The Leading Zero-Fee Professional Trading
                 </p>
               </div>
               <div className="px-6">
@@ -48,9 +48,9 @@ const AuthPage = () => {
             </TabsContent>
             <TabsContent value="signup">
               <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"}`}>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">TradeX</h1>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">TradeX</h1>
                 <p className="text-muted-foreground mb-6">
-                  The Leading Zero-Fee Professional Trading Platform
+                  The Leading Zero-Fee Professional Trading
                 </p>
               </div>
               <div className="px-6">

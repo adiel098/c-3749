@@ -86,7 +86,7 @@ const Trade = () => {
           <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   TradeX
                 </h1>
                 <p className="text-muted-foreground">The Leading Zero-Fee Professional Trading Platform</p>
