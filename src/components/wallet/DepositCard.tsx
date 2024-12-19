@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wallet, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { QRCodeSVG } from "qrcode.react";
 import { useDepositAddresses } from "@/hooks/useDepositAddresses";
 
 export function DepositCard() {
@@ -141,14 +140,6 @@ export function DepositCard() {
               onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount"
               className="bg-secondary/20 border-secondary"
-            />
-          </div>
-
-          <div className="flex justify-center">
-            <QRCodeSVG 
-              value={getAddress(selectedMethod)} 
-              size={200}
-              className="p-2 bg-white rounded-lg"
             />
           </div>
           
