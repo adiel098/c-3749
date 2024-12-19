@@ -89,7 +89,7 @@ const Trade = () => {
                 <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   TradeX Platform
                 </h1>
-                <p className="text-muted-foreground">Practice trading with virtual funds</p>
+                <p className="text-muted-foreground">The Leading Zero-Fee Professional Trading Platform</p>
               </div>
             </header>
 
