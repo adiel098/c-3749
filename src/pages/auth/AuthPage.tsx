@@ -15,7 +15,14 @@ const AuthPage = () => {
           <Tabs defaultValue="login" className="w-full">
             <TabsContent value="login">
               <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"} text-center`}>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">TradeX</h1>
+                <h1 className={`${isMobile ? 'text-6xl' : 'text-4xl md:text-5xl lg:text-6xl'} font-bold mb-4 relative`}>
+                  <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient relative inline-block">
+                    TradeX
+                  </span>
+                  {isMobile && (
+                    <span className="absolute -inset-1 bg-primary/10 blur-xl -z-10 animate-pulse-subtle rounded-full"></span>
+                  )}
+                </h1>
                 <p className="text-muted-foreground mb-6">
                   The Leading Zero-Fee Professional Trading 🚀📈
                 </p>
@@ -48,7 +55,14 @@ const AuthPage = () => {
             </TabsContent>
             <TabsContent value="signup">
               <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"} text-center`}>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">Join Us Now</h1>
+                <h1 className={`${isMobile ? 'text-6xl' : 'text-4xl md:text-5xl lg:text-6xl'} font-bold mb-4 relative`}>
+                  <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient relative inline-block">
+                    Join Us Now
+                  </span>
+                  {isMobile && (
+                    <span className="absolute -inset-1 bg-primary/10 blur-xl -z-10 animate-pulse-subtle rounded-full"></span>
+                  )}
+                </h1>
                 <p className="text-muted-foreground mb-6">
                   Join thousands of successful traders worldwide! 🌟
                 </p>
