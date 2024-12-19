@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bitcoin, Wallet, Loader2 } from "lucide-react";
+import { Wallet, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { useDepositAddresses } from "@/hooks/useDepositAddresses";
@@ -18,19 +18,17 @@ export function DepositCard() {
     return depositAddresses?.find(addr => addr.currency.toLowerCase() === currency)?.address || '';
   };
 
-  const handleMethodSelect = (method: string) => {
-    setSelectedMethod(method);
-    toast({
-      title: `${method.toUpperCase()} selected`,
-      description: `You will deposit using ${method.toUpperCase()}`,
-    });
-  };
-
   const handleCopy = (address: string) => {
     navigator.clipboard.writeText(address);
     toast({
-      title: "Address copied",
-      description: "The deposit address has been copied to your clipboard",
+      title: "Address Copied! 📋",
+      description: (
+        <div className="flex items-center gap-2">
+          <Check className="h-4 w-4 text-green-500" />
+          <span>The deposit address is now in your clipboard ✨</span>
+        </div>
+      ),
+      variant: "default"
     });
   };
 
@@ -38,7 +36,7 @@ export function DepositCard() {
     return (
       <Card className="glass-effect overflow-hidden relative group">
         <CardContent className="flex items-center justify-center p-8">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </CardContent>
       </Card>
     );
@@ -54,42 +52,83 @@ export function DepositCard() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex gap-2">
+        <div className="grid grid-cols-3 gap-3">
           <Button
             variant={selectedMethod === "bitcoin" ? "default" : "outline"}
-            className={`flex-1 gap-2 transition-all duration-300 ${
+            size="lg"
+            className={`w-full h-24 flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
               selectedMethod === "bitcoin" 
-                ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : ""
+                ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20" 
+                : "hover:bg-primary/5"
             }`}
-            onClick={() => handleMethodSelect("bitcoin")}
+            onClick={() => setSelectedMethod("bitcoin")}
           >
-            <Bitcoin className="h-4 w-4" />
-            Bitcoin
+            <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <img 
+              src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/btc.png"
+              alt="Bitcoin"
+              className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
+            <span className="text-sm font-medium">Bitcoin</span>
+            {selectedMethod === "bitcoin" && (
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+            )}
           </Button>
+
           <Button
             variant={selectedMethod === "ethereum" ? "default" : "outline"}
-            className={`flex-1 gap-2 transition-all duration-300 ${
+            size="lg"
+            className={`w-full h-24 flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
               selectedMethod === "ethereum" 
-                ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : ""
+                ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20" 
+                : "hover:bg-primary/5"
             }`}
-            onClick={() => handleMethodSelect("ethereum")}
+            onClick={() => setSelectedMethod("ethereum")}
           >
-            <Wallet className="h-4 w-4" />
-            Ethereum
+            <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <img 
+              src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png"
+              alt="Ethereum"
+              className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
+            <span className="text-sm font-medium">Ethereum</span>
+            {selectedMethod === "ethereum" && (
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+            )}
           </Button>
+
           <Button
             variant={selectedMethod === "usdt" ? "default" : "outline"}
-            className={`flex-1 gap-2 transition-all duration-300 ${
+            size="lg"
+            className={`w-full h-24 flex flex-col items-center justify-center gap-2 relative overflow-hidden group ${
               selectedMethod === "usdt" 
-                ? "bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20" 
-                : ""
+                ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20" 
+                : "hover:bg-primary/5"
             }`}
-            onClick={() => handleMethodSelect("usdt")}
+            onClick={() => setSelectedMethod("usdt")}
           >
-            <span className="font-bold">₮</span>
-            USDT
+            <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <img 
+              src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png"
+              alt="USDT"
+              className="h-8 w-8 mb-1 group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
+            <span className="text-sm font-medium">USDT</span>
+            {selectedMethod === "usdt" && (
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+            )}
           </Button>
         </div>
 
@@ -122,21 +161,25 @@ export function DepositCard() {
                 className="font-mono text-sm bg-secondary/20 border-secondary"
               />
               <Button
-                size="icon"
                 variant="secondary"
                 onClick={() => handleCopy(getAddress(selectedMethod))}
                 className="hover:bg-secondary/80 transition-colors"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
+                Copy
               </Button>
             </div>
             <p className="text-sm text-muted-foreground">
               Send only {selectedMethod.toUpperCase()} to this address. Sending any other cryptocurrency may result in permanent loss.
             </p>
           </div>
+        </div>
+
+        {/* New friendly informative text */}
+        <div className="bg-secondary/10 p-3 rounded-lg border border-primary/10">
+          <p className="text-sm text-muted-foreground text-center">
+            Deposit transactions are automatically synchronized. Once sufficient confirmations are received, your account balance will be updated instantly. 
+            Our system ensures seamless and secure fund management for a smooth trading experience. 🚀💸
+          </p>
         </div>
       </CardContent>
     </Card>
