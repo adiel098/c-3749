@@ -36,7 +36,7 @@ export const AppSidebar = () => {
         <SidebarGroup>
           <div className="flex h-[60px] items-center px-6">
             <Link to="/" className="flex items-center gap-2 font-semibold">
-              <span className="text-xl gradient-text">CryptoTrade</span>
+              <span className="text-xl gradient-text">TradeX</span>
             </Link>
           </div>
           <SidebarGroupContent>
