@@ -9,7 +9,6 @@ import { useDepositAddresses } from "@/hooks/useDepositAddresses";
 
 export function DepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
-  const [amount, setAmount] = useState<string>("");
   const { toast } = useToast();
   const { data: depositAddresses, isLoading } = useDepositAddresses();
   
@@ -131,38 +130,25 @@ export function DepositCard() {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Amount to Deposit</Label>
+        <div className="space-y-2">
+          <Label>Deposit Address</Label>
+          <div className="flex gap-2">
             <Input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount"
-              className="bg-secondary/20 border-secondary"
+              value={getAddress(selectedMethod)}
+              readOnly
+              className="font-mono text-sm bg-secondary/20 border-secondary"
             />
+            <Button
+              variant="secondary"
+              onClick={() => handleCopy(getAddress(selectedMethod))}
+              className="hover:bg-secondary/80 transition-colors"
+            >
+              Copy
+            </Button>
           </div>
-          
-          <div className="space-y-2">
-            <Label>Deposit Address</Label>
-            <div className="flex gap-2">
-              <Input
-                value={getAddress(selectedMethod)}
-                readOnly
-                className="font-mono text-sm bg-secondary/20 border-secondary"
-              />
-              <Button
-                variant="secondary"
-                onClick={() => handleCopy(getAddress(selectedMethod))}
-                className="hover:bg-secondary/80 transition-colors"
-              >
-                Copy
-              </Button>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Send only {selectedMethod.toUpperCase()} to this address. Sending any other cryptocurrency may result in permanent loss.
-            </p>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Send only {selectedMethod.toUpperCase()} to this address. Sending any other cryptocurrency may result in permanent loss.
+          </p>
         </div>
 
         {/* New friendly informative text */}
