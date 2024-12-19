@@ -14,7 +14,7 @@ const AuthPage = () => {
         <CardContent className="p-0">
           <Tabs defaultValue="login" className="w-full">
             <TabsContent value="login">
-              <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"}`}>
+              <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"} text-center`}>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">TradeX</h1>
                 <p className="text-muted-foreground mb-6">
                   The Leading Zero-Fee Professional Trading
@@ -47,7 +47,7 @@ const AuthPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="signup">
-              <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"}`}>
+              <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"} text-center`}>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">Join Us Now</h1>
                 <p className="text-muted-foreground mb-6">
                   Join thousands of successful traders worldwide! 🌟
