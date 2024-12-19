@@ -87,7 +87,7 @@ const Trade = () => {
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  TradeX
+                  OrbiterEX
                 </h1>
                 <p className="text-muted-foreground">The Leading Zero-Fee Professional Trading Platform</p>
               </div>

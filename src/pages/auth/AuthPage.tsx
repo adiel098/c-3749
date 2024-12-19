@@ -17,7 +17,7 @@ const AuthPage = () => {
               <div className={`p-4 pb-2 ${isMobile ? "pt-6" : "pt-6"} text-center`}>
                 <h1 className={`${isMobile ? 'text-6xl' : 'text-4xl md:text-5xl lg:text-6xl'} font-bold mb-4 relative`}>
                   <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient relative inline-block">
-                    TradeX
+                    OrbiterEX
                   </span>
                   {isMobile && (
                     <span className="absolute -inset-1 bg-primary/10 blur-xl -z-10 animate-pulse-subtle rounded-full"></span>
