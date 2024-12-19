@@ -138,12 +138,11 @@ export function DepositCard() {
               readOnly
               className="font-mono text-sm bg-secondary/20 border-secondary"
             />
-            <Button
-              variant="secondary"
+            <Button 
               onClick={() => handleCopy(getAddress(selectedMethod))}
-              className="hover:bg-secondary/80 transition-colors"
+              className="w-full bg-primary/20 hover:bg-primary/30 backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-[1.02]"
             >
-              Copy
+              Copy Address
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
