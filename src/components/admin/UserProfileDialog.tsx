@@ -7,15 +7,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { toastStyles } from "@/utils/toastStyles";
+import { UserDetailsTab } from "./user-profile/UserDetailsTab";
+import { TransactionsTab } from "./user-profile/TransactionsTab";
+import { SettingsTab } from "./user-profile/SettingsTab";
+import { useState } from "react";
 
 interface UserProfileDialogProps {
   userId: string | null;
@@ -26,10 +23,12 @@ interface UserProfileDialogProps {
 
 export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserProfileDialogProps) {
   const { toast } = useToast();
-  const [maxLeverage, setMaxLeverage] = useState<number>(100);
-  const [notes, setNotes] = useState<string>("");
-  const [isBlocked, setIsBlocked] = useState(false);
-  const [isFrozen, setIsFrozen] = useState(false);
+  const [settings, setSettings] = useState({
+    maxLeverage: 100,
+    notes: "",
+    isBlocked: false,
+    isFrozen: false
+  });
 
   const { data: userData } = useQuery({
     queryKey: ["user-profile", userId],
@@ -43,10 +42,12 @@ export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserPro
 
       if (error) throw error;
       
-      setMaxLeverage(data.max_leverage || 100);
-      setNotes(data.notes || "");
-      setIsBlocked(data.is_blocked || false);
-      setIsFrozen(data.is_frozen || false);
+      setSettings({
+        maxLeverage: data.max_leverage || 100,
+        notes: data.notes || "",
+        isBlocked: data.is_blocked || false,
+        isFrozen: data.is_frozen || false
+      });
       
       return data;
     },
@@ -74,10 +75,10 @@ export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserPro
       const { error } = await supabase
         .from("profiles")
         .update({
-          max_leverage: maxLeverage,
-          notes: notes,
-          is_blocked: isBlocked,
-          is_frozen: isFrozen
+          max_leverage: settings.maxLeverage,
+          notes: settings.notes,
+          is_blocked: settings.isBlocked,
+          is_frozen: settings.isFrozen
         })
         .eq("id", userId);
 
@@ -113,104 +114,20 @@ export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserPro
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>First Name</Label>
-                <Input value={userData.first_name || ""} readOnly className="bg-[#2A2F3C]" />
-              </div>
-              <div>
-                <Label>Last Name</Label>
-                <Input value={userData.last_name || ""} readOnly className="bg-[#2A2F3C]" />
-              </div>
-              <div>
-                <Label>Phone</Label>
-                <Input value={userData.phone || ""} readOnly className="bg-[#2A2F3C]" />
-              </div>
-              <div>
-                <Label>Balance</Label>
-                <Input value={userData.balance || 0} readOnly className="bg-[#2A2F3C]" />
-              </div>
-            </div>
+          <TabsContent value="details">
+            <UserDetailsTab userData={userData} />
           </TabsContent>
 
-          <TabsContent value="transactions" className="space-y-4">
-            <div className="space-y-4">
-              {transactions?.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex justify-between items-center p-3 bg-[#2A2F3C] rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium capitalize">{transaction.type}</p>
-                    <p className="text-sm text-[#E5DEFF]/60">
-                      {format(new Date(transaction.created_at), "PPpp")}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      ${transaction.amount.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-[#E5DEFF]/60 capitalize">
-                      {transaction.status}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <TabsContent value="transactions">
+            <TransactionsTab transactions={transactions} />
           </TabsContent>
 
-          <TabsContent value="settings" className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <Label>Maximum Leverage</Label>
-                <Input
-                  type="number"
-                  value={maxLeverage}
-                  onChange={(e) => setMaxLeverage(Number(e.target.value))}
-                  className="bg-[#2A2F3C]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Account Status</Label>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label>Block Account</Label>
-                    <Switch
-                      checked={isBlocked}
-                      onCheckedChange={setIsBlocked}
-                      className="data-[state=checked]:bg-red-500"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label>Freeze Account</Label>
-                    <Switch
-                      checked={isFrozen}
-                      onCheckedChange={setIsFrozen}
-                      className="data-[state=checked]:bg-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label>Internal Notes</Label>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="bg-[#2A2F3C] min-h-[100px]"
-                  placeholder="Add internal notes about this user..."
-                />
-              </div>
-
-              <Button
-                onClick={handleUpdateProfile}
-                className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]"
-              >
-                Save Changes
-              </Button>
-            </div>
+          <TabsContent value="settings">
+            <SettingsTab
+              initialValues={settings}
+              onUpdate={handleUpdateProfile}
+              onChange={setSettings}
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>
