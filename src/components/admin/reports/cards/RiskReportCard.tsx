@@ -11,7 +11,7 @@ export function RiskReportCard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("positions")
-        .select("*, profiles!inner(first_name, last_name, email, balance)")
+        .select("*, profiles(first_name, last_name, balance)")
         .eq("status", "open");
 
       if (error) throw error;
