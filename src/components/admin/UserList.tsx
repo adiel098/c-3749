@@ -60,9 +60,9 @@ export function UserList() {
     
     const searchLower = searchQuery.toLowerCase();
     return users.filter(user => 
-      user.first_name?.toLowerCase().includes(searchLower) ||
-      user.last_name?.toLowerCase().includes(searchLower) ||
-      user.email?.toLowerCase().includes(searchLower) ||
+      (user.first_name?.toLowerCase() || "").includes(searchLower) ||
+      (user.last_name?.toLowerCase() || "").includes(searchLower) ||
+      (user.email?.toLowerCase() || "").includes(searchLower) ||
       user.id.toLowerCase().includes(searchLower)
     );
   }, [users, searchQuery]);

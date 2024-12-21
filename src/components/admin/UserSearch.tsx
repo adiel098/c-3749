@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface UserSearchProps {
@@ -11,12 +11,7 @@ export function UserSearch({ onSearch }: UserSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const handleSearch = useCallback((value: string) => {
-    setSearchTerm(value);
-  }, []);
-
-  // Effect to handle debounced search
-  useCallback(() => {
+  useEffect(() => {
     onSearch(debouncedSearchTerm);
   }, [debouncedSearchTerm, onSearch]);
 
@@ -27,7 +22,7 @@ export function UserSearch({ onSearch }: UserSearchProps) {
         placeholder="Search by name, email, or ID..."
         className="pl-10 bg-[#1A1F2C]/50 border-[#7E69AB]/20 text-[#E5DEFF] transition-all duration-200 focus:border-[#9b87f5]/40"
         value={searchTerm}
-        onChange={(e) => handleSearch(e.target.value)}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
     </div>
   );
