@@ -52,6 +52,14 @@ export default {
           DEFAULT: "#1E293B", // כחול אפור כהה
           foreground: "#FFFFFF",
         },
+        popover: {
+          DEFAULT: "#1E293B", // Adding solid background for popovers
+          foreground: "#FFFFFF",
+        },
+        dialog: {
+          DEFAULT: "#1E293B", // Adding solid background for dialogs
+          foreground: "#FFFFFF",
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
