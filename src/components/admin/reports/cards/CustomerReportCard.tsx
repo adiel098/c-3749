@@ -21,15 +21,41 @@ export function CustomerReportCard() {
     if (!customers) return;
 
     const csvContent = [
-      ["User ID", "Name", "Email", "Balance", "Total Positions", "Total PnL", "Last Login"],
+      [
+        "User ID",
+        "Name",
+        "Email",
+        "Phone",
+        "Registration Date",
+        "Total Positions",
+        "Open Positions",
+        "Balance",
+        "Total PnL",
+        "Total Transactions",
+        "Total Deposits",
+        "Total Withdrawals",
+        "Last Transaction",
+        "Last Login",
+        "Account Status",
+        "Max Leverage"
+      ],
       ...customers.map((customer) => [
         customer.user_id,
         `${customer.first_name || ""} ${customer.last_name || ""}`.trim(),
         customer.email || "",
-        customer.balance?.toString() || "0",
+        customer.phone || "",
+        format(new Date(customer.created_at || new Date()), "PPpp"),
         customer.total_positions?.toString() || "0",
+        customer.open_positions?.toString() || "0",
+        customer.balance?.toString() || "0",
         customer.total_pnl?.toString() || "0",
+        customer.total_transactions?.toString() || "0",
+        customer.total_deposits?.toString() || "0",
+        customer.total_withdrawals?.toString() || "0",
+        customer.last_transaction_date ? format(new Date(customer.last_transaction_date), "PPpp") : "",
         customer.last_login ? format(new Date(customer.last_login), "PPpp") : "",
+        customer.is_blocked ? "Blocked" : customer.is_frozen ? "Frozen" : "Active",
+        customer.max_leverage?.toString() || "100"
       ]),
     ]
       .map((row) => row.join(","))

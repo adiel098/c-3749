@@ -11,7 +11,7 @@ export function FinancialReportCard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("transactions")
-        .select("*, profiles(first_name, last_name)")
+        .select("*, user_statistics!inner(first_name, last_name, email, phone)")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -23,10 +23,21 @@ export function FinancialReportCard() {
     if (!transactions) return;
 
     const csvContent = [
-      ["Transaction ID", "User", "Type", "Amount", "Status", "Created At"],
+      [
+        "Transaction ID",
+        "User",
+        "Email",
+        "Phone",
+        "Type",
+        "Amount",
+        "Status",
+        "Created At"
+      ],
       ...transactions.map((tx) => [
         tx.id,
-        `${tx.profiles?.first_name || ""} ${tx.profiles?.last_name || ""}`.trim(),
+        `${tx.user_statistics?.first_name || ""} ${tx.user_statistics?.last_name || ""}`.trim(),
+        tx.user_statistics?.email || "",
+        tx.user_statistics?.phone || "",
         tx.type,
         tx.amount.toString(),
         tx.status,

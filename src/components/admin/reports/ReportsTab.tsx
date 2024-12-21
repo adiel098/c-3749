@@ -1,9 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomerReportCard } from "./cards/CustomerReportCard";
 import { TradingReportCard } from "./cards/TradingReportCard";
-import { RiskReportCard } from "./cards/RiskReportCard";
 import { FinancialReportCard } from "./cards/FinancialReportCard";
-import { FileText, Users, TrendingUp, DollarSign, ShieldAlert } from "lucide-react";
+import { FileText, Users, TrendingUp, DollarSign } from "lucide-react";
 
 export function ReportsTab() {
   return (
@@ -17,7 +16,7 @@ export function ReportsTab() {
       </div>
 
       <Tabs defaultValue="customers" className="w-full">
-        <TabsList className="grid w-full max-w-[600px] grid-cols-4 bg-card/30 p-1">
+        <TabsList className="grid w-full max-w-[600px] grid-cols-3 bg-card/30 p-1">
           <TabsTrigger value="customers" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Customers</span>
@@ -29,10 +28,6 @@ export function ReportsTab() {
           <TabsTrigger value="financial" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
             <span>Financial</span>
-          </TabsTrigger>
-          <TabsTrigger value="risk" className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4" />
-            <span>Risk</span>
           </TabsTrigger>
         </TabsList>
 
@@ -46,10 +41,6 @@ export function ReportsTab() {
 
         <TabsContent value="financial" className="space-y-4 animate-in fade-in-50">
           <FinancialReportCard />
-        </TabsContent>
-
-        <TabsContent value="risk" className="space-y-4 animate-in fade-in-50">
-          <RiskReportCard />
         </TabsContent>
       </Tabs>
     </div>
