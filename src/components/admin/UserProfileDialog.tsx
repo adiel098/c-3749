@@ -102,7 +102,7 @@ export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1A1F2C] border-[#7E69AB]/20 max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="bg-[#1A1F2C] border-[#7E69AB]/20 max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[#E5DEFF]">User Profile</DialogTitle>
         </DialogHeader>
