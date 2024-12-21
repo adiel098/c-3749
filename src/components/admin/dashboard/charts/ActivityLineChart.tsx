@@ -2,7 +2,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import { format } from 'date-fns';
 
 interface ChartData {
-  hour: string;
+  date: string;
   transactions: number;
   positions: number;
   volume: number;
@@ -20,10 +20,10 @@ export function ActivityLineChart({ data }: ActivityLineChartProps) {
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke="#2d2e33" />
         <XAxis 
-          dataKey="hour" 
+          dataKey="date" 
           stroke="#888888"
           fontSize={12}
-          tickFormatter={(value) => format(new Date(value), 'HH:mm')}
+          tickFormatter={(value) => format(new Date(value), 'MMM dd')}
         />
         <YAxis
           stroke="#888888"
@@ -52,7 +52,7 @@ export function ActivityLineChart({ data }: ActivityLineChartProps) {
               : value,
             name.charAt(0).toUpperCase() + name.slice(1)
           ]}
-          labelFormatter={(label) => format(new Date(label), 'HH:mm')}
+          labelFormatter={(label) => format(new Date(label), 'MMM dd, yyyy')}
         />
         <Line
           type="monotone"
