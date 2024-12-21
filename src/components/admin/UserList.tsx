@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { toastStyles } from "@/utils/toastStyles";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { BalanceUpdateDialog } from "./BalanceUpdateDialog";
 import { UserActions } from "./UserActions";
 import { useUserManagement } from "./useUserManagement";
@@ -27,8 +27,8 @@ export function UserList() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { handleDeleteUser, handleBalanceUpdate } = useUserManagement();
   
-  const { data: users, isLoading } = useQuery({
-    queryKey: ["admin-users", searchQuery],
+  const { data: users = [], isLoading } = useQuery({
+    queryKey: ["admin-users"],
     queryFn: async () => {
       const { data: profiles, error: profilesError } = await supabase
         .rpc('get_user_profiles');
@@ -47,23 +47,25 @@ export function UserList() {
         openPositionsCounts[position.user_id] = (openPositionsCounts[position.user_id] || 0) + 1;
       });
 
-      const filteredProfiles = profiles?.map(profile => ({
+      return profiles?.map(profile => ({
         ...profile,
         open_positions_count: openPositionsCounts[profile.id] || 0
-      }));
-
-      if (!searchQuery) return filteredProfiles;
-
-      const searchLower = searchQuery.toLowerCase();
-      return filteredProfiles?.filter(user => 
-        user.first_name?.toLowerCase().includes(searchLower) ||
-        user.last_name?.toLowerCase().includes(searchLower) ||
-        user.email?.toLowerCase().includes(searchLower) ||
-        user.id.toLowerCase().includes(searchLower)
-      );
+      })) || [];
     },
-    staleTime: 30000, // Cache results for 30 seconds
+    staleTime: 30000,
   });
+
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery) return users;
+    
+    const searchLower = searchQuery.toLowerCase();
+    return users.filter(user => 
+      user.first_name?.toLowerCase().includes(searchLower) ||
+      user.last_name?.toLowerCase().includes(searchLower) ||
+      user.email?.toLowerCase().includes(searchLower) ||
+      user.id.toLowerCase().includes(searchLower)
+    );
+  }, [users, searchQuery]);
 
   const handleAdminToggle = async (userId: string, currentAdminStatus: boolean) => {
     try {
@@ -132,7 +134,7 @@ export function UserList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users?.map((user) => (
+              {filteredUsers.map((user) => (
                 <TableRow 
                   key={user.id}
                   className="hover:bg-[#7E69AB]/5 border-[#7E69AB]/20 cursor-pointer"
