@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Users, ArrowUpDown, Wallet, TrendingUp, AlertCircle, ArrowUp, ArrowDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 
 interface StatCard {
   title: string;
@@ -24,7 +23,7 @@ interface StatCard {
 
 export function AdvancedStatisticsCards() {
   const { data: stats, isLoading } = useQuery({
-    queryKey: ["admin-dashboard-advanced-stats"],
+    queryKey: ["admin-dashboard-stats"],
     queryFn: async () => {
       // Get total users and their balance
       const { data: profiles } = await supabase
@@ -47,7 +46,7 @@ export function AdvancedStatisticsCards() {
         .gte('created_at', today.toISOString());
 
       // Get yesterday's transactions for comparison
-      const yesterday = new Date(today);
+      const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       
       const { data: yesterdayTransactions } = await supabase
@@ -60,7 +59,13 @@ export function AdvancedStatisticsCards() {
       const totalUsers = profiles?.length || 0;
       const totalBalance = profiles?.reduce((sum, p) => sum + Number(p.balance), 0) || 0;
       const openPositions = positions?.length || 0;
-      const totalPositionsValue = positions?.reduce((sum, pos) => sum + Number(pos.amount), 0) || 0;
+      
+      // Calculate total margin and PnL
+      const totalMargin = positions?.reduce((sum, pos) => sum + Number(pos.amount), 0) || 0;
+      const totalPnL = positions?.reduce((sum, pos) => sum + (Number(pos.profit_loss) || 0), 0) || 0;
+      
+      // Calculate total account value (balance + margin + PnL)
+      const totalAccountValue = totalBalance + totalMargin + totalPnL;
 
       // Calculate today's activity
       const todayDeposits = todayTransactions?.reduce((sum, tx) => 
@@ -92,8 +97,10 @@ export function AdvancedStatisticsCards() {
       return {
         totalUsers,
         totalBalance,
+        totalAccountValue,
         openPositions,
-        totalPositionsValue,
+        totalMargin,
+        totalPnL,
         todayDeposits,
         todayWithdrawals,
         depositTrend,
@@ -135,25 +142,25 @@ export function AdvancedStatisticsCards() {
       }
     },
     {
-      title: "Total Balance",
-      value: `$${(stats?.totalBalance || 0).toLocaleString()}`,
+      title: "Total Account Value",
+      value: `$${(stats?.totalAccountValue || 0).toLocaleString()}`,
       icon: <Wallet className="h-5 w-5" />,
-      description: "Combined user balance",
+      description: "Including margins & PnL",
       trend: {
         value: 8,
         isPositive: true
       },
       gradientClass: "from-[#84FAB0] to-[#8FD3F4]",
       secondaryValue: {
-        label: "Avg. Balance",
-        value: `$${stats?.totalUsers ? Math.floor(stats.totalBalance / stats.totalUsers).toLocaleString() : 0}`
+        label: "Total Margin",
+        value: `$${(stats?.totalMargin || 0).toLocaleString()}`
       }
     },
     {
       title: "Open Positions",
       value: stats?.openPositions.toLocaleString() || "0",
       icon: <TrendingUp className="h-5 w-5" />,
-      description: `$${(stats?.totalPositionsValue || 0).toLocaleString()} total value`,
+      description: `Total PnL: $${(stats?.totalPnL || 0).toLocaleString()}`,
       trend: {
         value: 5,
         isPositive: true
@@ -161,7 +168,7 @@ export function AdvancedStatisticsCards() {
       gradientClass: "from-[#A8C0FF] to-[#3F2B96]",
       secondaryValue: {
         label: "Avg. Position Size",
-        value: `$${stats?.openPositions ? Math.floor(stats.totalPositionsValue / stats.openPositions).toLocaleString() : 0}`
+        value: `$${stats?.openPositions ? Math.floor(stats.totalMargin / stats.openPositions).toLocaleString() : 0}`
       }
     },
     {
