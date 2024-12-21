@@ -12,6 +12,7 @@ import { toastStyles } from "@/utils/toastStyles";
 import { UserDetailsTab } from "./user-profile/UserDetailsTab";
 import { TransactionsTab } from "./user-profile/TransactionsTab";
 import { SettingsTab } from "./user-profile/SettingsTab";
+import { DepositAddressesTab } from "./user-profile/DepositAddressesTab";
 import { useState } from "react";
 
 interface UserProfileDialogProps {
@@ -111,6 +112,7 @@ export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserPro
           <TabsList className="bg-[#2A2F3C]">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="deposit-addresses">Deposit Addresses</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -120,6 +122,10 @@ export function UserProfileDialog({ userId, isOpen, onClose, onUpdate }: UserPro
 
           <TabsContent value="transactions">
             <TransactionsTab transactions={transactions} />
+          </TabsContent>
+
+          <TabsContent value="deposit-addresses">
+            <DepositAddressesTab userId={userData.id} />
           </TabsContent>
 
           <TabsContent value="settings">
