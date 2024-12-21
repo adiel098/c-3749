@@ -1,20 +1,52 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
 import { useState } from "react";
-import { useDepositAddresses } from "@/hooks/useDepositAddresses";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { CurrencyButton } from "./deposit/CurrencyButton";
 import { AddressField } from "./deposit/AddressField";
 import { InfoMessage } from "./deposit/InfoMessage";
 
 export function DepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
-  const { data: depositAddresses, isLoading } = useDepositAddresses();
-  
+
+  const { data: userAddresses, isLoading: userAddressesLoading } = useQuery({
+    queryKey: ["user-deposit-addresses"],
+    queryFn: async () => {
+      const { data: userAddresses, error: userError } = await supabase
+        .from("user_deposit_addresses")
+        .select("*");
+
+      if (userError) throw userError;
+      return userAddresses || [];
+    },
+  });
+
+  const { data: defaultAddresses, isLoading: defaultAddressesLoading } = useQuery({
+    queryKey: ["default-deposit-addresses"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("deposit_addresses")
+        .select("*");
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const getAddress = (currency: string) => {
-    return depositAddresses?.find(addr => addr.currency.toLowerCase() === currency)?.address || '';
+    const userAddress = userAddresses?.find(
+      (addr) => addr.currency.toLowerCase() === currency.toLowerCase()
+    );
+    if (userAddress) return userAddress.address;
+
+    const defaultAddress = defaultAddresses?.find(
+      (addr) => addr.currency.toLowerCase() === currency.toLowerCase()
+    );
+    return defaultAddress?.address || '';
   };
 
-  if (isLoading) {
+  if (userAddressesLoading || defaultAddressesLoading) {
     return (
       <Card className="glass-effect overflow-hidden relative group">
         <CardContent className="flex items-center justify-center p-8">
