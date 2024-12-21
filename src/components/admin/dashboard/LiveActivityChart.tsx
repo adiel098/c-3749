@@ -6,6 +6,7 @@ import { subHours, format } from 'date-fns';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity } from "lucide-react";
 import { useEffect } from "react";
+import { queryClient } from "@/lib/react-query";
 
 export function LiveActivityChart() {
   const { data: chartData, isLoading } = useQuery({

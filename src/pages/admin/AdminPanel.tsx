@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/react-query";
 
 export default function AdminPanel() {
   const { data: profile } = useProfile();
@@ -41,8 +43,9 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-background">
-      <div className="container mx-auto p-8 space-y-8">
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-gradient-to-b from-[#1A1F2C] to-background">
+        <div className="container mx-auto p-8 space-y-8">
         <div className="flex justify-between items-center">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-[#9b87f5] to-[#D946EF] bg-clip-text text-transparent">
@@ -63,8 +66,8 @@ export default function AdminPanel() {
             <span className="relative transition-transform group-hover:-translate-y-0.5">Logout</span>
           </Button>
         </div>
-        
-        <Tabs defaultValue="dashboard" className="w-full">
+          
+          <Tabs defaultValue="dashboard" className="w-full">
           <TabsList className="grid w-full max-w-[600px] grid-cols-4 bg-[#1A1F2C] p-1">
             <TabsTrigger 
               value="dashboard" 
@@ -96,13 +99,13 @@ export default function AdminPanel() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="dashboard" className="space-y-6 mt-6">
-            <AdvancedStatisticsCards />
-            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-              <LiveActivityChart />
-              <LiveActivityFeed />
-            </div>
-          </TabsContent>
+            <TabsContent value="dashboard" className="space-y-6 mt-6">
+              <AdvancedStatisticsCards />
+              <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+                <LiveActivityChart />
+                <LiveActivityFeed />
+              </div>
+            </TabsContent>
 
           <TabsContent value="users" className="mt-6">
             <UserList />
@@ -115,8 +118,9 @@ export default function AdminPanel() {
           <TabsContent value="summary" className="mt-6">
             <SystemSummary />
           </TabsContent>
-        </Tabs>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 }

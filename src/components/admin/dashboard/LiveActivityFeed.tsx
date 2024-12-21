@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Activity, ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown } from "lucide-react";
 import { format } from "date-fns";
 import { useEffect } from "react";
+import { queryClient } from "@/lib/react-query";
 
 interface ActivityItem {
   id: string;
