@@ -1,12 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { subHours, format } from 'date-fns';
-import { Skeleton } from "@/components/ui/skeleton";
-import { Activity } from "lucide-react";
 import { useEffect } from "react";
 import { queryClient } from "@/lib/react-query";
+import { ChartContainer } from "./charts/ChartContainer";
+import { ActivityLineChart } from "./charts/ActivityLineChart";
 
 export function LiveActivityChart() {
   const { data: chartData, isLoading } = useQuery({
@@ -101,119 +99,9 @@ export function LiveActivityChart() {
     };
   }, []);
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5 text-primary" />
-            Live System Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-[400px] w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" />
-          Live System Activity
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2d2e33" />
-              <XAxis 
-                dataKey="hour" 
-                stroke="#888888"
-                fontSize={12}
-                tickFormatter={(value) => format(new Date(value), 'HH:mm')}
-              />
-              <YAxis
-                stroke="#888888"
-                fontSize={12}
-                tickFormatter={(value) => `${value}`}
-                yAxisId="left"
-              />
-              <YAxis
-                stroke="#888888"
-                fontSize={12}
-                tickFormatter={(value) => `$${value}`}
-                orientation="right"
-                yAxisId="right"
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1a1b1e',
-                  border: '1px solid #2d2e33',
-                  borderRadius: '6px'
-                }}
-                labelStyle={{ color: '#e5deff' }}
-                itemStyle={{ color: '#e5deff' }}
-                formatter={(value: number, name: string) => [
-                  name === 'volume' || name === 'deposits' || name === 'withdrawals'
-                    ? `$${value.toLocaleString()}`
-                    : value,
-                  name.charAt(0).toUpperCase() + name.slice(1)
-                ]}
-                labelFormatter={(label) => format(new Date(label), 'HH:mm')}
-              />
-              <Line
-                type="monotone"
-                dataKey="transactions"
-                stroke="#8884d8"
-                strokeWidth={2}
-                dot={false}
-                yAxisId="left"
-                name="Transactions"
-              />
-              <Line
-                type="monotone"
-                dataKey="positions"
-                stroke="#82ca9d"
-                strokeWidth={2}
-                dot={false}
-                yAxisId="left"
-                name="Positions"
-              />
-              <Line
-                type="monotone"
-                dataKey="volume"
-                stroke="#ff8b8b"
-                strokeWidth={2}
-                dot={false}
-                yAxisId="right"
-                name="Volume"
-              />
-              <Line
-                type="monotone"
-                dataKey="deposits"
-                stroke="#ffd700"
-                strokeWidth={2}
-                dot={false}
-                yAxisId="right"
-                name="Deposits"
-              />
-              <Line
-                type="monotone"
-                dataKey="withdrawals"
-                stroke="#ff4757"
-                strokeWidth={2}
-                dot={false}
-                yAxisId="right"
-                name="Withdrawals"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer isLoading={isLoading}>
+      <ActivityLineChart data={chartData || []} />
+    </ChartContainer>
   );
 }
