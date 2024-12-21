@@ -3,9 +3,9 @@ import { Navigate } from "react-router-dom";
 import { UserList } from "@/components/admin/UserList";
 import { DepositAddresses } from "@/components/admin/DepositAddresses";
 import { SystemSummary } from "@/components/admin/SystemSummary";
-import { StatisticsCards } from "@/components/admin/dashboard/StatisticsCards";
-import { ActivityChart } from "@/components/admin/dashboard/ActivityChart";
-import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
+import { AdvancedStatisticsCards } from "@/components/admin/dashboard/AdvancedStatisticsCards";
+import { LiveActivityChart } from "@/components/admin/dashboard/LiveActivityChart";
+import { LiveActivityFeed } from "@/components/admin/dashboard/LiveActivityFeed";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Wallet, BarChart3, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -97,10 +97,10 @@ export default function AdminPanel() {
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6 mt-6">
-            <StatisticsCards />
+            <AdvancedStatisticsCards />
             <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-              <ActivityChart />
-              <RecentActivity />
+              <LiveActivityChart />
+              <LiveActivityFeed />
             </div>
           </TabsContent>
 
