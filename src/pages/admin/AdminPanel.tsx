@@ -3,6 +3,9 @@ import { Navigate } from "react-router-dom";
 import { UserList } from "@/components/admin/UserList";
 import { DepositAddresses } from "@/components/admin/DepositAddresses";
 import { SystemSummary } from "@/components/admin/SystemSummary";
+import { StatisticsCards } from "@/components/admin/dashboard/StatisticsCards";
+import { ActivityChart } from "@/components/admin/dashboard/ActivityChart";
+import { RecentActivity } from "@/components/admin/dashboard/RecentActivity";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Wallet, BarChart3, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -61,14 +64,14 @@ export default function AdminPanel() {
           </Button>
         </div>
         
-        <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full max-w-[600px] grid-cols-3 bg-[#1A1F2C] p-1">
+        <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList className="grid w-full max-w-[600px] grid-cols-4 bg-[#1A1F2C] p-1">
             <TabsTrigger 
-              value="summary" 
+              value="dashboard" 
               className="flex items-center gap-2 data-[state=active]:bg-[#6E59A5] data-[state=active]:text-white"
             >
               <BarChart3 className="h-4 w-4" />
-              Summary
+              Dashboard
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
@@ -84,15 +87,33 @@ export default function AdminPanel() {
               <Wallet className="h-4 w-4" />
               Deposit Addresses
             </TabsTrigger>
+            <TabsTrigger 
+              value="summary" 
+              className="flex items-center gap-2 data-[state=active]:bg-[#6E59A5] data-[state=active]:text-white"
+            >
+              <BarChart3 className="h-4 w-4" />
+              Summary
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="summary" className="mt-6">
-            <SystemSummary />
+
+          <TabsContent value="dashboard" className="space-y-6 mt-6">
+            <StatisticsCards />
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+              <ActivityChart />
+              <RecentActivity />
+            </div>
           </TabsContent>
+
           <TabsContent value="users" className="mt-6">
             <UserList />
           </TabsContent>
+
           <TabsContent value="addresses" className="mt-6">
             <DepositAddresses />
+          </TabsContent>
+
+          <TabsContent value="summary" className="mt-6">
+            <SystemSummary />
           </TabsContent>
         </Tabs>
       </div>
