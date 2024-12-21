@@ -17,24 +17,24 @@ import { useState } from "react";
 import { BalanceUpdateDialog } from "./BalanceUpdateDialog";
 import { UserActions } from "./UserActions";
 import { useUserManagement } from "./useUserManagement";
+import { UserSearch } from "./UserSearch";
+import { UserProfileDialog } from "./UserProfileDialog";
 
 export function UserList() {
   const { toast } = useToast();
   const [selectedUser, setSelectedUser] = useState<{ id: string; balance: number } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { handleDeleteUser, handleBalanceUpdate } = useUserManagement();
   
   const { data: users, isLoading } = useQuery({
-    queryKey: ["admin-users"],
+    queryKey: ["admin-users", searchQuery],
     queryFn: async () => {
-      // First get user profiles
       const { data: profiles, error: profilesError } = await supabase
         .rpc('get_user_profiles');
 
       if (profilesError) throw profilesError;
 
-      // Then get open positions count for each user
-      const openPositionsCounts: Record<string, number> = {};
-      
       const { data: positions, error: positionsError } = await supabase
         .from('positions')
         .select('user_id')
@@ -42,16 +42,26 @@ export function UserList() {
 
       if (positionsError) throw positionsError;
 
-      // Count open positions for each user
+      const openPositionsCounts: Record<string, number> = {};
       positions?.forEach(position => {
         openPositionsCounts[position.user_id] = (openPositionsCounts[position.user_id] || 0) + 1;
       });
 
-      // Combine the data
-      return profiles?.map(profile => ({
-        ...profile,
-        open_positions_count: openPositionsCounts[profile.id] || 0
-      }));
+      return profiles
+        ?.map(profile => ({
+          ...profile,
+          open_positions_count: openPositionsCounts[profile.id] || 0
+        }))
+        .filter(user => {
+          if (!searchQuery) return true;
+          const searchLower = searchQuery.toLowerCase();
+          return (
+            user.first_name?.toLowerCase().includes(searchLower) ||
+            user.last_name?.toLowerCase().includes(searchLower) ||
+            user.email?.toLowerCase().includes(searchLower) ||
+            user.id.toLowerCase().includes(searchLower)
+          );
+        });
     },
   });
 
@@ -104,6 +114,8 @@ export function UserList() {
 
   return (
     <>
+      <UserSearch onSearch={setSearchQuery} />
+      
       <Card className="overflow-hidden bg-[#1A1F2C]/50 backdrop-blur-sm border-[#7E69AB]/20">
         <div className="overflow-x-auto">
           <Table>
@@ -123,7 +135,8 @@ export function UserList() {
               {users?.map((user) => (
                 <TableRow 
                   key={user.id}
-                  className="hover:bg-[#7E69AB]/5 border-[#7E69AB]/20"
+                  className="hover:bg-[#7E69AB]/5 border-[#7E69AB]/20 cursor-pointer"
+                  onClick={() => setSelectedUserId(user.id)}
                 >
                   <TableCell className="font-medium text-[#E5DEFF]">
                     {user.first_name} {user.last_name}
@@ -170,6 +183,13 @@ export function UserList() {
         onClose={() => setSelectedUser(null)}
         onUpdate={onBalanceUpdate}
         initialBalance={selectedUser?.balance || 0}
+      />
+
+      <UserProfileDialog
+        userId={selectedUserId}
+        isOpen={!!selectedUserId}
+        onClose={() => setSelectedUserId(null)}
+        onUpdate={onBalanceUpdate}
       />
     </>
   );
