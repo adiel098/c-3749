@@ -47,22 +47,22 @@ export function UserList() {
         openPositionsCounts[position.user_id] = (openPositionsCounts[position.user_id] || 0) + 1;
       });
 
-      return profiles
-        ?.map(profile => ({
-          ...profile,
-          open_positions_count: openPositionsCounts[profile.id] || 0
-        }))
-        .filter(user => {
-          if (!searchQuery) return true;
-          const searchLower = searchQuery.toLowerCase();
-          return (
-            user.first_name?.toLowerCase().includes(searchLower) ||
-            user.last_name?.toLowerCase().includes(searchLower) ||
-            user.email?.toLowerCase().includes(searchLower) ||
-            user.id.toLowerCase().includes(searchLower)
-          );
-        });
+      const filteredProfiles = profiles?.map(profile => ({
+        ...profile,
+        open_positions_count: openPositionsCounts[profile.id] || 0
+      }));
+
+      if (!searchQuery) return filteredProfiles;
+
+      const searchLower = searchQuery.toLowerCase();
+      return filteredProfiles?.filter(user => 
+        user.first_name?.toLowerCase().includes(searchLower) ||
+        user.last_name?.toLowerCase().includes(searchLower) ||
+        user.email?.toLowerCase().includes(searchLower) ||
+        user.id.toLowerCase().includes(searchLower)
+      );
     },
+    staleTime: 30000, // Cache results for 30 seconds
   });
 
   const handleAdminToggle = async (userId: string, currentAdminStatus: boolean) => {

@@ -9,7 +9,7 @@ interface UserSearchProps {
 
 export function UserSearch({ onSearch }: UserSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // Increased debounce delay to 500ms
 
   useEffect(() => {
     onSearch(debouncedSearchTerm);
