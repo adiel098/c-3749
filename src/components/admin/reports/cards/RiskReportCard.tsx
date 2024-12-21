@@ -9,11 +9,11 @@ export function RiskReportCard() {
   const { data: riskData, isLoading } = useQuery({
     queryKey: ["risk-report"],
     queryFn: async () => {
-      const { data: positions } = await supabase
+      const { data, error } = await supabase
         .from("positions")
         .select(`
           *,
-          profiles (
+          user:user_id (
             first_name,
             last_name,
             email,
@@ -22,9 +22,11 @@ export function RiskReportCard() {
         `)
         .eq("status", "open");
 
-      return positions?.map((position) => ({
+      if (error) throw error;
+      
+      return data?.map((position) => ({
         ...position,
-        risk_ratio: position.amount / (position.profiles?.balance || 1),
+        risk_ratio: position.amount / (position.user?.balance || 1),
       }));
     },
   });
@@ -45,7 +47,7 @@ export function RiskReportCard() {
       ],
       ...riskData.map((position) => [
         position.id,
-        `${position.profiles?.first_name || ""} ${position.profiles?.last_name || ""}`.trim(),
+        `${position.user?.first_name || ""} ${position.user?.last_name || ""}`.trim(),
         position.symbol,
         position.amount.toString(),
         position.leverage.toString(),

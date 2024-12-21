@@ -9,17 +9,19 @@ export function FinancialReportCard() {
   const { data: transactions, isLoading } = useQuery({
     queryKey: ["financial-report"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("transactions")
         .select(`
           *,
-          profiles (
+          user:user_id (
             first_name,
             last_name,
             email
           )
         `)
         .order("created_at", { ascending: false });
+
+      if (error) throw error;
       return data;
     },
   });
@@ -31,7 +33,7 @@ export function FinancialReportCard() {
       ["Transaction ID", "User", "Type", "Amount", "Status", "Created At"],
       ...transactions.map((tx) => [
         tx.id,
-        `${tx.profiles?.first_name || ""} ${tx.profiles?.last_name || ""}`.trim(),
+        `${tx.user?.first_name || ""} ${tx.user?.last_name || ""}`.trim(),
         tx.type,
         tx.amount.toString(),
         tx.status,

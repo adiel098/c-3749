@@ -9,17 +9,19 @@ export function TradingReportCard() {
   const { data: positions, isLoading } = useQuery({
     queryKey: ["trading-report"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("positions")
         .select(`
           *,
-          profiles (
+          user:user_id (
             first_name,
             last_name,
             email
           )
         `)
         .order("created_at", { ascending: false });
+
+      if (error) throw error;
       return data;
     },
   });
@@ -42,7 +44,7 @@ export function TradingReportCard() {
       ],
       ...positions.map((position) => [
         position.id,
-        `${position.profiles?.first_name || ""} ${position.profiles?.last_name || ""}`.trim(),
+        `${position.user?.first_name || ""} ${position.user?.last_name || ""}`.trim(),
         position.symbol,
         position.type,
         position.amount.toString(),
