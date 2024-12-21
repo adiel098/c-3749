@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action_type: string
+          admin_id: string | null
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action_type: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       deposit_addresses: {
         Row: {
           address: string
@@ -38,6 +83,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deposit_addresses_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -114,6 +166,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "positions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       profiles: {
@@ -123,7 +182,12 @@ export type Database = {
           first_name: string | null
           id: string
           is_admin: boolean | null
+          is_blocked: boolean | null
+          is_frozen: boolean | null
+          last_login: string | null
           last_name: string | null
+          max_leverage: number | null
+          notes: string | null
           phone: string | null
         }
         Insert: {
@@ -132,7 +196,12 @@ export type Database = {
           first_name?: string | null
           id: string
           is_admin?: boolean | null
+          is_blocked?: boolean | null
+          is_frozen?: boolean | null
+          last_login?: string | null
           last_name?: string | null
+          max_leverage?: number | null
+          notes?: string | null
           phone?: string | null
         }
         Update: {
@@ -141,7 +210,12 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_admin?: boolean | null
+          is_blocked?: boolean | null
+          is_frozen?: boolean | null
+          last_login?: string | null
           last_name?: string | null
+          max_leverage?: number | null
+          notes?: string | null
           phone?: string | null
         }
         Relationships: []
@@ -179,11 +253,38 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      user_statistics: {
+        Row: {
+          balance: number | null
+          email: string | null
+          first_name: string | null
+          is_blocked: boolean | null
+          is_frozen: boolean | null
+          last_login: string | null
+          last_name: string | null
+          last_transaction_date: string | null
+          max_leverage: number | null
+          open_positions: number | null
+          total_deposits: number | null
+          total_pnl: number | null
+          total_positions: number | null
+          total_transactions: number | null
+          total_withdrawals: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_profiles: {
@@ -204,6 +305,15 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          action_type: string
+          entity_type: string
+          entity_id: string
+          details: Json
+        }
+        Returns: string
       }
       merge_positions: {
         Args: {
