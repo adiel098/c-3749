@@ -3,15 +3,47 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useDepositAddresses } from "@/hooks/useDepositAddresses";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function MobileDepositCard() {
   const [selectedMethod, setSelectedMethod] = useState<string>("bitcoin");
   const { toast } = useToast();
-  const { data: depositAddresses, isLoading } = useDepositAddresses();
-  
+
+  const { data: userAddresses, isLoading: userAddressesLoading } = useQuery({
+    queryKey: ["user-deposit-addresses"],
+    queryFn: async () => {
+      const { data: userAddresses, error: userError } = await supabase
+        .from("user_deposit_addresses")
+        .select("*");
+
+      if (userError) throw userError;
+      return userAddresses || [];
+    },
+  });
+
+  const { data: defaultAddresses, isLoading: defaultAddressesLoading } = useQuery({
+    queryKey: ["default-deposit-addresses"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("deposit_addresses")
+        .select("*");
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const getAddress = (currency: string) => {
-    return depositAddresses?.find(addr => addr.currency.toLowerCase() === currency)?.address || '';
+    const userAddress = userAddresses?.find(
+      (addr) => addr.currency.toLowerCase() === currency.toLowerCase()
+    );
+    if (userAddress) return userAddress.address;
+
+    const defaultAddress = defaultAddresses?.find(
+      (addr) => addr.currency.toLowerCase() === currency.toLowerCase()
+    );
+    return defaultAddress?.address || '';
   };
 
   const handleCopy = (address: string) => {
@@ -28,7 +60,7 @@ export function MobileDepositCard() {
     });
   };
 
-  if (isLoading) {
+  if (userAddressesLoading || defaultAddressesLoading) {
     return (
       <Card className="glass-effect">
         <CardContent className="flex items-center justify-center p-8">
@@ -142,7 +174,6 @@ export function MobileDepositCard() {
           </p>
         </div>
 
-        {/* New friendly informative text */}
         <div className="bg-secondary/10 p-3 rounded-lg border border-primary/10">
           <p className="text-xs text-muted-foreground text-center">
             Deposit transactions are automatically synchronized. Once sufficient confirmations are received, your account balance will be updated instantly. 
