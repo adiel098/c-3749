@@ -3,12 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
-import { Activity, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Activity, ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown } from "lucide-react";
 
 export function RecentActivity() {
   const { data: activities, isLoading } = useQuery({
     queryKey: ["admin-recent-activity"],
     queryFn: async () => {
+      // Get recent transactions
       const { data: transactions } = await supabase
         .from('transactions')
         .select(`
@@ -24,6 +25,7 @@ export function RecentActivity() {
         .order('created_at', { ascending: false })
         .limit(10);
 
+      // Get recent positions
       const { data: positions } = await supabase
         .from('positions')
         .select(`
@@ -117,9 +119,15 @@ export function RecentActivity() {
                       </div>
                     )
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Activity className="h-4 w-4 text-primary" />
-                    </div>
+                    activity.subtype === 'long' ? (
+                      <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                        <TrendingUp className="h-4 w-4 text-blue-500" />
+                      </div>
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                        <TrendingDown className="h-4 w-4 text-yellow-500" />
+                      </div>
+                    )
                   )}
                   <div>
                     <p className="text-sm font-medium">
