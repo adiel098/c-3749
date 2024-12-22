@@ -18,23 +18,18 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
   const { data: priceData, isLoading, error } = useQuery({
     queryKey: ['crypto-price', symbol],
     queryFn: async () => {
-      console.log('Fetching price data from TradingView for:', symbol);
+      console.log('Fetching price data from Binance for:', symbol);
       try {
-        // Using TradingView's public API endpoint
-        const response = await fetch(`https://symbol-search.tradingview.com/symbol_search/v3/?text=${symbol}USDT&hl=1&exchange=BINANCE`);
-        if (!response.ok) throw new Error('TradingView API failed');
+        const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`);
+        if (!response.ok) throw new Error('Failed to fetch price data');
         const data = await response.json();
         
-        if (!data || !data[0] || !data[0].price_change || !data[0].price) {
-          throw new Error('Invalid data format from TradingView');
-        }
-
         return {
-          price: parseFloat(data[0].price),
-          priceChange24h: parseFloat(data[0].price_change)
+          price: parseFloat(data.lastPrice),
+          priceChange24h: parseFloat(data.priceChangePercent)
         };
       } catch (error) {
-        console.error('TradingView API error:', error);
+        console.error('Binance API error:', error);
         throw error;
       }
     },
@@ -103,7 +98,7 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
       </div>
       
       <div className="relative flex-1 w-full min-h-[600px]">
-        <TradingViewWidget symbol={`${symbol}USDT`} />
+        <TradingViewWidget symbol={`BINANCE:${symbol}USDT`} />
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingView
         const widget = new TradingView.widget({
           width: "100%",
           height: "100%",
-          symbol: `BINANCE:${symbol}`,
+          symbol: symbol,
           interval: "D",
           timezone: "Etc/UTC",
           theme: "dark",
