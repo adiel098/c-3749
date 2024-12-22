@@ -88,25 +88,23 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
         )}
       </div>
       
-      <div className="flex-1 relative w-full overflow-hidden rounded-lg border border-white/10 bg-card/30" style={{ minHeight: '350px' }}>
-        <div className="absolute inset-0">
-          <TradingViewWidget 
-            symbol={symbol} 
-            isMobile={true}
-            chartConfig={{
-              height: "100%",
-              interval: "15",
-              theme: "dark",
-              style: "1",
-              toolbar_bg: "#131722",
-              hide_side_toolbar: true,
-              hide_volume: true,
-              hide_top_toolbar: true,
-              studies: [],
-              show_popup_button: false,
-            }}
-          />
-        </div>
+      <div className="flex-1 relative w-full overflow-hidden rounded-lg border border-white/10 bg-card/30" style={{ height: '350px' }}>
+        <TradingViewWidget 
+          symbol={symbol} 
+          isMobile={true}
+          chartConfig={{
+            height: "100%",
+            interval: "15",
+            theme: "dark",
+            style: "1",
+            toolbar_bg: "#131722",
+            hide_side_toolbar: true,
+            hide_volume: true,
+            hide_top_toolbar: true,
+            studies: [],
+            show_popup_button: false,
+          }}
+        />
       </div>
     </div>
   );
