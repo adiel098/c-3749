@@ -4,7 +4,6 @@ import { TradingViewWidget } from "./trading/TradingViewWidget";
 import { TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useCryptoPrice } from "@/hooks/useCryptoPrice";
 import { useToast } from "@/components/ui/use-toast";
 
 interface CryptoChartProps {
@@ -19,40 +18,29 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
   const { data: priceData, isLoading, error } = useQuery({
     queryKey: ['crypto-price', symbol],
     queryFn: async () => {
-      console.log('Fetching price data for:', symbol);
+      console.log('Fetching price data from TradingView for:', symbol);
       try {
-        // Try Binance API first
-        const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`);
-        if (!response.ok) throw new Error('Binance API failed');
+        // Using TradingView's public API endpoint
+        const response = await fetch(`https://symbol-search.tradingview.com/symbol_search/v3/?text=${symbol}USDT&hl=1&exchange=BINANCE`);
+        if (!response.ok) throw new Error('TradingView API failed');
         const data = await response.json();
-        return {
-          price: parseFloat(data.lastPrice),
-          priceChange24h: parseFloat(data.priceChangePercent)
-        };
-      } catch (binanceError) {
-        console.warn('Binance API failed, trying CoinGecko:', binanceError);
         
-        // Fallback to CoinGecko API
-        const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd&include_24hr_change=true`);
-        if (!response.ok) throw new Error('Both price APIs failed');
-        const data = await response.json();
-        const coinData = data[symbol.toLowerCase()];
+        if (!data || !data[0] || !data[0].price_change || !data[0].price) {
+          throw new Error('Invalid data format from TradingView');
+        }
+
         return {
-          price: coinData.usd,
-          priceChange24h: coinData.usd_24h_change
+          price: parseFloat(data[0].price),
+          priceChange24h: parseFloat(data[0].price_change)
         };
+      } catch (error) {
+        console.error('TradingView API error:', error);
+        throw error;
       }
     },
     refetchInterval: 5000,
-    staleTime: 0,
-    retry: 3,
-    onError: (error) => {
-      console.error('Price fetch error:', error);
-      toast({
-        title: "Error fetching price",
-        description: "Unable to fetch current price. Please try again later.",
-        variant: "destructive",
-      });
+    meta: {
+      errorMessage: "Unable to fetch current price. Please try again later."
     }
   });
 
