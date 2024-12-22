@@ -90,6 +90,7 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
       
       <div className="flex-1 relative w-full overflow-hidden rounded-lg border border-white/10 bg-card/30" style={{ height: '350px' }}>
         <TradingViewWidget 
+          key={symbol} 
           symbol={symbol} 
           isMobile={true}
           chartConfig={{
@@ -103,6 +104,7 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
             hide_top_toolbar: true,
             studies: [],
             show_popup_button: false,
+            autosize: true,
           }}
         />
       </div>

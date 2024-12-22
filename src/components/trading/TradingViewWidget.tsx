@@ -11,6 +11,7 @@ interface ChartConfig {
   hide_top_toolbar?: boolean;
   studies?: string[];
   show_popup_button?: boolean;
+  autosize?: boolean;
 }
 
 interface TradingViewWidgetProps {
@@ -25,7 +26,6 @@ export const TradingViewWidget = memo(({
   chartConfig
 }: TradingViewWidgetProps) => {
   const container = useRef<HTMLDivElement>(null);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
     if (!symbol || !container.current) return;
@@ -33,9 +33,11 @@ export const TradingViewWidget = memo(({
     const containerId = `tradingview_${Math.random().toString(36).substring(7)}`;
     container.current.id = containerId;
 
-    const loadTradingView = () => {
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/tv.js";
+    script.async = true;
+    script.onload = () => {
       if (typeof TradingView !== 'undefined' && container.current) {
-        console.log("Creating TradingView widget for symbol:", symbol);
         new TradingView.widget({
           width: "100%",
           height: chartConfig?.height || "100%",
@@ -51,16 +53,16 @@ export const TradingViewWidget = memo(({
           container_id: containerId,
           show_popup_button: chartConfig?.show_popup_button ?? !isMobile,
           hide_side_toolbar: chartConfig?.hide_side_toolbar ?? isMobile,
-          hide_top_toolbar: true, // Always hide the top toolbar
+          hide_top_toolbar: true,
           studies: chartConfig?.studies || (isMobile ? [] : undefined),
-          autosize: true,
+          autosize: chartConfig?.autosize ?? true,
           save_image: false,
           backgroundColor: "rgba(19, 23, 34, 1)",
           gridColor: "rgba(67, 70, 81, 0.3)",
           hide_volume: chartConfig?.hide_volume ?? isMobile,
           disabled_features: [
             "use_localstorage_for_settings",
-            "header_widget", // Hide the header completely
+            "header_widget",
             "header_symbol_search",
             "header_resolutions",
             "header_chart_type",
@@ -76,23 +78,18 @@ export const TradingViewWidget = memo(({
       }
     };
 
-    if (!scriptRef.current) {
-      scriptRef.current = document.createElement("script");
-      scriptRef.current.type = "text/javascript";
-      scriptRef.current.src = "https://s3.tradingview.com/tv.js";
-      scriptRef.current.async = true;
-      scriptRef.current.onload = loadTradingView;
-      document.head.appendChild(scriptRef.current);
-    } else {
-      loadTradingView();
-    }
+    document.head.appendChild(script);
 
     return () => {
       if (container.current) {
         container.current.innerHTML = '';
       }
+      const existingScript = document.querySelector(`script[src="${script.src}"]`);
+      if (existingScript) {
+        existingScript.remove();
+      }
     };
-  }, [symbol, isMobile, chartConfig]);
+  }, [symbol]);
 
   return (
     <div 
