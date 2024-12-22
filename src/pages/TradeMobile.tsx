@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TradingForm } from "@/components/trading/TradingFormMobile";
@@ -26,6 +26,13 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
   const { session } = useAuth();
 
+  // Close auth dialog when session becomes active
+  useEffect(() => {
+    if (session) {
+      setShowAuthDialog(false);
+    }
+  }, [session, setShowAuthDialog]);
+
   const handlePriceUpdate = (price: number) => {
     setCurrentPrice(price);
   };
@@ -45,7 +52,7 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
         <AppSidebar />
         <div className="flex-1 overflow-y-auto h-[calc(100dvh-4rem)]">
           <div className="p-4 space-y-4 pb-[120px]">
-            <div className="h-[300px]">
+            <div className="h-[450px]">
               <MobileCryptoChart 
                 symbol={selectedCrypto} 
                 onPriceUpdate={handlePriceUpdate}

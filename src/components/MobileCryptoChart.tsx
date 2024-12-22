@@ -88,7 +88,7 @@ export function MobileCryptoChart({ symbol, onPriceUpdate, onSymbolChange }: Mob
         )}
       </div>
       
-      <div className="flex-1 relative w-full overflow-hidden rounded-lg border border-white/10 bg-card/30" style={{ height: '350px' }}>
+      <div className="flex-1 relative w-full overflow-hidden rounded-lg border border-white/10 bg-card/30" style={{ height: '450px' }}>
         <TradingViewWidget 
           key={symbol} 
           symbol={symbol} 
