@@ -9,7 +9,6 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAuth } from "@/hooks/useAuth";
 import { LogIn, Mail, Lock } from "lucide-react";
 import { toastStyles, ToastClose } from "@/utils/toastStyles";
-import { Dialog } from "@radix-ui/react-dialog";
 
 interface LoginFormData {
   email: string;
@@ -86,7 +85,7 @@ export function LoginForm() {
 
       // Close the dialog if we're on mobile
       if (isMobile) {
-        const closeButton = document.querySelector('[data-radix-collection-item]');
+        const closeButton = document.querySelector('[data-dialog-close]');
         if (closeButton instanceof HTMLElement) {
           closeButton.click();
         }
