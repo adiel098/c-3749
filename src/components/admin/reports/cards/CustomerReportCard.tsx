@@ -5,15 +5,38 @@ import { supabase } from "@/integrations/supabase/client";
 import { Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
+type CustomerStatistics = {
+  user_id: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  balance: number | null;
+  total_positions: number | null;
+  open_positions: number | null;
+  total_pnl: number | null;
+  total_transactions: number | null;
+  total_deposits: number | null;
+  total_withdrawals: number | null;
+  last_transaction_date: string | null;
+  last_login: string | null;
+  is_blocked: boolean | null;
+  is_frozen: boolean | null;
+  max_leverage: number | null;
+  profiles: {
+    created_at: string;
+    phone: string | null;
+  } | null;
+}
+
 export function CustomerReportCard() {
-  const { data: customers, isLoading } = useQuery({
+  const { data: customers, isLoading } = useQuery<CustomerStatistics[]>({
     queryKey: ["customer-report"],
     queryFn: async () => {
       const { data: users } = await supabase
         .from("user_statistics")
         .select("*, profiles(created_at, phone)")
         .order("total_positions", { ascending: false });
-      return users;
+      return users || [];
     },
   });
 

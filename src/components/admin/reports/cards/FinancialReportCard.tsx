@@ -5,8 +5,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
+type TransactionWithUser = {
+  id: string;
+  user_id: string;
+  type: string;
+  amount: number;
+  status: string;
+  created_at: string;
+  user_statistics: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    profiles: {
+      phone: string | null;
+    } | null;
+  };
+}
+
 export function FinancialReportCard() {
-  const { data: transactions, isLoading } = useQuery({
+  const { data: transactions, isLoading } = useQuery<TransactionWithUser[]>({
     queryKey: ["financial-report"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,7 +40,7 @@ export function FinancialReportCard() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
@@ -43,9 +60,9 @@ export function FinancialReportCard() {
       ],
       ...transactions.map((tx) => [
         tx.id,
-        `${tx.user_statistics?.first_name || ""} ${tx.user_statistics?.last_name || ""}`.trim(),
-        tx.user_statistics?.email || "",
-        tx.user_statistics?.profiles?.phone || "",
+        `${tx.user_statistics.first_name || ""} ${tx.user_statistics.last_name || ""}`.trim(),
+        tx.user_statistics.email || "",
+        tx.user_statistics.profiles?.phone || "",
         tx.type,
         tx.amount.toString(),
         tx.status,

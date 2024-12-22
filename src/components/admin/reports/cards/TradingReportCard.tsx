@@ -5,8 +5,29 @@ import { supabase } from "@/integrations/supabase/client";
 import { Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
+type PositionWithUser = {
+  id: string;
+  user_id: string;
+  symbol: string;
+  type: string;
+  amount: number;
+  leverage: number;
+  entry_price: number;
+  profit_loss: number | null;
+  status: string | null;
+  created_at: string;
+  user_statistics: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    profiles: {
+      phone: string | null;
+    } | null;
+  };
+}
+
 export function TradingReportCard() {
-  const { data: positions, isLoading } = useQuery({
+  const { data: positions, isLoading } = useQuery<PositionWithUser[]>({
     queryKey: ["trading-report"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,7 +44,7 @@ export function TradingReportCard() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
@@ -47,9 +68,9 @@ export function TradingReportCard() {
       ],
       ...positions.map((position) => [
         position.id,
-        `${position.user_statistics?.first_name || ""} ${position.user_statistics?.last_name || ""}`.trim(),
-        position.user_statistics?.email || "",
-        position.user_statistics?.profiles?.phone || "",
+        `${position.user_statistics.first_name || ""} ${position.user_statistics.last_name || ""}`.trim(),
+        position.user_statistics.email || "",
+        position.user_statistics.profiles?.phone || "",
         position.symbol,
         position.type,
         position.amount.toString(),
