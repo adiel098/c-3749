@@ -110,7 +110,7 @@ export const TradingViewWidget = memo(({
               variant={selectedInterval === tf.value ? "secondary" : "ghost"}
               size={isMobile ? "xs" : "sm"}
               onClick={() => setSelectedInterval(tf.value)}
-              className={`${isMobile ? 'text-xs px-2 py-1 h-7 min-w-[40px]' : 'flex-1 min-w-[60px]'}`}
+              className="min-w-[40px]"
             >
               {tf.label}
             </Button>
