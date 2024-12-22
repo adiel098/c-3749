@@ -9,11 +9,14 @@ export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingView
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!symbol) return;
+
     const script = document.createElement("script");
     script.src = "https://s3.tradingview.com/tv.js";
     script.async = true;
     script.onload = () => {
       if (container.current && typeof TradingView !== 'undefined') {
+        console.log("Initializing TradingView with symbol:", symbol);
         const widget = new TradingView.widget({
           width: "100%",
           height: "100%",
@@ -30,7 +33,9 @@ export const TradingViewWidget = memo(({ symbol, isMobile = false }: TradingView
           show_popup_button: !isMobile,
           hide_side_toolbar: isMobile,
           hide_top_toolbar: false,
-          studies: isMobile ? [] : undefined
+          studies: isMobile ? [] : undefined,
+          autosize: true,
+          save_image: false
         });
 
         return () => {
