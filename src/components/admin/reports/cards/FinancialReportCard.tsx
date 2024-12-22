@@ -4,23 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-
-type TransactionWithUser = {
-  id: string;
-  user_id: string;
-  type: string;
-  amount: number;
-  status: string;
-  created_at: string;
-  user_statistics: {
-    first_name: string | null;
-    last_name: string | null;
-    email: string | null;
-    profiles: {
-      phone: string | null;
-    } | null;
-  };
-}
+import { TransactionWithUser } from "../types";
 
 export function FinancialReportCard() {
   const { data: transactions, isLoading } = useQuery<TransactionWithUser[]>({
@@ -34,13 +18,20 @@ export function FinancialReportCard() {
             first_name,
             last_name,
             email,
-            profiles:profiles(phone)
+            profiles:profiles!inner(phone)
           )
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+
+      return (data || []).map(tx => ({
+        ...tx,
+        user_statistics: {
+          ...tx.user_statistics,
+          profiles: tx.user_statistics.profiles[0] // Take first profile since it's a 1-1 relationship
+        }
+      }));
     },
   });
 

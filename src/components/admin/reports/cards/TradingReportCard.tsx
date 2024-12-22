@@ -4,27 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-
-type PositionWithUser = {
-  id: string;
-  user_id: string;
-  symbol: string;
-  type: string;
-  amount: number;
-  leverage: number;
-  entry_price: number;
-  profit_loss: number | null;
-  status: string | null;
-  created_at: string;
-  user_statistics: {
-    first_name: string | null;
-    last_name: string | null;
-    email: string | null;
-    profiles: {
-      phone: string | null;
-    } | null;
-  };
-}
+import { PositionWithUser } from "../types";
 
 export function TradingReportCard() {
   const { data: positions, isLoading } = useQuery<PositionWithUser[]>({
@@ -38,13 +18,20 @@ export function TradingReportCard() {
             first_name,
             last_name,
             email,
-            profiles:profiles(phone)
+            profiles:profiles!inner(phone)
           )
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+
+      return (data || []).map(position => ({
+        ...position,
+        user_statistics: {
+          ...position.user_statistics,
+          profiles: position.user_statistics.profiles[0] // Take first profile since it's a 1-1 relationship
+        }
+      }));
     },
   });
 

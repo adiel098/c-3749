@@ -4,39 +4,26 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-
-type CustomerStatistics = {
-  user_id: string;
-  first_name: string | null;
-  last_name: string | null;
-  email: string | null;
-  balance: number | null;
-  total_positions: number | null;
-  open_positions: number | null;
-  total_pnl: number | null;
-  total_transactions: number | null;
-  total_deposits: number | null;
-  total_withdrawals: number | null;
-  last_transaction_date: string | null;
-  last_login: string | null;
-  is_blocked: boolean | null;
-  is_frozen: boolean | null;
-  max_leverage: number | null;
-  profiles: {
-    created_at: string;
-    phone: string | null;
-  } | null;
-}
+import { CustomerStatistics } from "../types";
 
 export function CustomerReportCard() {
   const { data: customers, isLoading } = useQuery<CustomerStatistics[]>({
     queryKey: ["customer-report"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("user_statistics")
-        .select("*, profiles:profiles(created_at, phone)")
+        .select(`
+          *,
+          profiles:profiles!inner(created_at, phone)
+        `)
         .order("total_positions", { ascending: false });
-      return data || [];
+
+      if (error) throw error;
+
+      return (data || []).map(customer => ({
+        ...customer,
+        profiles: customer.profiles[0] // Take first profile since it's a 1-1 relationship
+      }));
     },
   });
 
