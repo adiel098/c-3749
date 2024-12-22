@@ -20,6 +20,11 @@ interface TradingView {
     show_popup_button?: boolean;
     popup_width?: string;
     popup_height?: string;
+    backgroundColor?: string;
+    gridColor?: string;
+    hide_volume?: boolean;
+    disabled_features?: string[];
+    enabled_features?: string[];
   }) => {
     remove: () => void;
   };
