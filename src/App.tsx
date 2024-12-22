@@ -13,24 +13,34 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useState } from "react";
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { session } = useAuth();
   const { data: profile } = useProfile();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   return (
     <div className="relative min-h-screen">
       <Routes>
         <Route path="/" element={
-          session ? (
-            profile?.is_admin ? (
-              <Navigate to="/admin" replace />
-            ) : (
-              <Navigate to="/trade" replace />
-            )
+          isMobile ? (
+            <TradeMobile 
+              showAuthDialog={showAuthDialog} 
+              setShowAuthDialog={setShowAuthDialog} 
+            />
           ) : (
-            <AuthPage />
+            session ? (
+              profile?.is_admin ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <Navigate to="/trade" replace />
+              )
+            ) : (
+              <AuthPage />
+            )
           )
         } />
         <Route
@@ -48,15 +58,19 @@ function App() {
         <Route
           path="/trade"
           element={
-            <ProtectedRoute>
-              {profile?.is_admin ? (
-                <Navigate to="/admin" replace />
-              ) : (
-                <div className={isMobile ? "main-content" : ""}>
-                  {isMobile ? <TradeMobile /> : <Trade />}
-                </div>
-              )}
-            </ProtectedRoute>
+            isMobile ? (
+              <Navigate to="/" replace />
+            ) : (
+              <ProtectedRoute>
+                {profile?.is_admin ? (
+                  <Navigate to="/admin" replace />
+                ) : (
+                  <div className={isMobile ? "main-content" : ""}>
+                    <Trade />
+                  </div>
+                )}
+              </ProtectedRoute>
+            )
           }
         />
         <Route
@@ -117,7 +131,16 @@ function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {isMobile && session && !profile?.is_admin && <MobileNavBar />}
+      {isMobile && !profile?.is_admin && (
+        <>
+          <MobileNavBar onAuthRequired={() => setShowAuthDialog(true)} />
+          <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+            <DialogContent className="p-0">
+              <AuthPage />
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
       <Toaster />
     </div>
   );

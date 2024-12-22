@@ -7,9 +7,15 @@ import {
   History,
   Settings2,
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
-export const MobileNavBar = () => {
+interface MobileNavBarProps {
+  onAuthRequired: () => void;
+}
+
+export const MobileNavBar = ({ onAuthRequired }: MobileNavBarProps) => {
   const location = useLocation();
+  const { session } = useAuth();
 
   const menuItems = [
     { path: "/", icon: TrendingUp, label: "Trade" },
@@ -19,6 +25,13 @@ export const MobileNavBar = () => {
     { path: "/settings", icon: Settings2, label: "Settings" },
   ];
 
+  const handleClick = (e: React.MouseEvent, requiresAuth: boolean) => {
+    if (requiresAuth && !session) {
+      e.preventDefault();
+      onAuthRequired();
+    }
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/30 backdrop-blur-xl border-t border-white/10">
       <div className="flex justify-around items-center h-16">
@@ -26,6 +39,7 @@ export const MobileNavBar = () => {
           <Link
             key={path}
             to={path}
+            onClick={(e) => handleClick(e, path !== "/")}
             className={cn(
               "flex flex-col items-center justify-center w-full h-full px-2 text-xs",
               "text-muted-foreground hover:text-foreground transition-colors",

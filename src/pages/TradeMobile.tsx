@@ -9,19 +9,30 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { MobilePositionsList } from "@/components/trading/MobilePositionsList";
 import { MobileCryptoChart } from "@/components/MobileCryptoChart";
 import { MobileNavBar } from "@/components/MobileNavBar";
+import { useAuth } from "@/hooks/useAuth";
 
-const TradeMobile = () => {
+interface TradeMobileProps {
+  showAuthDialog: boolean;
+  setShowAuthDialog: (show: boolean) => void;
+}
+
+const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) => {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC");
   const [currentPrice, setCurrentPrice] = useState<number>();
   const { data: positions, refetch: refetchPositions } = usePositions();
   const [isTradeFormOpen, setIsTradeFormOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
+  const { session } = useAuth();
 
   const handlePriceUpdate = (price: number) => {
     setCurrentPrice(price);
   };
 
-  const openTradeForm = (type: 'long' | 'short') => {
+  const handleTradeAction = (type: 'long' | 'short') => {
+    if (!session) {
+      setShowAuthDialog(true);
+      return;
+    }
     setTradeType(type);
     setIsTradeFormOpen(true);
   };
@@ -40,12 +51,14 @@ const TradeMobile = () => {
               />
             </div>
 
-            <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
-              <MobilePositionsList
-                positions={positions || []}
-                onUpdate={refetchPositions}
-              />
-            </div>
+            {session && (
+              <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+                <MobilePositionsList
+                  positions={positions || []}
+                  onUpdate={refetchPositions}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -54,7 +67,7 @@ const TradeMobile = () => {
             <SheetTrigger asChild>
               <Button
                 className="flex-1 h-10 bg-success hover:bg-success/90"
-                onClick={() => openTradeForm('long')}
+                onClick={() => handleTradeAction('long')}
               >
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-4 w-4" />
@@ -62,32 +75,28 @@ const TradeMobile = () => {
                 </div>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <TradingForm 
-                selectedCrypto={selectedCrypto} 
-                currentPrice={currentPrice} 
-                initialType={tradeType}
-                onClose={() => setIsTradeFormOpen(false)}
-              />
-            </SheetContent>
+            {session && (
+              <SheetContent side="bottom" className="h-[80vh] p-0">
+                <TradingForm 
+                  selectedCrypto={selectedCrypto} 
+                  currentPrice={currentPrice} 
+                  initialType={tradeType}
+                  onClose={() => setIsTradeFormOpen(false)}
+                />
+              </SheetContent>
+            )}
           </Sheet>
 
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                className="flex-1 h-10 bg-warning hover:bg-warning/90"
-                onClick={() => openTradeForm('short')}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <TrendingDown className="h-4 w-4" />
-                  <span>Short</span>
-                </div>
-              </Button>
-            </SheetTrigger>
-          </Sheet>
+          <Button
+            className="flex-1 h-10 bg-warning hover:bg-warning/90"
+            onClick={() => handleTradeAction('short')}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <TrendingDown className="h-4 w-4" />
+              <span>Short</span>
+            </div>
+          </Button>
         </div>
-
-        <MobileNavBar />
       </div>
     </SidebarProvider>
   );
