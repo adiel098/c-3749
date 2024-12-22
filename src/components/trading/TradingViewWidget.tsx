@@ -100,27 +100,35 @@ export const TradingViewWidget = memo(({
     };
   }, [symbol, selectedInterval]);
 
+  const timeframeWidth = isMobile ? 40 : 48; // Width of each timeframe button
+  const totalWidth = timeframes.length * timeframeWidth;
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex justify-between w-full mb-2 p-2 bg-card/30 rounded-lg">
-        <div className="flex gap-1 w-full overflow-x-auto custom-scrollbar">
-          {timeframes.map((tf) => (
-            <Button
-              key={tf.value}
-              variant={selectedInterval === tf.value ? "secondary" : "ghost"}
-              size={isMobile ? "xs" : "sm"}
-              onClick={() => setSelectedInterval(tf.value)}
-              className="min-w-[40px]"
-            >
-              {tf.label}
-            </Button>
-          ))}
+      <div className="flex justify-center w-full mb-2">
+        <div 
+          className="bg-card/30 rounded-lg p-2"
+          style={{ width: `${totalWidth}px` }}
+        >
+          <div className="flex gap-1">
+            {timeframes.map((tf) => (
+              <Button
+                key={tf.value}
+                variant={selectedInterval === tf.value ? "secondary" : "ghost"}
+                size={isMobile ? "xs" : "sm"}
+                onClick={() => setSelectedInterval(tf.value)}
+                className="min-w-[40px]"
+              >
+                {tf.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
       <div 
         ref={container}
         className="w-full h-full bg-card/30 rounded-lg overflow-hidden"
-        style={{ minHeight: isMobile ? "350px" : "600px" }}
+        style={{ minHeight: isMobile ? "450px" : "600px" }}
       />
     </div>
   );
