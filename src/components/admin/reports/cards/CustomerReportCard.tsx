@@ -32,11 +32,11 @@ export function CustomerReportCard() {
   const { data: customers, isLoading } = useQuery<CustomerStatistics[]>({
     queryKey: ["customer-report"],
     queryFn: async () => {
-      const { data: users } = await supabase
+      const { data } = await supabase
         .from("user_statistics")
-        .select("*, profiles(created_at, phone)")
+        .select("*, profiles:profiles(created_at, phone)")
         .order("total_positions", { ascending: false });
-      return users || [];
+      return data || [];
     },
   });
 

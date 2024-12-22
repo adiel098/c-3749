@@ -34,11 +34,11 @@ export function TradingReportCard() {
         .from("positions")
         .select(`
           *,
-          user_statistics!inner(
+          user_statistics:user_statistics!inner(
             first_name,
             last_name,
             email,
-            profiles(phone)
+            profiles:profiles(phone)
           )
         `)
         .order("created_at", { ascending: false });
