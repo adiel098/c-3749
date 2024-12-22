@@ -51,14 +51,26 @@ export const TradingViewWidget = memo(({
           container_id: containerId,
           show_popup_button: chartConfig?.show_popup_button ?? !isMobile,
           hide_side_toolbar: chartConfig?.hide_side_toolbar ?? isMobile,
-          hide_top_toolbar: chartConfig?.hide_top_toolbar ?? false,
+          hide_top_toolbar: true, // Always hide the top toolbar
           studies: chartConfig?.studies || (isMobile ? [] : undefined),
           autosize: true,
           save_image: false,
           backgroundColor: "rgba(19, 23, 34, 1)",
           gridColor: "rgba(67, 70, 81, 0.3)",
           hide_volume: chartConfig?.hide_volume ?? isMobile,
-          disabled_features: ["use_localstorage_for_settings"],
+          disabled_features: [
+            "use_localstorage_for_settings",
+            "header_widget", // Hide the header completely
+            "header_symbol_search",
+            "header_resolutions",
+            "header_chart_type",
+            "header_settings",
+            "header_indicators",
+            "header_compare",
+            "header_undo_redo",
+            "header_screenshot",
+            "timeframes_toolbar",
+          ],
           enabled_features: ["study_templates"],
         });
       }
@@ -86,7 +98,7 @@ export const TradingViewWidget = memo(({
     <div 
       ref={container}
       className="w-full h-full bg-card/30 rounded-lg overflow-hidden"
-      style={{ minHeight: isMobile ? "250px" : "600px" }}
+      style={{ minHeight: isMobile ? "350px" : "600px" }}
     />
   );
 });
