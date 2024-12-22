@@ -5,11 +5,11 @@ import { TradingForm } from "@/components/trading/TradingFormMobile";
 import { usePositions } from "@/hooks/usePositions";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, LogIn } from "lucide-react";
 import { MobilePositionsList } from "@/components/trading/MobilePositionsList";
 import { MobileCryptoChart } from "@/components/MobileCryptoChart";
-import { MobileNavBar } from "@/components/MobileNavBar";
 import { useAuth } from "@/hooks/useAuth";
+import { Card } from "@/components/ui/card";
 
 interface TradeMobileProps {
   showAuthDialog: boolean;
@@ -51,13 +51,32 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
               />
             </div>
 
-            {session && (
+            {session ? (
               <div className="bg-secondary/20 backdrop-blur-lg rounded-lg p-4 border border-white/10">
                 <MobilePositionsList
                   positions={positions || []}
                   onUpdate={refetchPositions}
                 />
               </div>
+            ) : (
+              <Card className="bg-secondary/20 backdrop-blur-lg p-4 border border-white/10">
+                <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
+                  <LogIn className="h-12 w-12 text-muted-foreground" />
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-lg">Login Required</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Please log in to view your positions and start trading
+                    </p>
+                  </div>
+                  <Button 
+                    variant="secondary" 
+                    onClick={() => setShowAuthDialog(true)}
+                    className="mt-4"
+                  >
+                    Login to Trade
+                  </Button>
+                </div>
+              </Card>
             )}
           </div>
         </div>
