@@ -11,7 +11,7 @@ export function FinancialReportCard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("transactions")
-        .select("*, user_statistics!inner(first_name, last_name, email, phone)")
+        .select("*, user_statistics!inner(first_name, last_name, email, profiles(phone))")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -37,7 +37,7 @@ export function FinancialReportCard() {
         tx.id,
         `${tx.user_statistics?.first_name || ""} ${tx.user_statistics?.last_name || ""}`.trim(),
         tx.user_statistics?.email || "",
-        tx.user_statistics?.phone || "",
+        tx.user_statistics?.profiles?.phone || "",
         tx.type,
         tx.amount.toString(),
         tx.status,

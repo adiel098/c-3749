@@ -11,7 +11,7 @@ export function CustomerReportCard() {
     queryFn: async () => {
       const { data: users } = await supabase
         .from("user_statistics")
-        .select("*")
+        .select("*, profiles(created_at, phone)")
         .order("total_positions", { ascending: false });
       return users;
     },
@@ -43,8 +43,8 @@ export function CustomerReportCard() {
         customer.user_id,
         `${customer.first_name || ""} ${customer.last_name || ""}`.trim(),
         customer.email || "",
-        customer.phone || "",
-        format(new Date(customer.created_at || new Date()), "PPpp"),
+        customer.profiles?.phone || "",
+        format(new Date(customer.profiles?.created_at || new Date()), "PPpp"),
         customer.total_positions?.toString() || "0",
         customer.open_positions?.toString() || "0",
         customer.balance?.toString() || "0",

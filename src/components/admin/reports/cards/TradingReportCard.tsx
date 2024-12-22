@@ -11,7 +11,7 @@ export function TradingReportCard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("positions")
-        .select("*, user_statistics!inner(first_name, last_name, email, phone)")
+        .select("*, user_statistics!inner(first_name, last_name, email, profiles(phone))")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -41,7 +41,7 @@ export function TradingReportCard() {
         position.id,
         `${position.user_statistics?.first_name || ""} ${position.user_statistics?.last_name || ""}`.trim(),
         position.user_statistics?.email || "",
-        position.user_statistics?.phone || "",
+        position.user_statistics?.profiles?.phone || "",
         position.symbol,
         position.type,
         position.amount.toString(),
