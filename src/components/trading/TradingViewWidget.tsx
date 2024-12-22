@@ -81,7 +81,6 @@ export const TradingViewWidget = memo(({
             "header_undo_redo",
             "header_screenshot",
             "header_chart_type",
-            "timeframes_toolbar",
           ],
           enabled_features: ["study_templates"],
         });
@@ -104,14 +103,14 @@ export const TradingViewWidget = memo(({
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between w-full mb-2 p-2 bg-card/30 rounded-lg">
-        <div className="flex gap-2 w-full justify-evenly">
+        <div className="flex gap-1 w-full overflow-x-auto custom-scrollbar">
           {timeframes.map((tf) => (
             <Button
               key={tf.value}
               variant={selectedInterval === tf.value ? "secondary" : "ghost"}
-              size="sm"
+              size={isMobile ? "xs" : "sm"}
               onClick={() => setSelectedInterval(tf.value)}
-              className="flex-1 min-w-[60px]"
+              className={`${isMobile ? 'text-xs px-2 py-1 h-7 min-w-[40px]' : 'flex-1 min-w-[60px]'}`}
             >
               {tf.label}
             </Button>
