@@ -44,7 +44,7 @@ export function CustomerReportCard() {
         `${customer.first_name || ""} ${customer.last_name || ""}`.trim(),
         customer.email || "",
         customer.profiles?.phone || "",
-        format(new Date(customer.profiles?.created_at || new Date()), "PPpp"),
+        customer.profiles?.created_at ? format(new Date(customer.profiles.created_at), "PPpp") : "",
         customer.total_positions?.toString() || "0",
         customer.open_positions?.toString() || "0",
         customer.balance?.toString() || "0",
