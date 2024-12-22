@@ -5,7 +5,11 @@ import { SignUpForm } from "@/components/auth/SignUpForm";
 import { LogIn, UserPlus } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const AuthPage = () => {
+interface AuthPageProps {
+  onAuthSuccess?: () => void;
+}
+
+const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
@@ -51,7 +55,7 @@ const AuthPage = () => {
                 </TabsList>
               </div>
               <div className="px-6 pb-6">
-                <LoginForm />
+                <LoginForm onAuthSuccess={onAuthSuccess} />
               </div>
             </TabsContent>
             <TabsContent value="signup">
@@ -91,7 +95,7 @@ const AuthPage = () => {
                 </TabsList>
               </div>
               <div className="px-6 pb-6">
-                <SignUpForm />
+                <SignUpForm onAuthSuccess={onAuthSuccess} />
               </div>
             </TabsContent>
           </Tabs>

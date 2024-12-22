@@ -8,14 +8,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAuth } from "@/hooks/useAuth";
 import { LogIn, Mail, Lock } from "lucide-react";
-import { toastStyles, ToastClose } from "@/utils/toastStyles";
+import { toastStyles } from "@/utils/toastStyles";
 
-interface LoginFormData {
-  email: string;
-  password: string;
+interface LoginFormProps {
+  onAuthSuccess?: () => void;
 }
 
-export function LoginForm() {
+export function LoginForm({ onAuthSuccess }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -83,12 +82,9 @@ export function LoginForm() {
         duration: 3000,
       });
 
-      // Close the dialog if we're on mobile
-      if (isMobile) {
-        const closeButton = document.querySelector('[data-dialog-close]');
-        if (closeButton instanceof HTMLElement) {
-          closeButton.click();
-        }
+      // Call onAuthSuccess callback if provided
+      if (onAuthSuccess) {
+        onAuthSuccess();
       }
 
       const from = location.state?.from?.pathname || "/";

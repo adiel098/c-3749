@@ -10,6 +10,8 @@ import { MobilePositionsList } from "@/components/trading/MobilePositionsList";
 import { MobileCryptoChart } from "@/components/MobileCryptoChart";
 import { useAuth } from "@/hooks/useAuth";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import AuthPage from "@/pages/auth/AuthPage";
 
 interface TradeMobileProps {
   showAuthDialog: boolean;
@@ -116,6 +118,12 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
             </div>
           </Button>
         </div>
+
+        <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+          <DialogContent className="p-0">
+            <AuthPage onAuthSuccess={() => setShowAuthDialog(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
     </SidebarProvider>
   );

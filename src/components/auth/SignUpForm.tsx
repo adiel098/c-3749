@@ -6,9 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { UserPlus } from "lucide-react";
 import { SignUpFormFields } from "./SignUpFormFields";
 import { SignUpFormData } from "./types";
-import { toastStyles, ToastClose, toastConfig } from "@/utils/toastStyles";
+import { toastStyles, toastConfig } from "@/utils/toastStyles";
 
-export function SignUpForm() {
+interface SignUpFormProps {
+  onAuthSuccess?: () => void;
+}
+
+export function SignUpForm({ onAuthSuccess }: SignUpFormProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
   const [isLoading, setIsLoading] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
@@ -71,6 +75,11 @@ export function SignUpForm() {
         className: toastStyles.success.className,
         ...toastConfig,
       });
+
+      // Call onAuthSuccess callback if provided
+      if (onAuthSuccess) {
+        onAuthSuccess();
+      }
     } catch (error: any) {
       toast({
         title: "Registration Failed ❌",
