@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useCryptoPrice } from "@/hooks/useCryptoPrice";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CryptoChartProps {
   symbol: string;
@@ -13,21 +14,46 @@ interface CryptoChartProps {
 }
 
 const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps) => {
-  const { data: priceData, isLoading } = useQuery({
+  const { toast } = useToast();
+
+  const { data: priceData, isLoading, error } = useQuery({
     queryKey: ['crypto-price', symbol],
     queryFn: async () => {
       console.log('Fetching price data for:', symbol);
-      const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`);
-      if (!response.ok) throw new Error('Failed to fetch price data');
-      const data = await response.json();
-      return {
-        price: parseFloat(data.lastPrice),
-        priceChange24h: parseFloat(data.priceChangePercent)
-      };
+      try {
+        // Try Binance API first
+        const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`);
+        if (!response.ok) throw new Error('Binance API failed');
+        const data = await response.json();
+        return {
+          price: parseFloat(data.lastPrice),
+          priceChange24h: parseFloat(data.priceChangePercent)
+        };
+      } catch (binanceError) {
+        console.warn('Binance API failed, trying CoinGecko:', binanceError);
+        
+        // Fallback to CoinGecko API
+        const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd&include_24hr_change=true`);
+        if (!response.ok) throw new Error('Both price APIs failed');
+        const data = await response.json();
+        const coinData = data[symbol.toLowerCase()];
+        return {
+          price: coinData.usd,
+          priceChange24h: coinData.usd_24h_change
+        };
+      }
     },
     refetchInterval: 5000,
     staleTime: 0,
     retry: 3,
+    onError: (error) => {
+      console.error('Price fetch error:', error);
+      toast({
+        title: "Error fetching price",
+        description: "Unable to fetch current price. Please try again later.",
+        variant: "destructive",
+      });
+    }
   });
 
   useEffect(() => {
@@ -62,6 +88,8 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
             <Loader2 className="h-4 w-4 animate-spin" />
             <span className="text-sm">Loading...</span>
           </div>
+        ) : error ? (
+          <div className="text-warning text-sm">Price unavailable</div>
         ) : (
           <div className="flex items-center gap-2 lg:gap-4">
             <span className="text-base lg:text-lg font-mono bg-secondary/20 px-2 lg:px-3 py-1 rounded-lg">
