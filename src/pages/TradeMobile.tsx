@@ -88,7 +88,7 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
                 className="flex-1 h-10 bg-success hover:bg-success/90"
                 onClick={() => handleTradeAction('long')}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 w-full">
                   <TrendingUp className="h-4 w-4" />
                   <span>Long</span>
                 </div>
@@ -110,7 +110,7 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
             className="flex-1 h-10 bg-warning hover:bg-warning/90"
             onClick={() => handleTradeAction('short')}
           >
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 w-full">
               <TrendingDown className="h-4 w-4" />
               <span>Short</span>
             </div>
