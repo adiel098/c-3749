@@ -53,7 +53,7 @@ export const TradingViewWidget = memo(({
           container_id: containerId,
           show_popup_button: chartConfig?.show_popup_button ?? !isMobile,
           hide_side_toolbar: chartConfig?.hide_side_toolbar ?? isMobile,
-          hide_top_toolbar: true,
+          hide_top_toolbar: false, // Changed to false to show the timeframe selector
           studies: chartConfig?.studies || (isMobile ? [] : undefined),
           autosize: chartConfig?.autosize ?? true,
           save_image: false,
@@ -64,14 +64,13 @@ export const TradingViewWidget = memo(({
             "use_localstorage_for_settings",
             "header_widget",
             "header_symbol_search",
-            "header_resolutions",
-            "header_chart_type",
             "header_settings",
             "header_indicators",
             "header_compare",
             "header_undo_redo",
             "header_screenshot",
-            "timeframes_toolbar",
+            "header_chart_type",
+            "timeframes_toolbar", // Remove this line to show the timeframe selector
           ],
           enabled_features: ["study_templates"],
         });
