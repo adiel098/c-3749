@@ -46,13 +46,14 @@ const CryptoChart = ({ symbol, onPriceUpdate, onSymbolChange }: CryptoChartProps
     refetchInterval: 5000,
     staleTime: 0,
     retry: 3,
-    onError: (error) => {
-      console.error('Price fetch error:', error);
-      toast({
-        title: "Error fetching price",
-        description: "Unable to fetch current price. Please try again later.",
-        variant: "destructive",
-      });
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error fetching price",
+          description: "Unable to fetch current price. Please try again later.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
