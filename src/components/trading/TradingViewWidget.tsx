@@ -1,4 +1,5 @@
-import { useEffect, useRef, memo } from "react";
+import { useEffect, useRef, memo, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ChartConfig {
   height?: string;
@@ -20,12 +21,22 @@ interface TradingViewWidgetProps {
   chartConfig?: ChartConfig;
 }
 
+const timeframes = [
+  { label: "1m", value: "1" },
+  { label: "5m", value: "5" },
+  { label: "15m", value: "15" },
+  { label: "1h", value: "60" },
+  { label: "4h", value: "240" },
+  { label: "1D", value: "D" },
+];
+
 export const TradingViewWidget = memo(({ 
   symbol, 
   isMobile = false,
   chartConfig
 }: TradingViewWidgetProps) => {
   const container = useRef<HTMLDivElement>(null);
+  const [selectedInterval, setSelectedInterval] = useState(chartConfig?.interval || "15");
 
   useEffect(() => {
     if (!symbol || !container.current) return;
@@ -42,7 +53,7 @@ export const TradingViewWidget = memo(({
           width: "100%",
           height: chartConfig?.height || "100%",
           symbol: `BINANCE:${symbol}USDT`,
-          interval: chartConfig?.interval || "D",
+          interval: selectedInterval,
           timezone: "Etc/UTC",
           theme: chartConfig?.theme || "dark",
           style: chartConfig?.style || "1",
@@ -53,7 +64,7 @@ export const TradingViewWidget = memo(({
           container_id: containerId,
           show_popup_button: chartConfig?.show_popup_button ?? !isMobile,
           hide_side_toolbar: chartConfig?.hide_side_toolbar ?? isMobile,
-          hide_top_toolbar: false, // Changed to false to show the timeframe selector
+          hide_top_toolbar: true,
           studies: chartConfig?.studies || (isMobile ? [] : undefined),
           autosize: chartConfig?.autosize ?? true,
           save_image: false,
@@ -70,7 +81,7 @@ export const TradingViewWidget = memo(({
             "header_undo_redo",
             "header_screenshot",
             "header_chart_type",
-            "timeframes_toolbar", // Remove this line to show the timeframe selector
+            "timeframes_toolbar",
           ],
           enabled_features: ["study_templates"],
         });
@@ -88,14 +99,29 @@ export const TradingViewWidget = memo(({
         existingScript.remove();
       }
     };
-  }, [symbol]);
+  }, [symbol, selectedInterval]);
 
   return (
-    <div 
-      ref={container}
-      className="w-full h-full bg-card/30 rounded-lg overflow-hidden"
-      style={{ minHeight: isMobile ? "350px" : "600px" }}
-    />
+    <div className="flex flex-col h-full">
+      <div className="flex gap-1 mb-2 p-2 bg-card/30 rounded-lg overflow-x-auto">
+        {timeframes.map((tf) => (
+          <Button
+            key={tf.value}
+            variant={selectedInterval === tf.value ? "secondary" : "ghost"}
+            size="sm"
+            onClick={() => setSelectedInterval(tf.value)}
+            className="min-w-[40px]"
+          >
+            {tf.label}
+          </Button>
+        ))}
+      </div>
+      <div 
+        ref={container}
+        className="w-full h-full bg-card/30 rounded-lg overflow-hidden"
+        style={{ minHeight: isMobile ? "350px" : "600px" }}
+      />
+    </div>
   );
 });
 
