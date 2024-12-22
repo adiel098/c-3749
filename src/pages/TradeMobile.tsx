@@ -84,29 +84,15 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
         </div>
 
         <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 flex gap-4 bg-background/95 backdrop-blur-md border-t border-white/10">
-          <Sheet open={isTradeFormOpen} onOpenChange={setIsTradeFormOpen}>
-            <SheetTrigger asChild>
-              <Button
-                className="flex-1 h-12 bg-success hover:bg-success/90"
-                onClick={() => handleTradeAction('long')}
-              >
-                <div className="flex items-center justify-center gap-2 w-full h-full">
-                  <TrendingUp className="h-4 w-4" />
-                  <span>Long</span>
-                </div>
-              </Button>
-            </SheetTrigger>
-            {session && (
-              <SheetContent side="bottom" className="h-[80vh] p-0">
-                <TradingForm 
-                  selectedCrypto={selectedCrypto} 
-                  currentPrice={currentPrice} 
-                  initialType={tradeType}
-                  onClose={() => setIsTradeFormOpen(false)}
-                />
-              </SheetContent>
-            )}
-          </Sheet>
+          <Button
+            className="flex-1 h-12 bg-success hover:bg-success/90"
+            onClick={() => handleTradeAction('long')}
+          >
+            <div className="flex items-center justify-center gap-2 w-full h-full">
+              <TrendingUp className="h-4 w-4" />
+              <span>Long</span>
+            </div>
+          </Button>
 
           <Button
             className="flex-1 h-12 bg-warning hover:bg-warning/90"
@@ -118,6 +104,19 @@ const TradeMobile = ({ showAuthDialog, setShowAuthDialog }: TradeMobileProps) =>
             </div>
           </Button>
         </div>
+
+        {session && (
+          <Sheet open={isTradeFormOpen} onOpenChange={setIsTradeFormOpen}>
+            <SheetContent side="bottom" className="h-[80vh] p-0">
+              <TradingForm 
+                selectedCrypto={selectedCrypto} 
+                currentPrice={currentPrice} 
+                initialType={tradeType}
+                onClose={() => setIsTradeFormOpen(false)}
+              />
+            </SheetContent>
+          </Sheet>
+        )}
 
         <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
           <DialogContent className="p-0">
