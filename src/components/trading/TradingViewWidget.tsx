@@ -103,18 +103,20 @@ export const TradingViewWidget = memo(({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex gap-1 mb-2 p-2 bg-card/30 rounded-lg overflow-x-auto">
-        {timeframes.map((tf) => (
-          <Button
-            key={tf.value}
-            variant={selectedInterval === tf.value ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setSelectedInterval(tf.value)}
-            className="min-w-[40px]"
-          >
-            {tf.label}
-          </Button>
-        ))}
+      <div className="flex justify-between w-full mb-2 p-2 bg-card/30 rounded-lg">
+        <div className="flex gap-2 w-full justify-evenly">
+          {timeframes.map((tf) => (
+            <Button
+              key={tf.value}
+              variant={selectedInterval === tf.value ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setSelectedInterval(tf.value)}
+              className="flex-1 min-w-[60px]"
+            >
+              {tf.label}
+            </Button>
+          ))}
+        </div>
       </div>
       <div 
         ref={container}
